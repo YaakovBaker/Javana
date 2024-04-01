@@ -1,0 +1,21 @@
+Javana MyProgram:
+    decl myVar: int
+    decl myBool: bool
+    record MyRecord {
+        int: field1,
+        bool: field2
+    }
+
+    func myFunction() -> int {
+        var x = 5
+        var y = 10
+        println(x + y)
+        return x
+    }
+
+    @main() {
+        var arr = @(int)[5]
+        var rec = @MyRecord{field1=10, field2=true}
+        myFunction()
+        println("Program executed successfully.")
+    }
