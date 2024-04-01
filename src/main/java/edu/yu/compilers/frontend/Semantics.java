@@ -36,6 +36,8 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         this.error = new SemanticErrorHandler();
     }
 
+
+
     public int getErrorCount() {
         return 0;
     }
@@ -49,14 +51,6 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     }
 
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
     @Override
     public Object visitProgram(JavanaParser.ProgramContext ctx){
         visit(ctx.programHeader());
@@ -67,14 +61,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+
     @Override
     public Object visitProgramHeader(JavanaParser.ProgramHeaderContext ctx){
         JavanaParser.IdentifierContext idCtx = ctx.identifier();
@@ -88,14 +75,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+
     @Override
     public Object visitMainMethod(JavanaParser.MainMethodContext ctx){
         JavanaParser.MainArgContext mArgCtx = ctx.mainArg();
@@ -106,14 +86,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+
     @Override
     public Object visitMainArg(JavanaParser.MainArgContext ctx){
         JavanaParser.IdentifierContext idCtx = ctx.identifier();
@@ -125,14 +98,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+
     @Override
     public Object visitGlobalDefinitions(JavanaParser.GlobalDefinitionsContext ctx){
         JavanaParser.NameDeclStatementContext declCtx = ctx.nameDeclStatement();
