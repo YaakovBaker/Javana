@@ -3,22 +3,11 @@ package edu.yu.compilers.frontend;
 import antlr4.JavanaBaseVisitor;
 import antlr4.JavanaParser;
 import edu.yu.compilers.intermediate.symtable.Predefined;
-import edu.yu.compilers.intermediate.symtable.SymTable;
 import edu.yu.compilers.intermediate.symtable.SymTableEntry;
-import edu.yu.compilers.intermediate.symtable.SymTableEntry.Kind;
 import edu.yu.compilers.intermediate.symtable.SymTableStack;
-import edu.yu.compilers.intermediate.type.TypeChecker;
 import edu.yu.compilers.intermediate.type.Typespec;
-import edu.yu.compilers.intermediate.type.Typespec.Form;
 import edu.yu.compilers.intermediate.util.CrossReferencer;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-
-import static edu.yu.compilers.frontend.SemanticErrorHandler.Code.*;
 import static edu.yu.compilers.intermediate.symtable.SymTableEntry.Kind.*;
-import static edu.yu.compilers.intermediate.symtable.SymTableEntry.Routine.DECLARED;
 import static edu.yu.compilers.intermediate.type.Typespec.Form.*;
 
 /***
@@ -39,15 +28,16 @@ public class Semantics extends JavanaBaseVisitor<Object> {
 
 
     public int getErrorCount() {
-        return 0;
+        return error.getCount();
     }
 
     public SymTableEntry getProgramId() {
-        return null;
+        return programId;
     }
 
     public void printSymbolTableStack() {
-
+        CrossReferencer crossReferencer = new CrossReferencer();
+        crossReferencer.print(symTableStack);
     }
 
 
