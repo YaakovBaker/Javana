@@ -1,6 +1,9 @@
 // Generated from Javana.g4 by ANTLR 4.13.1
 
 package antlr4;
+import java.util.HashMap;
+import edu.yu.compilers.intermediate.symtable.SymTableEntry;
+import edu.yu.compilers.intermediate.type.Typespec;
 
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -3036,6 +3039,7 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class IdentifierContext extends ParserRuleContext {
+		public SymTableEntry entry = null;
 		public TerminalNode IDENT() { return getToken(JavanaParser.IDENT, 0); }
 		public IdentifierContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);

@@ -2,6 +2,9 @@ grammar Javana;
 
 @header {
 package antlr4;
+import java.util.HashMap;
+import edu.yu.compilers.intermediate.symtable.SymTableEntry;
+import edu.yu.compilers.intermediate.type.Typespec;
 }
 
 // Program and routines --------------------
@@ -22,7 +25,7 @@ mainArg
     : identifier ':' stringArrType 
     ;
 
-globalDefinitions 
+globalDefinitions
     : nameDeclStatement 
     | nameDeclDefStatement
     ;
@@ -245,7 +248,7 @@ recordArrType  : REC_ARR_TYPE ;
 
 // Misc Rules
 
-identifier
+identifier locals [ SymTableEntry entry = null ]
     : IDENT
     ;
 
