@@ -2,8 +2,8 @@ Javana MyProgram:
     decl myVar: int
     decl myBool: bool
     record MyRecord {
-        int: field1,
-        bool: field2
+        field1: int
+        field2: bool
     }
 
     func myFunction() -> int {
@@ -14,7 +14,7 @@ Javana MyProgram:
     }
 
     @main() {
-        var arr = @(int)[5]
+        var arr = @int[5]
         var rec = @MyRecord{field1=10, field2=true}
         myFunction()
         println("Program executed successfully.")
