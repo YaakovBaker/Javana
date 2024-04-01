@@ -87,4 +87,63 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         idCtx.entry = programId;
         return null;
     }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     *
+     * @param ctx
+     */
+    @Override
+    public Object visitMainMethod(JavanaParser.MainMethodContext ctx){
+        JavanaParser.MainArgContext mArgCtx = ctx.mainArg();
+        if( mArgCtx != null){
+            visit(mArgCtx);
+        }
+        visit(ctx.blockStatement());
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     *
+     * @param ctx
+     */
+    @Override
+    public Object visitMainArg(JavanaParser.MainArgContext ctx){
+        JavanaParser.IdentifierContext idCtx = ctx.identifier();
+        JavanaParser.StringArrTypeContext strArrTypeCtx = ctx.stringArrType();
+        String argName = idCtx.getText();
+        SymTableEntry argId = symTableStack.enterLocal(argName, VARIABLE);
+        argId.setType(new Typespec(ARRAY));
+        idCtx.entry = argId;
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     *
+     * @param ctx
+     */
+    @Override
+    public Object visitGlobalDefinitions(JavanaParser.GlobalDefinitionsContext ctx){
+        JavanaParser.NameDeclStatementContext declCtx = ctx.nameDeclStatement();
+        if(declCtx != null){
+            visit(declCtx);
+        }else{
+            JavanaParser.NameDeclDefStatementContext defCtx = ctx.nameDeclDefStatement();
+            visit(defCtx);
+        }
+        return null;
+    }
+
+
 }
