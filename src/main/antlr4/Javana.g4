@@ -48,7 +48,7 @@ funcArgument
     : typeAssoc 
     ;
 
-returnType
+returnType locals [ Typespec typeSpec = null, SymTableEntry entry = null ]
     : type
     | 'None'
     ;
@@ -248,7 +248,7 @@ recordArrType  : REC_ARR_TYPE ;
 
 // Misc Rules
 
-identifier locals [ SymTableEntry entry = null ]
+identifier locals [ SymTableEntry entry = null, Typespec typeSpec = null ]
     : IDENT
     ;
 

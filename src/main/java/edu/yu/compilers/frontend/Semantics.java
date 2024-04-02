@@ -4,11 +4,13 @@ import antlr4.JavanaBaseVisitor;
 import antlr4.JavanaParser;
 import com.sun.source.tree.Tree;
 import edu.yu.compilers.intermediate.symtable.Predefined;
+import edu.yu.compilers.intermediate.symtable.SymTable;
 import edu.yu.compilers.intermediate.symtable.SymTableEntry;
 import edu.yu.compilers.intermediate.symtable.SymTableStack;
 import edu.yu.compilers.intermediate.type.Typespec;
 import edu.yu.compilers.intermediate.util.CrossReferencer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static edu.yu.compilers.intermediate.symtable.SymTableEntry.Kind.*;
@@ -110,32 +112,63 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     @Override
     public Object visitFuncDefinition(JavanaParser.FuncDefinitionContext ctx){
         JavanaParser.FuncPrototypeContext protoCtx = ctx.funcPrototype();
-        visit(protoCtx);
-        visit(ctx.blockStatement());
-        return null;
-    }
-
-    
-    @Override
-    public Object visitFuncPrototype(JavanaParser.FuncPrototypeContext ctx){
-        JavanaParser.IdentifierContext idCtx = ctx.identifier();
+        //FunctionProtype
+        //Get our contexts
+        JavanaParser.IdentifierContext idCtx = protoCtx.identifier();
+        JavanaParser.FuncArgListContext argListCtx = protoCtx.funcArgList();
+        //Grab the function name
         String funcName = idCtx.getText();
-        SymTableEntry funcId = symTableStack.enterLocal(funcName, FUNCTION);
-        funcId.setRoutineSymTable(symTableStack.push());
-        symTableStack.getLocalSymTable().setOwner(funcId);
+        //We need to create this function as an entity of the stack
+        SymTableEntry funcId = symTableStack.lookupLocal(funcName);
+        if( funcId != null ){
+            error.flag(SemanticErrorHandler.Code.REDECLARED_IDENTIFIER, protoCtx.getStart().getLine(), funcName);
+            return null;
+        }
+        funcId = symTableStack.enterLocal(funcName, FUNCTION);
+        funcId.setRoutineCode(SymTableEntry.Routine.DECLARED);
         idCtx.entry = funcId;
-        visit(ctx.funcArgList());
-        visit(ctx.returnType());
+
+        //Append to the parent list
+        symTableStack.getLocalSymTable().getOwner().appendSubroutine(funcId);
+
+        funcId.setRoutineSymTable(symTableStack.push());
+        idCtx.entry = funcId;
+
+        SymTable symTable = symTableStack.getLocalSymTable();
+        symTable.setOwner(funcId);
+
+        if( argListCtx != null){
+            ArrayList<SymTableEntry> argIds = (ArrayList<SymTableEntry>) visit(argListCtx);
+            funcId.setRoutineParameters(argIds);
+
+            for( SymTableEntry argId : argIds ){
+                argId.setSlotNumber(symTable.nextSlotNumber());
+            }
+        }
+        JavanaParser.ReturnTypeContext returnTypeCtx = protoCtx.returnType();
+        visit(returnTypeCtx);
+        Typespec returnType = returnTypeCtx.typeSpec;
+        funcId.setType(returnType);
+        idCtx.typeSpec = returnType;
+
+        SymTableEntry assocVarId = symTableStack.enterLocal(funcName, VARIABLE);
+        assocVarId.setSlotNumber(symTable.nextSlotNumber());
+        assocVarId.setType(returnType);
+        //Visit Block
+        visit(ctx.blockStatement());
+        funcId.setExecutable(ctx.blockStatement());
+        symTableStack.pop();
         return null;
     }
-
     
     @Override
     public Object visitFuncArgList(JavanaParser.FuncArgListContext ctx){
+        ArrayList<SymTableEntry> argList = new ArrayList<>();
         for(JavanaParser.FuncArgumentContext argCtx : ctx.funcArgument()){
-            visit(argCtx);
+            SymTableEntry argId = (SymTableEntry) visit(argCtx);
+            argList.add(argId);
         }
-        return null;
+        return argList;
     }
 
     
@@ -149,6 +182,21 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     
     @Override
     public Object visitReturnType(JavanaParser.ReturnTypeContext ctx){
+        String typeName = ctx.getText();
+        SymTableEntry typeId = symTableStack.lookup(typeName);
+        if( typeId != null){
+            if( typeId.getKind() != TYPE ){
+                error.flag(SemanticErrorHandler.Code.INVALID_TYPE, ctx);
+                ctx.typeSpec = Predefined.undefinedType;//Or IntegerType
+            }else{
+                ctx.typeSpec = typeId.getType();
+            }
+            typeId.appendLineNumber(ctx.getStart().getLine());
+        }else{
+            error.flag(SemanticErrorHandler.Code.UNDECLARED_IDENTIFIER, ctx);
+            ctx.typeSpec = Predefined.undefinedType;//Or IntegerType
+        }
+        ctx.entry = typeId;
         if( ctx.type() != null){
             visit(ctx.type());
         }

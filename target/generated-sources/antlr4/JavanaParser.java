@@ -615,6 +615,8 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class ReturnTypeContext extends ParserRuleContext {
+		public Typespec typeSpec = null;
+		public SymTableEntry entry = null;
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
 		}
@@ -3041,6 +3043,7 @@ public class JavanaParser extends Parser {
 	@SuppressWarnings("CheckReturnValue")
 	public static class IdentifierContext extends ParserRuleContext {
 		public SymTableEntry entry = null;
+		public Typespec typeSpec = null;
 		public TerminalNode IDENT() { return getToken(JavanaParser.IDENT, 0); }
 		public IdentifierContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
