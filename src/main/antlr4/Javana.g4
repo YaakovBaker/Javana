@@ -159,7 +159,7 @@ printArgument
 
 // Expressions -----------------------------
 
-expression 
+expression locals [ Typespec typeSpec = null ]
     : expression arrIdxSpecifier            
     | expression '.' 'length'
     | expression '.' identifier                   
