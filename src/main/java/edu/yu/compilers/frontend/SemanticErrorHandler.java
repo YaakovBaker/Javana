@@ -19,6 +19,7 @@ public class SemanticErrorHandler
         NAME_MUST_BE_FUNCTION      ("Must be a function name"),
         ARGUMENT_COUNT_MISMATCH    ("Invalid number of arguments"),
         INVALID_RETURN_TYPE        ("Invalid function return type"),
+        ILLEGAL_ASSIGNMENT ("Illegal assignment operation"),
         INDEX_OUT_OF_BOUNDS        ("Index out of bounds");
         
         private final String message;
