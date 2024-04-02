@@ -106,14 +106,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     }
 
     // Function Definitions and Declarations ---
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitFuncDefinition(JavanaParser.FuncDefinitionContext ctx){
         JavanaParser.FuncPrototypeContext protoCtx = ctx.funcPrototype();
@@ -122,14 +115,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitFuncPrototype(JavanaParser.FuncPrototypeContext ctx){
         JavanaParser.IdentifierContext idCtx = ctx.identifier();
@@ -143,14 +129,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitFuncArgList(JavanaParser.FuncArgListContext ctx){
         for(JavanaParser.FuncArgumentContext argCtx : ctx.funcArgument()){
@@ -159,14 +138,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitFuncArgument(JavanaParser.FuncArgumentContext ctx){
         JavanaParser.TypeAssocContext typeAssocCtx = ctx.typeAssoc();
@@ -174,14 +146,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitReturnType(JavanaParser.ReturnTypeContext ctx){
         if( ctx.type() != null){
@@ -192,14 +157,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
 
     // Name Definitions and Declarations -------
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitRecordDecl(JavanaParser.RecordDeclContext ctx){
         JavanaParser.IdentifierContext idCtx = ctx.identifier();
@@ -215,28 +173,14 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitVariableDecl(JavanaParser.VariableDeclContext ctx){
         visit(ctx.typeAssoc());
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitTypeAssoc(JavanaParser.TypeAssocContext ctx){
         JavanaParser.NameListContext nameListCtx = ctx.nameList();
@@ -246,14 +190,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitVariableDef(JavanaParser.VariableDefContext ctx){
         visit(ctx.nameList());
@@ -261,14 +198,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitConstantDef(JavanaParser.ConstantDefContext ctx){
         visit(ctx.nameList());
@@ -276,14 +206,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitNameList(JavanaParser.NameListContext ctx){
         List<JavanaParser.IdentifierContext> idCtxs = ctx.identifier();
@@ -311,14 +234,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
 //        return null;
 //    }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitBlockStatement(JavanaParser.BlockStatementContext ctx){
         symTableStack.push();
@@ -329,14 +245,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitNameDeclStatement(JavanaParser.NameDeclStatementContext ctx){
         if( ctx.variableDecl() != null){
@@ -347,14 +256,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitNameDeclDefStatement(JavanaParser.NameDeclDefStatementContext ctx){
         if( ctx.variableDef() != null){
@@ -367,14 +269,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitAssignmentStatement(JavanaParser.AssignmentStatementContext ctx){
         JavanaParser.IdentifierContext idCtx = ctx.identifier();
@@ -386,14 +281,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitIdentModifier(JavanaParser.IdentModifierContext ctx){
         if( ctx.arrIdxSpecifier() != null){
@@ -404,28 +292,14 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitArrIdxSpecifier(JavanaParser.ArrIdxSpecifierContext ctx){
         visit(ctx.expression());
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitIfStatement(JavanaParser.IfStatementContext ctx){
         JavanaParser.ExpressionContext exprCtx = ctx.expression();
@@ -444,14 +318,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitForStatement(JavanaParser.ForStatementContext ctx){
         //Optional variableDef
@@ -461,14 +328,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitWhileStatement(JavanaParser.WhileStatementContext ctx){
         //Expression
@@ -476,56 +336,28 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitExpressionStatement(JavanaParser.ExpressionStatementContext ctx){
         visit(ctx.expression());
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitReturnStatement(JavanaParser.ReturnStatementContext ctx){
         visit(ctx.expression());
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitPrintStatement(JavanaParser.PrintStatementContext ctx){
         visit(ctx.printArgument());
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitPrintLineStatement(JavanaParser.PrintLineStatementContext ctx){
         JavanaParser.PrintArgumentContext printArgCtx = ctx.printArgument();
@@ -533,14 +365,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitPrintArgument(JavanaParser.PrintArgumentContext ctx){
         JavanaParser.ExpressionContext exprCtx = ctx.expression();
@@ -554,118 +379,55 @@ public class Semantics extends JavanaBaseVisitor<Object> {
 
     // Expressions -----------------------------
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitExpression(JavanaParser.ExpressionContext ctx){
         return super.visitExpression(ctx);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitExprList(JavanaParser.ExprListContext ctx){
         return super.visitExprList(ctx);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitReadCharCall(JavanaParser.ReadCharCallContext ctx){
         return super.visitReadCharCall(ctx);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitReadLineCall(JavanaParser.ReadLineCallContext ctx){
         return super.visitReadLineCall(ctx);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitFunctionCall(JavanaParser.FunctionCallContext ctx){
         return super.visitFunctionCall(ctx);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitNewArray(JavanaParser.NewArrayContext ctx){
         return super.visitNewArray(ctx);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitNewRecord(JavanaParser.NewRecordContext ctx){
         return super.visitNewRecord(ctx);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitVarInitList(JavanaParser.VarInitListContext ctx){
         return super.visitVarInitList(ctx);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitLiteral(JavanaParser.LiteralContext ctx){
         return super.visitLiteral(ctx);
@@ -673,158 +435,74 @@ public class Semantics extends JavanaBaseVisitor<Object> {
 
     // Types -----------------------------------
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitType(JavanaParser.TypeContext ctx){
         return super.visitType(ctx);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitScalarType(JavanaParser.ScalarTypeContext ctx){
         return super.visitScalarType(ctx);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitCompositeType(JavanaParser.CompositeTypeContext ctx){
         return super.visitCompositeType(ctx);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitIntegerType(JavanaParser.IntegerTypeContext ctx){
         return super.visitIntegerType(ctx);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitBooleanType(JavanaParser.BooleanTypeContext ctx){
         return super.visitBooleanType(ctx);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitStringType(JavanaParser.StringTypeContext ctx){
         return super.visitStringType(ctx);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitRecordType(JavanaParser.RecordTypeContext ctx){
         return super.visitRecordType(ctx);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitIntegerArrType(JavanaParser.IntegerArrTypeContext ctx){
         return super.visitIntegerArrType(ctx);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitBooleanArrType(JavanaParser.BooleanArrTypeContext ctx){
         return super.visitBooleanArrType(ctx);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitStringArrType(JavanaParser.StringArrTypeContext ctx){
         return super.visitStringArrType(ctx);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitRecordArrType(JavanaParser.RecordArrTypeContext ctx){
         return super.visitRecordArrType(ctx);
     }
 
     // Misc Rules
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation returns the result of calling
-     * {@link #visitChildren} on {@code ctx}.</p>
-     *
-     * @param ctx
-     */
+    
     @Override
     public Object visitIdentifier(JavanaParser.IdentifierContext ctx){
         return super.visitIdentifier(ctx);

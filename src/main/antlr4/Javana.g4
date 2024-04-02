@@ -83,10 +83,10 @@ nameList
 // Statements ------------------------------
 
 statement 
-    : blockStatement                  
+    : blockStatement
     | nameDeclStatement
-    | nameDeclDefStatement             
-    | assignmentStatement 
+    | nameDeclDefStatement
+    | assignmentStatement
     | ifStatement
     | forStatement
     | whileStatement
