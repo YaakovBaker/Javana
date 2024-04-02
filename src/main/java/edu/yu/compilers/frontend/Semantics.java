@@ -454,7 +454,11 @@ public class Semantics extends JavanaBaseVisitor<Object> {
      */
     @Override
     public Object visitForStatement(JavanaParser.ForStatementContext ctx){
-        return super.visitForStatement(ctx);
+        //Optional variableDef
+        //Expression 1
+        //Expression 2
+        //Block
+        return null;
     }
 
     /**
@@ -467,7 +471,9 @@ public class Semantics extends JavanaBaseVisitor<Object> {
      */
     @Override
     public Object visitWhileStatement(JavanaParser.WhileStatementContext ctx){
-        return super.visitWhileStatement(ctx);
+        //Expression
+        //Block
+        return null;
     }
 
     /**
@@ -480,7 +486,8 @@ public class Semantics extends JavanaBaseVisitor<Object> {
      */
     @Override
     public Object visitExpressionStatement(JavanaParser.ExpressionStatementContext ctx){
-        return super.visitExpressionStatement(ctx);
+        visit(ctx.expression());
+        return null;
     }
 
     /**
@@ -493,7 +500,8 @@ public class Semantics extends JavanaBaseVisitor<Object> {
      */
     @Override
     public Object visitReturnStatement(JavanaParser.ReturnStatementContext ctx){
-        return super.visitReturnStatement(ctx);
+        visit(ctx.expression());
+        return null;
     }
 
     /**
@@ -506,7 +514,8 @@ public class Semantics extends JavanaBaseVisitor<Object> {
      */
     @Override
     public Object visitPrintStatement(JavanaParser.PrintStatementContext ctx){
-        return super.visitPrintStatement(ctx);
+        visit(ctx.printArgument());
+        return null;
     }
 
     /**
@@ -519,7 +528,9 @@ public class Semantics extends JavanaBaseVisitor<Object> {
      */
     @Override
     public Object visitPrintLineStatement(JavanaParser.PrintLineStatementContext ctx){
-        return super.visitPrintLineStatement(ctx);
+        JavanaParser.PrintArgumentContext printArgCtx = ctx.printArgument();
+        visit(printArgCtx);
+        return null;
     }
 
     /**
@@ -532,7 +543,13 @@ public class Semantics extends JavanaBaseVisitor<Object> {
      */
     @Override
     public Object visitPrintArgument(JavanaParser.PrintArgumentContext ctx){
-        return super.visitPrintArgument(ctx);
+        JavanaParser.ExpressionContext exprCtx = ctx.expression();
+        if( exprCtx != null) {
+            visit(exprCtx);
+        }else{
+            visit(ctx.exprList());
+        }
+        return null;
     }
 
     // Expressions -----------------------------
