@@ -213,8 +213,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         recordId.setRoutineSymTable(symTableStack.push());
         symTableStack.getLocalSymTable().setOwner(recordId);
         idCtx.entry = recordId;
-        List<JavanaParser.TypeAssocContext> typeAssocCtxs = ctx.typeAssoc();
-        for(JavanaParser.TypeAssocContext typeAssocCtx : typeAssocCtxs){
+        for(JavanaParser.TypeAssocContext typeAssocCtx : ctx.fields){
             visit(typeAssocCtx);
         }
         return null;
