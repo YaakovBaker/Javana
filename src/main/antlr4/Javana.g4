@@ -10,79 +10,79 @@ import edu.yu.compilers.intermediate.type.Typespec;
 // Program and routines --------------------
 
 program 
-    : programHeader globalDefinitions* mainMethod globalDefinitions* 
+    : hdr=programHeader defs+=globalDefinitions* main=mainMethod defs+=globalDefinitions*
     ;
 
-programHeader 
-    : 'Javana' identifier ':'
+programHeader
+    : 'Javana' name=identifier ':'
     ;
 
-mainMethod 
-    : '@main' '(' mainArg? ')' blockStatement 
+mainMethod
+    : '@main' '(' args=mainArg? ')' body=blockStatement
     ;
 
-mainArg 
-    : identifier ':' stringArrType 
+mainArg
+    : name=identifier ':' stringArrType
     ;
 
 globalDefinitions
-    : nameDeclStatement 
+    : nameDeclStatement
     | nameDeclDefStatement
     ;
 
 // Function Definitions and Declarations ---
 
-funcDefinition 
-    : funcPrototype blockStatement 
+funcDefinition
+    : proto=funcPrototype body=blockStatement
     ;
 
-funcPrototype  
-    : 'func' identifier '(' funcArgList? ')' '->' returnType 
+funcPrototype
+    : 'func' name=identifier '(' argList+=funcArgList? ')' '->' return=returnType
     ;
 
-funcArgList    
-    : funcArgument (',' funcArgument)* 
+funcArgList
+    : args+=funcArgument (',' args+=funcArgument)*
     ;
 
-funcArgument   
-    : typeAssoc 
+funcArgument
+    : typeAssoc
     ;
 
 returnType locals [ Typespec typeSpec = null, SymTableEntry entry = null ]
     : type
-    | 'None'
+    | None
     ;
 
 // Name Definitions and Declarations -------
 
 recordDecl
-    : 'record' identifier '{' (typeAssoc)* '}'
+    : 'record' name=identifier '{' fields+=typeAssoc* '}'
     ;
 
-variableDecl 
-    : 'decl' typeAssoc 
+variableDecl
+    : 'decl' assoc=typeAssoc
     ;
 
 typeAssoc
-    : nameList ':' type
+    : namelst=nameList ':' t=type
     ;
 
-variableDef  
-    : 'var' nameList '=' expression 
+variableDef
+    : 'var' namelst=nameList '=' expr=expression
     ;
 
-constantDef  
-    : 'const' nameList '=' expression 
+constantDef
+    : 'const' namelst=nameList '=' expr=expression
     ;
 
-nameList 
-    : identifier (',' identifier)* 
+nameList
+    : names+=identifier (',' names+=identifier)*
     ;
-    
+
 
 // Statements ------------------------------
 
-statement 
+statement
     : blockStatement
     | nameDeclStatement
     | nameDeclDefStatement
@@ -96,8 +96,8 @@ statement
     | printLineStatement
     ;
 
-blockStatement 
-    : '{' (statement)* '}' 
+blockStatement
+    : '{' stmts+=statement* '}'
     ;
 
 nameDeclStatement
@@ -110,78 +110,81 @@ nameDeclDefStatement
     | constantDef
     | funcDefinition
     ;
-    
-assignmentStatement        
-    : identifier identModifier? '=' expression 
+
+assignmentStatement
+    : var=variable '=' expr=expression
     ;
 
-identModifier
-    : arrIdxSpecifier
-    | '.' identifier
+variable
+    : name=identifier modifiers+=varModifier*
+    ;
+
+varModifier
+    : arrIdxSpecifier   # varArrayIndexModfier
+    | '.' identifier    # varRecordFieldModifier
     ;
 
 arrIdxSpecifier
-    : '[' expression ']'
+    : '[' expr=expression ']'
     ;
 
-ifStatement 
-    : 'if' '(' expression ')' blockStatement ('else' blockStatement)? 
+ifStatement
+    : 'if' '(' condition=expression ')' thenStmt=blockStatement ('else' elseStmt=blockStatement)?
     ;
 
-forStatement 
-    : 'for' '(' variableDef? ';' expression ';' expression ')' blockStatement 
+forStatement
+    : 'for' '(' init=variableDef? ';' condition=expression ';' updateExpr=expression ')' body=blockStatement
     ;
 
-whileStatement 
-    : 'while' '(' expression ')' blockStatement 
+whileStatement
+    : 'while' '(' condition=expression ')' body=blockStatement
     ;
 
-expressionStatement 
-    : expression 
+expressionStatement
+    : expr=expression
     ;
 
-returnStatement 
-    : 'return' expression? 
+returnStatement
+    : 'return' expr=expression
     ;
 
 printStatement
-    : 'print' printArgument 
+    : 'print' arg=printArgument
     ;
 
 printLineStatement
-    : 'println' printArgument?
+    : 'println' arg=printArgument?
     ;
 
 printArgument
-    : expression
-    | '(' exprList ')'
+    : expression        # PrintSingleValue
+    | '(' exprList ')'  # FormattedPrint
     ;
 
 // Expressions -----------------------------
 
 expression locals [ Typespec typeSpec = null ]
-    : expression arrIdxSpecifier            
+    : expression arrIdxSpecifier
     | expression '.' 'length'
-    | expression '.' identifier                   
-    | expression HIGHER_ARITH_OP expression   
-    | expression ARITH_OP expression          
-    | expression REL_OP expression            
-    | expression EQ_OP expression             
-    | expression COND_OP expression           
-    | '!' expression                          
-    | '-' expression                          
-    | '(' expression ')'                         
+    | expression '.' identifier
+    | lhs=expression op=HIGHER_ARITH_OP rhs=expression
+    | lhs=expression op=ARITH_OP rhs=expression
+    | lhs=expression op=REL_OP rhs=expression
+    | lhs=expression EQ_OP expression
+    | expression COND_OP expression
+    | '!' expression
+    | '(' expression ')'
     | readCharCall
     | readLineCall
     | functionCall
-    | identifier                                
-    | literal                                    
-    | newArray                                   
-    | newRecord                                  
+    | variable
+    | literal
+    | newArray
+    | newRecord
     ;
 
 exprList
-    : expression (',' expression)*
+    : exprs+=expression (',' exprs+=expression)*
     ;
 
 readCharCall
@@ -192,43 +195,47 @@ readLineCall
     : 'readln' '(' ')'
     ;
 
-functionCall 
-    : identifier '(' exprList? ')' 
+functionCall
+    : name=identifier '(' args=exprList? ')'
     ;
 
-newArray 
-    : '@' (scalarType | identifier) arrIdxSpecifier 
+newArray
+    : '@' (scalarType | identifier) arrIdxSpecifier
     ;
 
 newRecord
-    : '@' identifier '{' varInitList? '}'
+    : '@' identifier '{' init=fieldInitList? '}'
     ;
 
-varInitList
-    : identifier '=' expression (',' identifier '=' expression)*
+fieldInitList
+    : init+=fieldInit (',' init+=fieldInit)*
     ;
 
-literal 
-    : INTEGER
-    | BOOL        
-    | STRING      
-    | NULL_VALUE  
+fieldInit
+    : field=identifier '=' expr=expression
+    ;
+
+literal
+    : INTEGER   # IntegerLiteral
+    | BOOL      # BooleanLiteral
+    | STRING    # StringLiteral
+    | None      # NoneValue
     ;
 
 // Types -----------------------------------
 
-type 
-    : scalarType    
-    | compositeType 
+type
+    : scalarType    # TypeScalar
+    | compositeType # TypeComposite
     ;
 
-scalarType 
+scalarType
     : integerType
     | booleanType
     | stringType
     ;
 
-compositeType 
+compositeType
     : recordType
     | integerArrType
     | booleanArrType
@@ -252,6 +259,10 @@ identifier locals [ SymTableEntry entry = null, Typespec typeSpec = null ]
     : IDENT
     ;
 
+None
+    : NULL_VALUE
+    ;
+
 // Lexer tokens
 
 INT_ARR_TYPE  : INT_TYPE '[' ']' ;
@@ -269,11 +280,11 @@ REL_OP          : '<' | '>' | '<=' | '>=' ;
 EQ_OP           : '==' | '!=' ;
 COND_OP         : '&&' | '||' ;
 
+BOOL : 'true' | 'false' ;
+NULL_VALUE : 'None';
 IDENT  : [a-zA-Z_] [a-zA-Z_0-9]* ;
 STRING : '"' ( '\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '"' | '\\' ) | ~('\\' | '"') )* '"' ;
 INTEGER : '-'? [0-9]+ ;
-BOOL : 'true' | 'false' ;
-NULL_VALUE : 'None';
 
 NEWLINE : '\r'? '\n' -> skip ;
 WS : [ \t]+ -> skip ;
