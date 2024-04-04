@@ -205,8 +205,6 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     }
 
     // Name Definitions and Declarations -------
-
-    
     @Override
     public Object visitRecordDecl(JavanaParser.RecordDeclContext ctx){
         JavanaParser.IdentifierContext idCtx = ctx.identifier();
