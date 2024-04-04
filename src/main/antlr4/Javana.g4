@@ -115,7 +115,7 @@ assignmentStatement
     : var=variable '=' expr=expression
     ;
 
-variable
+variable locals [ SymTableEntry entry = null, Typespec typeSpec = null]
     : name=identifier modifiers+=varModifier*
     ;
 
@@ -145,7 +145,7 @@ expressionStatement
     ;
 
 returnStatement
-    : 'return' expr=expression
+    : 'return' expr=expression?
     ;
 
 printStatement
@@ -163,24 +163,24 @@ printArgument
 
 // Expressions -----------------------------
 
-expression locals [ Typespec typeSpec = null ]
-    : expression arrIdxSpecifier
-    | expression '.' 'length'
-    | expression '.' identifier
-    | lhs=expression op=HIGHER_ARITH_OP rhs=expression
-    | lhs=expression op=ARITH_OP rhs=expression
-    | lhs=expression op=REL_OP rhs=expression
-    | lhs=expression EQ_OP expression
-    | expression COND_OP expression
-    | '!' expression
-    | '(' expression ')'
-    | readCharCall
-    | readLineCall
-    | functionCall
-    | variable
-    | literal
-    | newArray
-    | newRecord
+expression locals [ Typespec typeSpec = null, SymTableEntry entry = null]
+    : expr=expression arrIdx=arrIdxSpecifier            # ExprArrayElement
+    | expr=expression '.' 'length'                      # ExprArrayLength
+    | expr=expression '.' name=identifier               # ExprRecordField
+    | lhs=expression op=HIGHER_ARITH_OP rhs=expression  # ExprHigherArith
+    | lhs=expression op=ARITH_OP rhs=expression         # ExprArith
+    | lhs=expression op=REL_OP rhs=expression           # ExprRelational
+    | lhs=expression op=EQ_OP rhs=expression            # ExprEquality
+    | lhs=expression op=COND_OP rhs=expression          # ExprConditional
+    | '!' expression                                    # ExprNot
+    | '(' expression ')'                                # ExprGroup
+    | readCharCall                                      # ExprReadChar
+    | readLineCall                                      # ExprReadLine
+    | functionCall                                      # ExprFunctionCall
+    | variable                                          # ExprVariable
+    | literal                                           # ExprLiteral
+    | newArray                                          # ExprNewArray
+    | newRecord                                         # ExprNewRecord
     ;
 
 exprList

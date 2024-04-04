@@ -7,6 +7,7 @@ import edu.yu.compilers.intermediate.symtable.Predefined;
 import edu.yu.compilers.intermediate.symtable.SymTable;
 import edu.yu.compilers.intermediate.symtable.SymTableEntry;
 import edu.yu.compilers.intermediate.symtable.SymTableStack;
+import edu.yu.compilers.intermediate.type.TypeChecker;
 import edu.yu.compilers.intermediate.type.Typespec;
 import edu.yu.compilers.intermediate.util.CrossReferencer;
 
@@ -50,7 +51,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     @Override
     public Object visitProgram(JavanaParser.ProgramContext ctx){
         visit(ctx.programHeader());
-        for(JavanaParser.GlobalDefinitionsContext globalDefinitionsContext : ctx.globalDefinitions()){
+        for(JavanaParser.GlobalDefinitionsContext globalDefinitionsContext : ctx.defs){
             visit(globalDefinitionsContext);
         }
         visit(ctx.mainMethod());
@@ -320,27 +321,40 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     
     @Override
     public Object visitAssignmentStatement(JavanaParser.AssignmentStatementContext ctx){
-        JavanaParser.IdentifierContext idCtx = ctx.identifier();
-        visit(idCtx);
-        if( ctx.identModifier() != null){
-            visit(ctx.identModifier());
+        JavanaParser.VariableContext varCtx = ctx.var;
+        JavanaParser.ExpressionContext exprCtx = ctx.expr;
+        visit(varCtx);
+        visit(exprCtx);
+
+        Typespec varType = varCtx.typeSpec;
+        Typespec exprType = exprCtx.typeSpec;
+
+        if( varCtx.entry == null ){
+            error.flag(SemanticErrorHandler.Code.UNDECLARED_IDENTIFIER, varCtx);
         }
-        visit(ctx.expression());
+
+        if( !TypeChecker.areAssignmentCompatible(varType, exprType)){
+            error.flag(SemanticErrorHandler.Code.INCOMPATIBLE_ASSIGNMENT, exprCtx);
+        }
         return null;
     }
 
-    
     @Override
-    public Object visitIdentModifier(JavanaParser.IdentModifierContext ctx){
-        if( ctx.arrIdxSpecifier() != null){
-            visit(ctx.arrIdxSpecifier());
+    public Object visitVariable(JavanaParser.VariableContext ctx) {
+        JavanaParser.IdentifierContext idCtx = ctx.identifier();
+        String varName = idCtx.getText();
+        SymTableEntry varId = symTableStack.lookup(varName);
+        if( varId != null ){
+            int lineNumber = ctx.getStart().getLine();
+            ctx.typeSpec = varId.getType();
+            ctx.entry = varId;
+            varId.appendLineNumber(lineNumber);
         }else{
-            visit(ctx.identifier());
+            ctx.typeSpec = Predefined.undefinedType;
         }
         return null;
     }
 
-    
     @Override
     public Object visitArrIdxSpecifier(JavanaParser.ArrIdxSpecifierContext ctx){
         visit(ctx.expression());
@@ -413,26 +427,19 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    
+
     @Override
-    public Object visitPrintArgument(JavanaParser.PrintArgumentContext ctx){
-        JavanaParser.ExpressionContext exprCtx = ctx.expression();
-        if( exprCtx != null) {
-            visit(exprCtx);
-        }else{
-            visit(ctx.exprList());
-        }
-        return null;
+    public Object visitPrintSingleValue(JavanaParser.PrintSingleValueContext ctx) {
+        return super.visitPrintSingleValue(ctx);
     }
+
+    @Override
+    public Object visitFormattedPrint(JavanaParser.FormattedPrintContext ctx) {
+        return super.visitFormattedPrint(ctx);
+    }
+
 
     // Expressions -----------------------------
-
-    
-    @Override
-    public Object visitExpression(JavanaParser.ExpressionContext ctx){
-        return super.visitExpression(ctx);
-    }
-
     
     @Override
     public Object visitExprList(JavanaParser.ExprListContext ctx){
@@ -468,27 +475,6 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     public Object visitNewRecord(JavanaParser.NewRecordContext ctx){
         return super.visitNewRecord(ctx);
     }
-
-    
-    @Override
-    public Object visitVarInitList(JavanaParser.VarInitListContext ctx){
-        return super.visitVarInitList(ctx);
-    }
-
-    
-    @Override
-    public Object visitLiteral(JavanaParser.LiteralContext ctx){
-        return super.visitLiteral(ctx);
-    }
-
-    // Types -----------------------------------
-
-    
-    @Override
-    public Object visitType(JavanaParser.TypeContext ctx){
-        return super.visitType(ctx);
-    }
-
     
     @Override
     public Object visitScalarType(JavanaParser.ScalarTypeContext ctx){
