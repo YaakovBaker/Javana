@@ -1,0 +1,8 @@
+Javana WrongAssignmentToInt:
+//Do a Declaration that is not semantically correct
+    decl myVar: int
+
+    func wrongFunc() {
+        //Semantically incorrect assignment
+        myVar = "Hello"
+    }
