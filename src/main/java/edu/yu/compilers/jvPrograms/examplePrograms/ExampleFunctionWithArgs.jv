@@ -1,0 +1,9 @@
+Javana ExampleFunctionWithArgs:
+    func add(x: int, y: int) -> int {
+        return x + y
+    }
+
+@main() {
+    var result = add(10, 20)
+    println("Result: " + result)
+}

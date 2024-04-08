@@ -1,0 +1,10 @@
+Javana ExampleRecordInitialization:
+    record Point {
+        x: int
+        y: int
+    }
+
+    @main() {
+        var p = @Point{x=10, y=20}
+        println("Point coordinates: (" + p.x + ", " + p.y + ")")
+    }

@@ -1,0 +1,8 @@
+Javana ExampleArrayAccess:
+    @main() {
+        var arr = @int[5]
+        arr[0] = 10
+        arr[1] = 20
+        println("Element at index 0: " + arr[0])
+        println("Element at index 1: " + arr[1])
+    }

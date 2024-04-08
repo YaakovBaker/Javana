@@ -1,0 +1,6 @@
+Javana ExampleLoop: //CURRENTLY DOES NOT WORK BECAUSE OF GRAMMAR
+    @main() {
+        for (var i = 0 ; i < 5 ; i = i + 1) {
+            println("Iteration: " + i)
+        }
+    }
