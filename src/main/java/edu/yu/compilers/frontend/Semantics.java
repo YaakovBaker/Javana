@@ -207,6 +207,25 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     // Name Definitions and Declarations -------
     @Override
     public Object visitRecordDecl(JavanaParser.RecordDeclContext ctx){
+        String recordTypeName = SymTable.generateUnnamedName();
+        Typespec recordType = new Typespec(RECORD);
+
+        SymTableEntry recordTypeId = symTableStack.enterLocal(recordTypeName, TYPE);
+        recordTypeId.setType(recordType);
+        recordType.setIdentifier(recordTypeId);
+
+        String recordTypePath = createRecordTypePath(recordType);
+        recordType.setRecordTypePath(recordTypePath);
+
+        // Enter the record fields into the record type's symbol table.
+        SymTable recordSymTable = createRecordSymTable(ctx.fields, recordTypeId);
+        recordType.setRecordSymTable(recordSymTable);
+
+        ctx.entry = recordTypeId;
+        ctx.typeSpec = recordType;
+
+
+        /*
         JavanaParser.IdentifierContext idCtx = ctx.identifier();
         String recordName = idCtx.getText();
         SymTableEntry recordId = symTableStack.enterLocal(recordName, RECORD_FIELD);
@@ -216,9 +235,52 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         for(JavanaParser.TypeAssocContext typeAssocCtx : ctx.fields){
             visit(typeAssocCtx);
         }
+
+         */
         return null;
+
+
     }
 
+    private SymTable createRecordSymTable(List<JavanaParser.TypeAssocContext> fields, SymTableEntry ownerId) {
+
+        SymTable recordSymTable = symTableStack.push();
+
+        recordSymTable.setOwner(ownerId);
+        //visit each field
+        for(JavanaParser.TypeAssocContext typeAssocCtx : fields){
+            visit(typeAssocCtx);
+        }
+
+        recordSymTable.resetVariables(RECORD_FIELD);
+        symTableStack.pop();
+
+        return recordSymTable;
+
+    }
+
+    /**
+     * Create the fully qualified type pathname of a record type.
+     *
+     * @param recordType the record type.
+     * @return the pathname.
+     */
+    private String createRecordTypePath(Typespec recordType) {
+        SymTableEntry recordId = recordType.getIdentifier();
+        SymTableEntry parentId = recordId.getSymTable().getOwner();
+        String path = recordId.getName();
+
+        while ((parentId.getKind() == TYPE) && (parentId.getType().getForm() == RECORD)) {
+            path = parentId.getName() + "$" + path;
+            parentId = parentId.getSymTable().getOwner();
+        }
+
+        path = parentId.getName() + "$" + path;
+        return path;
+    }
+
+
+    //Did record Decl
     
     @Override
     public Object visitVariableDecl(JavanaParser.VariableDeclContext ctx){

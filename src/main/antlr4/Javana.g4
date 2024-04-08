@@ -55,7 +55,7 @@ returnType locals [ Typespec typeSpec = null, SymTableEntry entry = null ]
 
 // Name Definitions and Declarations -------
 
-recordDecl
+recordDecl locals [ Typespec typeSpec = null, SymTableEntry entry = null ]
     : 'record' name=identifier '{' fields+=typeAssoc* '}'
     ;
 

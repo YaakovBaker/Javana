@@ -700,6 +700,8 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class RecordDeclContext extends ParserRuleContext {
+		public Typespec typeSpec = null;
+		public SymTableEntry entry = null;
 		public IdentifierContext name;
 		public TypeAssocContext typeAssoc;
 		public List<TypeAssocContext> fields = new ArrayList<TypeAssocContext>();
