@@ -26,8 +26,8 @@ mainArg
     ;
 
 globalDefinitions
-    : nameDeclStatement
-    | nameDeclDefStatement
+    : nameDeclStatement # nameDecl
+    | nameDeclDefStatement # nameDeclDef
     ;
 
 // Function Definitions and Declarations ---

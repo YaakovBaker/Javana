@@ -2,7 +2,6 @@ package edu.yu.compilers.frontend;
 
 import antlr4.JavanaBaseVisitor;
 import antlr4.JavanaParser;
-import com.sun.source.tree.Tree;
 import edu.yu.compilers.intermediate.symtable.Predefined;
 import edu.yu.compilers.intermediate.symtable.SymTable;
 import edu.yu.compilers.intermediate.symtable.SymTableEntry;
@@ -92,19 +91,6 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         SymTableEntry argId = symTableStack.enterLocal(argName, VARIABLE);
         argId.setType(new Typespec(ARRAY));
         idCtx.entry = argId;
-        return null;
-    }
-
-
-    @Override
-    public Object visitGlobalDefinitions(JavanaParser.GlobalDefinitionsContext ctx){
-        JavanaParser.NameDeclStatementContext declCtx = ctx.nameDeclStatement();
-        if(declCtx != null){
-            visit(declCtx);
-        }else{
-            JavanaParser.NameDeclDefStatementContext defCtx = ctx.nameDeclDefStatement();
-            visit(defCtx);
-        }
         return null;
     }
 
@@ -355,24 +341,26 @@ public class Semantics extends JavanaBaseVisitor<Object> {
 
     
     @Override
-    public Object visitNameDeclStatement(JavanaParser.NameDeclStatementContext ctx){
-        if( ctx.variableDecl() != null){
-            visit(ctx.variableDecl());
+    public Object visitNameDecl(JavanaParser.NameDeclContext ctx){
+        JavanaParser.NameDeclStatementContext declCtx = ctx.nameDeclStatement();
+        if( declCtx.variableDecl() != null){
+            visit(declCtx.variableDecl());
         }else{
-            visit(ctx.recordDecl());
+            visit(declCtx.recordDecl());
         }
         return null;
     }
 
     
     @Override
-    public Object visitNameDeclDefStatement(JavanaParser.NameDeclDefStatementContext ctx){
-        if( ctx.variableDef() != null){
-            visit(ctx.variableDef());
-        }else if( ctx.constantDef() != null ){
-            visit(ctx.constantDef());
+    public Object visitNameDeclDef(JavanaParser.NameDeclDefContext ctx){
+        JavanaParser.NameDeclDefStatementContext declCtx = ctx.nameDeclDefStatement();
+        if( declCtx.variableDef() != null){
+            visit(declCtx.variableDef());
+        }else if( declCtx.constantDef() != null ){
+            visit(declCtx.constantDef());
         }else{
-            visit(ctx.funcDefinition());
+            visit(declCtx.funcDefinition());
         }
         return null;
     }
@@ -423,10 +411,9 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     
     @Override
     public Object visitIfStatement(JavanaParser.IfStatementContext ctx){
-        JavanaParser.ExpressionContext exprCtx = ctx.expression();
-        JavanaParser.BlockStatementContext trueCtx = ctx.blockStatement(0);
-        JavanaParser.BlockStatementContext falseCtx = ctx.blockStatement(1);
-
+        JavanaParser.ExpressionContext exprCtx = ctx.condition;
+        JavanaParser.BlockStatementContext trueCtx = ctx.thenStmt;
+        JavanaParser.BlockStatementContext falseCtx = ctx.elseStmt;
         visit(exprCtx);
         //Make sure the expression is a boolean
         if( exprCtx.typeSpec != Predefined.booleanType){
@@ -442,32 +429,53 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     
     @Override
     public Object visitForStatement(JavanaParser.ForStatementContext ctx){
+        JavanaParser.VariableDefContext varDefCtx = ctx.init;
+        JavanaParser.ExpressionContext conditionCtx = ctx.condition;
+        JavanaParser.ExpressionContext updateCtx = ctx.updateExpr;
+        JavanaParser.BlockStatementContext blockCtx = ctx.body;
         //Optional variableDef
+        if( varDefCtx != null ){
+            visit(varDefCtx);
+        }
         //Expression 1
+        visit(conditionCtx);
+        if( conditionCtx.typeSpec != Predefined.booleanType){
+            error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_BOOLEAN, conditionCtx);
+        }
         //Expression 2
+        visit(updateCtx);
         //Block
+        visit(blockCtx);
         return null;
     }
 
     
     @Override
     public Object visitWhileStatement(JavanaParser.WhileStatementContext ctx){
-        //Expression
-        //Block
+        JavanaParser.ExpressionContext conditionCtx = ctx.condition;
+        JavanaParser.BlockStatementContext blockCtx = ctx.body;
+        visit(conditionCtx);
+        if( conditionCtx.typeSpec != Predefined.booleanType){
+            error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_BOOLEAN, conditionCtx);
+        }
+        visit(blockCtx);
         return null;
     }
 
     
     @Override
     public Object visitExpressionStatement(JavanaParser.ExpressionStatementContext ctx){
-        visit(ctx.expression());
+        visit(ctx.expr);
         return null;
     }
 
     
     @Override
     public Object visitReturnStatement(JavanaParser.ReturnStatementContext ctx){
-        visit(ctx.expression());
+        JavanaParser.ExpressionContext exprCtx = ctx.expr;
+        if( exprCtx != null ){
+            visit(exprCtx);
+        }
         return null;
     }
 

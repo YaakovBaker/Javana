@@ -40,11 +40,19 @@ public interface JavanaVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitMainArg(JavanaParser.MainArgContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link JavanaParser#globalDefinitions}.
+	 * Visit a parse tree produced by the {@code nameDecl}
+	 * labeled alternative in {@link JavanaParser#globalDefinitions}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitGlobalDefinitions(JavanaParser.GlobalDefinitionsContext ctx);
+	T visitNameDecl(JavanaParser.NameDeclContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code nameDeclDef}
+	 * labeled alternative in {@link JavanaParser#globalDefinitions}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNameDeclDef(JavanaParser.NameDeclDefContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link JavanaParser#funcDefinition}.
 	 * @param ctx the parse tree

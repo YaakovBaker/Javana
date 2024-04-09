@@ -369,19 +369,37 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class GlobalDefinitionsContext extends ParserRuleContext {
-		public NameDeclStatementContext nameDeclStatement() {
-			return getRuleContext(NameDeclStatementContext.class,0);
-		}
-		public NameDeclDefStatementContext nameDeclDefStatement() {
-			return getRuleContext(NameDeclDefStatementContext.class,0);
-		}
 		public GlobalDefinitionsContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_globalDefinitions; }
+	 
+		public GlobalDefinitionsContext() { }
+		public void copyFrom(GlobalDefinitionsContext ctx) {
+			super.copyFrom(ctx);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class NameDeclContext extends GlobalDefinitionsContext {
+		public NameDeclStatementContext nameDeclStatement() {
+			return getRuleContext(NameDeclStatementContext.class,0);
+		}
+		public NameDeclContext(GlobalDefinitionsContext ctx) { copyFrom(ctx); }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof JavanaVisitor ) return ((JavanaVisitor<? extends T>)visitor).visitGlobalDefinitions(this);
+			if ( visitor instanceof JavanaVisitor ) return ((JavanaVisitor<? extends T>)visitor).visitNameDecl(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class NameDeclDefContext extends GlobalDefinitionsContext {
+		public NameDeclDefStatementContext nameDeclDefStatement() {
+			return getRuleContext(NameDeclDefStatementContext.class,0);
+		}
+		public NameDeclDefContext(GlobalDefinitionsContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof JavanaVisitor ) return ((JavanaVisitor<? extends T>)visitor).visitNameDeclDef(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -395,6 +413,7 @@ public class JavanaParser extends Parser {
 			switch (_input.LA(1)) {
 			case T__8:
 			case T__11:
+				_localctx = new NameDeclContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(138);
@@ -404,6 +423,7 @@ public class JavanaParser extends Parser {
 			case T__5:
 			case T__12:
 			case T__14:
+				_localctx = new NameDeclDefContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(139);
