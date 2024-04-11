@@ -507,7 +507,20 @@ public class Semantics extends JavanaBaseVisitor<Object> {
 
 
     // Expressions -----------------------------
-    
+
+    //Currently working on
+    @Override
+    public Object visitExprArrayElement(JavanaParser.ExprArrayElementContext ctx) {
+        JavanaParser.ExpressionContext exprCtx = ctx.expr;
+        JavanaParser.ArrIdxSpecifierContext arrIdxCtx = ctx.arrIdx;
+        visit(exprCtx);
+        //This expression should return an array c = arrayReturn()[5]
+
+        visit(arrIdxCtx);
+        //I feel like there is more to this. This expression should return an array
+        return null;
+    }
+
     @Override
     public Object visitExprList(JavanaParser.ExprListContext ctx){
         return super.visitExprList(ctx);

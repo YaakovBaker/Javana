@@ -6,3 +6,10 @@ Javana ExampleArrayAccess:
         println("Element at index 0: " + arr[0])
         println("Element at index 1: " + arr[1])
     }
+    //Test ExprArrayElement
+    func test() -> None {
+            var arr = @int[5]
+            arr[0] = 10
+            b = arr[0]
+            c = test()[5]
+        }
