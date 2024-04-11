@@ -319,7 +319,8 @@ public class Semantics extends JavanaBaseVisitor<Object> {
 //
 //    }
 
-    
+
+    //TODO
     @Override
     public Object visitVariableDef(JavanaParser.VariableDefContext ctx){
         visit(ctx.nameList());
@@ -327,7 +328,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    
+    //TODO
     @Override
     public Object visitConstantDef(JavanaParser.ConstantDefContext ctx){
         visit(ctx.nameList());
@@ -335,17 +336,19 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    
-    @Override
-    public Object visitNameList(JavanaParser.NameListContext ctx){
-        List<JavanaParser.IdentifierContext> idCtxs = ctx.identifier();
-        for(JavanaParser.IdentifierContext idCtx : idCtxs){
-            String name = idCtx.getText();
-            SymTableEntry id = symTableStack.enterLocal(name, VARIABLE);
-            idCtx.entry = id;
-        }
-        return null;
-    }
+
+    //Gabe - NameList could be with Consts or in a Function too, so just go through it in the calling
+    // method
+//    @Override
+//    public Object visitNameList(JavanaParser.NameListContext ctx){
+//        List<JavanaParser.IdentifierContext> idCtxs = ctx.identifier();
+//        for(JavanaParser.IdentifierContext idCtx : idCtxs){
+//            String name = idCtx.getText();
+//            SymTableEntry id = symTableStack.enterLocal(name, VARIABLE);
+//            idCtx.entry = id;
+//        }
+//        return null;
+//    }
 
     // Statements ------------------------------
 
