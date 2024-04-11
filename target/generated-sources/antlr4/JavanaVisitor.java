@@ -232,12 +232,12 @@ public interface JavanaVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFormattedPrint(JavanaParser.FormattedPrintContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code ExprConditional}
+	 * Visit a parse tree produced by the {@code ExprLowLogical}
 	 * labeled alternative in {@link JavanaParser#expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExprConditional(JavanaParser.ExprConditionalContext ctx);
+	T visitExprLowLogical(JavanaParser.ExprLowLogicalContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code ExprNewRecord}
 	 * labeled alternative in {@link JavanaParser#expression}.
@@ -287,6 +287,13 @@ public interface JavanaVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitExprReadLine(JavanaParser.ExprReadLineContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code ExprHighLogical}
+	 * labeled alternative in {@link JavanaParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExprHighLogical(JavanaParser.ExprHighLogicalContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code ExprArrayElement}
 	 * labeled alternative in {@link JavanaParser#expression}.
@@ -380,6 +387,12 @@ public interface JavanaVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitNewArray(JavanaParser.NewArrayContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link JavanaParser#arrayElemType}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArrayElemType(JavanaParser.ArrayElemTypeContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link JavanaParser#newRecord}.
 	 * @param ctx the parse tree

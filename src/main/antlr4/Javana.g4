@@ -171,7 +171,8 @@ expression locals [ Typespec typeSpec = null, SymTableEntry entry = null]
     | lhs=expression op=ARITH_OP rhs=expression         # ExprArith
     | lhs=expression op=REL_OP rhs=expression           # ExprRelational
     | lhs=expression op=EQ_OP rhs=expression            # ExprEquality
-    | lhs=expression op=COND_OP rhs=expression          # ExprConditional
+    | lhs=expression op=HIGH_LOGIC_OP rhs=expression    # ExprHighLogical
+    | lhs=expression op=LOW_LOGIC_OP rhs=expression     # ExprLowLogical
     | '!' expression                                    # ExprNot
     | '(' expression ')'                                # ExprGroup
     | readCharCall                                      # ExprReadChar
@@ -199,8 +200,13 @@ functionCall
     : name=identifier '(' args=exprList? ')'
     ;
 
-newArray
-    : '@' (scalarType | identifier) arrIdxSpecifier
+newArray locals [Typespec typespec= null ]
+    : '@' t=arrayElemType arrIdxSpecifier
+    ;
+
+arrayElemType locals [Typespec typespec= null ]
+    : scalarType
+    | identifier
     ;
 
 newRecord
@@ -278,7 +284,8 @@ HIGHER_ARITH_OP : '*' | '/' | '%' ;
 ARITH_OP        : '+' | '-' ;
 REL_OP          : '<' | '>' | '<=' | '>=' ;
 EQ_OP           : '==' | '!=' ;
-COND_OP         : '&&' | '||' ;
+HIGH_LOGIC_OP   : '&&' ;
+LOW_LOGIC_OP    : '||' ;
 
 BOOL : 'true' | 'false' ;
 NULL_VALUE : 'None';
