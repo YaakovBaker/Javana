@@ -230,7 +230,7 @@ literal
 
 // Types -----------------------------------
 
-type
+type locals [ Typespec typeSpec = null ]
     : scalarType    # TypeScalar
     | compositeType # TypeComposite
     ;

@@ -13,6 +13,7 @@ import edu.yu.compilers.intermediate.util.CrossReferencer;
 import java.util.ArrayList;
 import java.util.List;
 
+import static edu.yu.compilers.frontend.SemanticErrorHandler.Code.REDECLARED_IDENTIFIER;
 import static edu.yu.compilers.intermediate.symtable.SymTableEntry.Kind.*;
 import static edu.yu.compilers.intermediate.type.Typespec.Form.*;
 
@@ -270,19 +271,53 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     
     @Override
     public Object visitVariableDecl(JavanaParser.VariableDeclContext ctx){
-        visit(ctx.typeAssoc());
+        JavanaParser.TypeAssocContext typeAssocCtx = ctx.typeAssoc();
+
+        JavanaParser.TypeContext typeCtx = typeAssocCtx.type();
+        visit(typeCtx);
+
+        JavanaParser.NameListContext nameListCtx = typeAssocCtx.nameList();
+
+        for(JavanaParser.IdentifierContext idCtx : nameListCtx.identifier()){
+            int lineNumber = idCtx.getStart().getLine();
+            String varName = idCtx.getText();
+
+            SymTableEntry variableId = symTableStack.lookupLocal(varName);
+
+            if (variableId == null) {
+                variableId = symTableStack.enterLocal(varName, VARIABLE);
+                variableId.setType(typeCtx.typeSpec);
+
+                // Assign slot numbers to local variables.
+                SymTable symTable = variableId.getSymTable();
+                if (symTable.getNestingLevel() > 1) {
+                    variableId.setSlotNumber(symTable.nextSlotNumber());
+                }
+
+                idCtx.entry = variableId;
+            }else{
+                error.flag(REDECLARED_IDENTIFIER, ctx);
+                variableId.setType(typeCtx.typeSpec);
+                idCtx.entry = variableId;
+            }
+
+            variableId.appendLineNumber(lineNumber);
+        }
         return null;
     }
 
-    
-    @Override
-    public Object visitTypeAssoc(JavanaParser.TypeAssocContext ctx){
-        JavanaParser.NameListContext nameListCtx = ctx.nameList();
-        JavanaParser.TypeContext typeCtx = ctx.type();
-        visit(nameListCtx);
-        visit(typeCtx);
-        return null;
-    }
+    //Gabe - I dont think we should use this, because both functions and Variable Decl's use this,
+    // they use different symTables, so lets do it in their respective methods
+//    @Override
+//    public Object visitTypeAssoc(JavanaParser.TypeAssocContext ctx){
+//
+//        JavanaParser.NameListContext nameListCtx = ctx.nameList();
+//        JavanaParser.TypeContext typeCtx = ctx.type();
+//        visit(nameListCtx);
+//        visit(typeCtx);
+//        return null;
+//
+//    }
 
     
     @Override

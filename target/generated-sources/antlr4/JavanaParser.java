@@ -3140,6 +3140,7 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class TypeContext extends ParserRuleContext {
+		public Typespec typeSpec = null;
 		public TypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -3148,6 +3149,7 @@ public class JavanaParser extends Parser {
 		public TypeContext() { }
 		public void copyFrom(TypeContext ctx) {
 			super.copyFrom(ctx);
+			this.typeSpec = ctx.typeSpec;
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")
