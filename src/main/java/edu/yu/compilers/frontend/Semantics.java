@@ -159,11 +159,11 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return argList;
     }
 
-    
+    // TODO
     @Override
     public Object visitFuncArgument(JavanaParser.FuncArgumentContext ctx){
         JavanaParser.TypeAssocContext typeAssocCtx = ctx.typeAssoc();
-        visit(typeAssocCtx);
+
         return null;
     }
 
@@ -210,25 +210,10 @@ public class Semantics extends JavanaBaseVisitor<Object> {
 
         ctx.entry = recordTypeId;
         ctx.typeSpec = recordType;
-
-
-        /*
-        JavanaParser.IdentifierContext idCtx = ctx.identifier();
-        String recordName = idCtx.getText();
-        SymTableEntry recordId = symTableStack.enterLocal(recordName, RECORD_FIELD);
-        recordId.setRoutineSymTable(symTableStack.push());
-        symTableStack.getLocalSymTable().setOwner(recordId);
-        idCtx.entry = recordId;
-        for(JavanaParser.TypeAssocContext typeAssocCtx : ctx.fields){
-            visit(typeAssocCtx);
-        }
-
-         */
         return null;
-
-
     }
 
+    //TODO
     private SymTable createRecordSymTable(List<JavanaParser.TypeAssocContext> fields, SymTableEntry ownerId) {
 
         SymTable recordSymTable = symTableStack.push();
@@ -236,7 +221,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         recordSymTable.setOwner(ownerId);
         //visit each field
         for(JavanaParser.TypeAssocContext typeAssocCtx : fields){
-            visit(typeAssocCtx);
+            //TODO
         }
 
         recordSymTable.resetVariables(RECORD_FIELD);
@@ -306,20 +291,6 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    //Gabe - I dont think we should use this, because both functions and Variable Decl's use this,
-    // they use different symTables, so lets do it in their respective methods
-//    @Override
-//    public Object visitTypeAssoc(JavanaParser.TypeAssocContext ctx){
-//
-//        JavanaParser.NameListContext nameListCtx = ctx.nameList();
-//        JavanaParser.TypeContext typeCtx = ctx.type();
-//        visit(nameListCtx);
-//        visit(typeCtx);
-//        return null;
-//
-//    }
-
-
     //TODO
     @Override
     public Object visitVariableDef(JavanaParser.VariableDefContext ctx){
@@ -336,36 +307,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-
-    //Gabe - NameList could be with Consts or in a Function too, so just go through it in the calling
-    // method
-//    @Override
-//    public Object visitNameList(JavanaParser.NameListContext ctx){
-//        List<JavanaParser.IdentifierContext> idCtxs = ctx.identifier();
-//        for(JavanaParser.IdentifierContext idCtx : idCtxs){
-//            String name = idCtx.getText();
-//            SymTableEntry id = symTableStack.enterLocal(name, VARIABLE);
-//            idCtx.entry = id;
-//        }
-//        return null;
-//    }
-
     // Statements ------------------------------
-
-//    /**
-//     * {@inheritDoc}
-//     *
-//     * <p>The default implementation returns the result of calling
-//     * {@link #visitChildren} on {@code ctx}.</p>
-//     *
-//     * @param ctx
-//     */
-//    @Override
-//    public Object visitStatement(JavanaParser.StatementContext ctx){
-//        //He doesn't do this for his Pascal one?
-//        return null;
-//    }
-
     
     @Override
     public Object visitBlockStatement(JavanaParser.BlockStatementContext ctx){
@@ -377,33 +319,6 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    
-    @Override
-    public Object visitNameDecl(JavanaParser.NameDeclContext ctx){
-        JavanaParser.NameDeclStatementContext declCtx = ctx.nameDeclStatement();
-        if( declCtx.variableDecl() != null){
-            visit(declCtx.variableDecl());
-        }else{
-            visit(declCtx.recordDecl());
-        }
-        return null;
-    }
-
-    
-    @Override
-    public Object visitNameDeclDef(JavanaParser.NameDeclDefContext ctx){
-        JavanaParser.NameDeclDefStatementContext declCtx = ctx.nameDeclDefStatement();
-        if( declCtx.variableDef() != null){
-            visit(declCtx.variableDef());
-        }else if( declCtx.constantDef() != null ){
-            visit(declCtx.constantDef());
-        }else{
-            visit(declCtx.funcDefinition());
-        }
-        return null;
-    }
-
-    
     @Override
     public Object visitAssignmentStatement(JavanaParser.AssignmentStatementContext ctx){
         JavanaParser.VariableContext varCtx = ctx.var;
@@ -442,7 +357,11 @@ public class Semantics extends JavanaBaseVisitor<Object> {
 
     @Override
     public Object visitArrIdxSpecifier(JavanaParser.ArrIdxSpecifierContext ctx){
-        visit(ctx.expression());
+        JavanaParser.ExpressionContext exprCtx = ctx.expr;
+        visit(exprCtx);
+        if( exprCtx.typeSpec != Predefined.integerType){
+            error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_INTEGER, ctx);
+        }
         return null;
     }
 
@@ -464,7 +383,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    
+    //TODO - double check update Expressions
     @Override
     public Object visitForStatement(JavanaParser.ForStatementContext ctx){
         JavanaParser.VariableDefContext varDefCtx = ctx.init;
@@ -474,6 +393,9 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         //Optional variableDef
         if( varDefCtx != null ){
             visit(varDefCtx);
+            if( varDefCtx.typeSpec != Predefined.integerType){
+                error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_INTEGER, varDefCtx);
+            }
         }
         //Expression 1
         visit(conditionCtx);
@@ -482,6 +404,9 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         }
         //Expression 2
         visit(updateCtx);
+        if( updateCtx.typeSpec != Predefined.integerType){
+            error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_INTEGER, updateCtx);
+        }
         //Block
         visit(blockCtx);
         return null;

@@ -67,7 +67,7 @@ typeAssoc
     : namelst=nameList ':' t=type
     ;
 
-variableDef
+variableDef locals [ Typespec typeSpec = null ]
     : 'var' namelst=nameList '=' expr=expression
     ;
 

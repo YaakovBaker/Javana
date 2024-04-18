@@ -876,6 +876,7 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class VariableDefContext extends ParserRuleContext {
+		public Typespec typeSpec = null;
 		public NameListContext namelst;
 		public ExpressionContext expr;
 		public NameListContext nameList() {
