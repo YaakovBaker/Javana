@@ -235,13 +235,13 @@ type locals [ Typespec typeSpec = null ]
     | compositeType # TypeComposite
     ;
 
-scalarType
+scalarType locals [ Typespec typeSpec = null ]
     : integerType
     | booleanType
     | stringType
     ;
 
-compositeType
+compositeType locals [ Typespec typeSpec = null ]
     : recordType
     | integerArrType
     | booleanArrType
@@ -249,15 +249,15 @@ compositeType
     | recordArrType
     ;
 
-integerType : INT_TYPE ;
-booleanType : BOOL_TYPE ;
-stringType  : STR_TYPE ;
-recordType  : identifier ;
+integerType locals [ Typespec typeSpec = null ] : INT_TYPE ;
+booleanType locals [ Typespec typeSpec = null ] : BOOL_TYPE ;
+stringType locals [ Typespec typeSpec = null ] : STR_TYPE ;
+recordType locals [ Typespec typeSpec = null ] : identifier ;
 
-integerArrType : INT_ARR_TYPE ;
-booleanArrType : BOOL_ARR_TYPE ;
-stringArrType  : STR_ARR_TYPE ;
-recordArrType  : REC_ARR_TYPE ;
+integerArrType locals [ Typespec typeSpec = null ] : INT_ARR_TYPE ;
+booleanArrType locals [ Typespec typeSpec = null ] : BOOL_ARR_TYPE ;
+stringArrType locals [ Typespec typeSpec = null ] : STR_ARR_TYPE ;
+recordArrType locals [ Typespec typeSpec = null ] : REC_ARR_TYPE ;
 
 // Misc Rules
 

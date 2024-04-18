@@ -3224,6 +3224,7 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class ScalarTypeContext extends ParserRuleContext {
+		public Typespec typeSpec = null;
 		public IntegerTypeContext integerType() {
 			return getRuleContext(IntegerTypeContext.class,0);
 		}
@@ -3289,6 +3290,7 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class CompositeTypeContext extends ParserRuleContext {
+		public Typespec typeSpec = null;
 		public RecordTypeContext recordType() {
 			return getRuleContext(RecordTypeContext.class,0);
 		}
@@ -3374,6 +3376,7 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class IntegerTypeContext extends ParserRuleContext {
+		public Typespec typeSpec = null;
 		public TerminalNode INT_TYPE() { return getToken(JavanaParser.INT_TYPE, 0); }
 		public IntegerTypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -3409,6 +3412,7 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class BooleanTypeContext extends ParserRuleContext {
+		public Typespec typeSpec = null;
 		public TerminalNode BOOL_TYPE() { return getToken(JavanaParser.BOOL_TYPE, 0); }
 		public BooleanTypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -3444,6 +3448,7 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class StringTypeContext extends ParserRuleContext {
+		public Typespec typeSpec = null;
 		public TerminalNode STR_TYPE() { return getToken(JavanaParser.STR_TYPE, 0); }
 		public StringTypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -3479,6 +3484,7 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class RecordTypeContext extends ParserRuleContext {
+		public Typespec typeSpec = null;
 		public IdentifierContext identifier() {
 			return getRuleContext(IdentifierContext.class,0);
 		}
@@ -3516,6 +3522,7 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class IntegerArrTypeContext extends ParserRuleContext {
+		public Typespec typeSpec = null;
 		public TerminalNode INT_ARR_TYPE() { return getToken(JavanaParser.INT_ARR_TYPE, 0); }
 		public IntegerArrTypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -3551,6 +3558,7 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class BooleanArrTypeContext extends ParserRuleContext {
+		public Typespec typeSpec = null;
 		public TerminalNode BOOL_ARR_TYPE() { return getToken(JavanaParser.BOOL_ARR_TYPE, 0); }
 		public BooleanArrTypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -3586,6 +3594,7 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class StringArrTypeContext extends ParserRuleContext {
+		public Typespec typeSpec = null;
 		public TerminalNode STR_ARR_TYPE() { return getToken(JavanaParser.STR_ARR_TYPE, 0); }
 		public StringArrTypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -3621,6 +3630,7 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class RecordArrTypeContext extends ParserRuleContext {
+		public Typespec typeSpec = null;
 		public TerminalNode REC_ARR_TYPE() { return getToken(JavanaParser.REC_ARR_TYPE, 0); }
 		public RecordArrTypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);

@@ -424,14 +424,6 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         visit(blockCtx);
         return null;
     }
-
-    
-    @Override
-    public Object visitExpressionStatement(JavanaParser.ExpressionStatementContext ctx){
-        visit(ctx.expr);
-        return null;
-    }
-
     
     @Override
     public Object visitReturnStatement(JavanaParser.ReturnStatementContext ctx){
@@ -439,30 +431,18 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         if( exprCtx != null ){
             visit(exprCtx);
         }
+        Typespec returnType = exprCtx != null ? exprCtx.typeSpec : Predefined.undefinedType;
+        //Check the current stack frame's returnType
+        SymTableEntry routineId = symTableStack.getLocalSymTable().getOwner();
+        Typespec routineType = routineId.getType();
+        //Compare and see if we have a type mismatch or not
+        if( !TypeChecker.areAssignmentCompatible(routineType, returnType)){
+            error.flag(SemanticErrorHandler.Code.TYPE_MISMATCH, ctx);
+        }
         return null;
     }
 
-    
-    @Override
-    public Object visitPrintStatement(JavanaParser.PrintStatementContext ctx){
-        visit(ctx.printArgument());
-        return null;
-    }
-
-    
-    @Override
-    public Object visitPrintLineStatement(JavanaParser.PrintLineStatementContext ctx){
-        JavanaParser.PrintArgumentContext printArgCtx = ctx.printArgument();
-        visit(printArgCtx);
-        return null;
-    }
-
-
-    @Override
-    public Object visitPrintSingleValue(JavanaParser.PrintSingleValueContext ctx) {
-        return super.visitPrintSingleValue(ctx);
-    }
-
+    //TODO
     @Override
     public Object visitFormattedPrint(JavanaParser.FormattedPrintContext ctx) {
         return super.visitFormattedPrint(ctx);
@@ -518,28 +498,17 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     public Object visitNewRecord(JavanaParser.NewRecordContext ctx){
         return super.visitNewRecord(ctx);
     }
-    
-    @Override
-    public Object visitScalarType(JavanaParser.ScalarTypeContext ctx){
-        return super.visitScalarType(ctx);
-    }
 
-    
-    @Override
-    public Object visitCompositeType(JavanaParser.CompositeTypeContext ctx){
-        return super.visitCompositeType(ctx);
-    }
-
-    
     @Override
     public Object visitIntegerType(JavanaParser.IntegerTypeContext ctx){
-        return super.visitIntegerType(ctx);
+        ctx.typeSpec = Predefined.integerType;
+        return null;
     }
 
-    
     @Override
     public Object visitBooleanType(JavanaParser.BooleanTypeContext ctx){
-        return super.visitBooleanType(ctx);
+        ctx.typeSpec = Predefined.booleanType;
+        return null;
     }
 
     
