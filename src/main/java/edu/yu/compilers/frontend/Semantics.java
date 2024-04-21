@@ -514,43 +514,50 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     
     @Override
     public Object visitStringType(JavanaParser.StringTypeContext ctx){
-        return super.visitStringType(ctx);
+        ctx.typeSpec = Predefined.stringType;
+        return null;
     }
 
-    
-    @Override
-    public Object visitRecordType(JavanaParser.RecordTypeContext ctx){
-        return super.visitRecordType(ctx);
-    }
+    //DOn't need?
+//    @Override
+//    public Object visitRecordType(JavanaParser.RecordTypeContext ctx){
+//
+//    }
 
     
     @Override
     public Object visitIntegerArrType(JavanaParser.IntegerArrTypeContext ctx){
-        return super.visitIntegerArrType(ctx);
+        ctx.typeSpec = Predefined.integerType;
+        return null;
     }
 
     
     @Override
     public Object visitBooleanArrType(JavanaParser.BooleanArrTypeContext ctx){
-        return super.visitBooleanArrType(ctx);
+        ctx.typeSpec = Predefined.booleanType;
+        return null;
     }
 
     
     @Override
     public Object visitStringArrType(JavanaParser.StringArrTypeContext ctx){
-        return super.visitStringArrType(ctx);
+        ctx.typeSpec = Predefined.stringType;
+        return null;
     }
 
     
     @Override
     public Object visitRecordArrType(JavanaParser.RecordArrTypeContext ctx){
-        return super.visitRecordArrType(ctx);
+        ctx.typeSpec = Predefined.undefinedType;
+        return null;
     }
 
     // Misc Rules
     
     @Override
     public Object visitIdentifier(JavanaParser.IdentifierContext ctx){
-        return super.visitIdentifier(ctx);
+        ctx.typeSpec = Predefined.undefinedType;
+        ctx.entry = symTableStack.lookup(ctx.getText());
+        return null;
     }
 }
