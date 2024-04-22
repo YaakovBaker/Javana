@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static edu.yu.compilers.frontend.SemanticErrorHandler.Code.REDECLARED_IDENTIFIER;
+import static edu.yu.compilers.frontend.SemanticErrorHandler.Code.TYPE_MISMATCH;
 import static edu.yu.compilers.intermediate.symtable.SymTableEntry.Kind.*;
 import static edu.yu.compilers.intermediate.type.Typespec.Form.*;
 
@@ -503,38 +504,154 @@ public class Semantics extends JavanaBaseVisitor<Object> {
 
 
     @Override
+    public Object visitExprArrayLength(JavanaParser.ExprArrayLengthContext ctx) {
+        JavanaParser.ExpressionContext exprCtx = ctx.expr;
+        visit(exprCtx);
+        //This expression should return an array
+        Typespec exprType = exprCtx.typeSpec;
+        //THis should be an array
+        if( exprType.getForm() != ARRAY){
+            error.flag(SemanticErrorHandler.Code.INVALID_TYPE, ctx);
+        }
+        return null;
+    }
+
+    @Override
+    public Object visitExprRecordField(JavanaParser.ExprRecordFieldContext ctx) {
+        JavanaParser.ExpressionContext exprCtx = ctx.expr;
+        JavanaParser.IdentifierContext idCtx = ctx.identifier();
+        visit(exprCtx);
+        //This expression should return a record
+        Typespec exprType = exprCtx.typeSpec;
+        //THis should be a record
+        if( exprType.getForm() != RECORD){
+            error.flag(SemanticErrorHandler.Code.INVALID_TYPE, ctx);
+        }
+        //Check if the field exists
+        SymTableEntry recordId = exprType.getIdentifier();
+        SymTable recordSymTable = recordId.getSymTable();
+        SymTableEntry fieldId = recordSymTable.lookup(idCtx.getText());
+        if( fieldId == null ){
+            error.flag(SemanticErrorHandler.Code.UNDECLARED_IDENTIFIER, ctx);
+        }
+        idCtx.entry = fieldId;
+        return null;
+    }
+
+    //May need to fix the error
+    @Override
+    public Object visitExprHigherArith(JavanaParser.ExprHigherArithContext ctx) {
+        JavanaParser.ExpressionContext leftCtx = ctx.lhs;
+        JavanaParser.ExpressionContext rightCtx = ctx.rhs;
+        visit(leftCtx);
+        //Check if a scalar type like integer or real
+        if( leftCtx.typeSpec != Predefined.integerType ){
+            error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_INTEGER, leftCtx);
+        }
+        visit(rightCtx);
+        //Check if a scalar type like integer or real
+        if( rightCtx.typeSpec != Predefined.integerType ){
+            error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_INTEGER, rightCtx);
+        }
+        return null;
+    }
+
+    @Override
+    public Object visitExprArith(JavanaParser.ExprArithContext ctx) {
+        JavanaParser.ExpressionContext leftCtx = ctx.lhs;
+        JavanaParser.ExpressionContext rightCtx = ctx.rhs;
+        visit(leftCtx);
+        visit(rightCtx);
+        Typespec leftType = leftCtx.typeSpec;
+        Typespec rightType = rightCtx.typeSpec;
+        // Both operands integer ==> integer result
+        if (TypeChecker.areBothInteger(leftType, rightType)) {
+            rightType = Predefined.integerType;
+        }
+
+        // Both real operands ==> real result
+        // One real and one integer operand ==> real result
+        else if (TypeChecker.isAtLeastOneReal(leftType, rightType)) {
+            rightType = Predefined.realType;
+        }
+
+        // Both operands string ==> string result
+        else if (TypeChecker.areBothString(leftType, rightType)) {
+            rightType = Predefined.stringType;
+        }
+
+        // Type mismatch.
+        else {
+            if (!TypeChecker.isIntegerOrReal(leftType)) {
+                error.flag(TYPE_MISMATCH, leftCtx);
+                rightType = Predefined.integerType;
+            }
+            if (!TypeChecker.isIntegerOrReal(rightType)) {
+                error.flag(TYPE_MISMATCH, rightCtx);
+                rightType = Predefined.integerType;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Object visitExprRelational(JavanaParser.ExprRelationalContext ctx) {
+        JavanaParser.ExpressionContext leftCtx = ctx.lhs;
+        JavanaParser.ExpressionContext rightCtx = ctx.rhs;
+        visit(leftCtx);
+        //Check if a scalar type like integer or real
+        if( leftCtx.typeSpec != Predefined.integerType ){
+            error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_INTEGER, leftCtx);
+        }
+        visit(rightCtx);
+        //Check if a scalar type like integer or real
+        if( rightCtx.typeSpec != Predefined.integerType ){
+            error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_INTEGER, rightCtx);
+        }
+        return null;
+    }
+
+    @Override
+    public Object visitExprEquality(JavanaParser.ExprEqualityContext ctx) {
+        JavanaParser.ExpressionContext leftCtx = ctx.lhs;
+        JavanaParser.ExpressionContext rightCtx = ctx.rhs;
+        visit(leftCtx);
+        //Check if a scalar type like integer or real
+        if( leftCtx.typeSpec != Predefined.integerType ){
+            error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_INTEGER, leftCtx);
+        }
+        visit(rightCtx);
+        //Check if a scalar type like integer or real
+        if( rightCtx.typeSpec != Predefined.integerType ){
+            error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_INTEGER, rightCtx);
+        }
+        return null;
+    }
+
+    @Override
+    public Object visitExprHighLogical(JavanaParser.ExprHighLogicalContext ctx) {
+        JavanaParser.ExpressionContext leftCtx = ctx.lhs;
+        JavanaParser.ExpressionContext rightCtx = ctx.rhs;
+        visit(leftCtx);
+        visit(rightCtx);
+        Typespec leftType = leftCtx.typeSpec;
+        Typespec rightType = rightCtx.typeSpec;
+        if( TypeChecker.areBothBoolean(leftType, rightType)){
+            error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_BOOLEAN, ctx);
+        }
+        return null;
+    }
+
+    @Override
+    public Object visitExprLowLogical(JavanaParser.ExprLowLogicalContext ctx) {
+        return super.visitExprLowLogical(ctx);
+    }
+
+    //More
+
+    @Override
     public Object visitExprList(JavanaParser.ExprListContext ctx){
         return super.visitExprList(ctx);
-    }
-
-    
-    @Override
-    public Object visitReadCharCall(JavanaParser.ReadCharCallContext ctx){
-        return super.visitReadCharCall(ctx);
-    }
-
-    
-    @Override
-    public Object visitReadLineCall(JavanaParser.ReadLineCallContext ctx){
-        return super.visitReadLineCall(ctx);
-    }
-
-    
-    @Override
-    public Object visitFunctionCall(JavanaParser.FunctionCallContext ctx){
-        return super.visitFunctionCall(ctx);
-    }
-
-    
-    @Override
-    public Object visitNewArray(JavanaParser.NewArrayContext ctx){
-        return super.visitNewArray(ctx);
-    }
-
-    
-    @Override
-    public Object visitNewRecord(JavanaParser.NewRecordContext ctx){
-        return super.visitNewRecord(ctx);
     }
 
     @Override
