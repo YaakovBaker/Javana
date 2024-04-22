@@ -191,9 +191,13 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
+
+
     // Name Definitions and Declarations -------
     @Override
     public Object visitRecordDecl(JavanaParser.RecordDeclContext ctx){
+        //TODO
+        //Pretty sure this is actually wrong... Ugh, look at createRecordType in Pascal and createRecordTypeSpec here
         String recordTypeName = SymTable.generateUnnamedName();
         Typespec recordType = new Typespec(RECORD);
 
@@ -250,6 +254,36 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         path = parentId.getName() + "$" + path;
         return path;
     }
+
+
+    @Override
+    public Object visitTypeAssoc(JavanaParser.TypeAssocContext ctx) {
+        JavanaParser.TypeContext typeCtx = ctx.type();
+
+        List<JavanaParser.IdentifierContext> identifierContextList = ctx.nameList().identifier();
+        visit(typeCtx); //Moved this line up, so as not ot be in for each loop
+
+        for(JavanaParser.IdentifierContext identifierContext : identifierContextList){
+            String typeName = identifierContext.getText();
+            SymTableEntry typeId = symTableStack.lookupLocal(typeName);
+            //There is something about "createRecordType" here in Pascal, need //TODO
+            if(typeId == null){
+                typeId = symTableStack.enterLocal(typeName, TYPE);
+                typeId.setType(typeCtx.typeSpec);
+                typeCtx.typeSpec.setIdentifier(typeId);
+            }else{
+                error.flag(REDECLARED_IDENTIFIER, ctx);
+            }
+            identifierContext.entry = typeId;
+            identifierContext.typeSpec = typeCtx.typeSpec;
+
+            typeId.appendLineNumber(ctx.getStart().getLine());
+
+        }
+
+        return null;
+    }
+
 
 
     //Did record Decl
@@ -449,6 +483,8 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     }
 
 
+
+
     // Expressions -----------------------------
 
     //Currently working on
@@ -463,6 +499,8 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         //I feel like there is more to this. This expression should return an array
         return null;
     }
+
+
 
     @Override
     public Object visitExprList(JavanaParser.ExprListContext ctx){
@@ -560,4 +598,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         ctx.entry = symTableStack.lookup(ctx.getText());
         return null;
     }
+
+
+
 }
