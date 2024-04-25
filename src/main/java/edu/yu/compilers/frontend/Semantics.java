@@ -644,7 +644,74 @@ public class Semantics extends JavanaBaseVisitor<Object> {
 
     @Override
     public Object visitExprLowLogical(JavanaParser.ExprLowLogicalContext ctx) {
-        return super.visitExprLowLogical(ctx);
+        JavanaParser.ExpressionContext leftCtx = ctx.lhs;
+        JavanaParser.ExpressionContext rightCtx = ctx.rhs;
+        visit(leftCtx);
+        visit(rightCtx);
+        Typespec leftType = leftCtx.typeSpec;
+        Typespec rightType = rightCtx.typeSpec;
+        if( TypeChecker.areBothBoolean(leftType, rightType)){
+            error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_BOOLEAN, ctx);
+        }
+        return null;
+    }
+
+    @Override
+    public Object visitExprNot(JavanaParser.ExprNotContext ctx) {
+        JavanaParser.ExpressionContext exprCtx = ctx.expression();
+        visit(exprCtx);
+        if( exprCtx.typeSpec != Predefined.booleanType){
+            error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_BOOLEAN, ctx);
+        }
+        return null;
+    }
+
+    @Override
+    public Object visitExprGroup(JavanaParser.ExprGroupContext ctx) {
+        JavanaParser.ExpressionContext exprCtx = ctx.expression();
+        visit(exprCtx);
+        ctx.typeSpec = exprCtx.typeSpec;
+        //We can group anything so we need to make sure it's just not undefined
+        if( exprCtx.typeSpec == Predefined.undefinedType){
+            error.flag(SemanticErrorHandler.Code.INVALID_TYPE, ctx);
+        }
+        return null;
+    }
+
+    //TODO and the lower levels
+    @Override
+    public Object visitExprReadChar(JavanaParser.ExprReadCharContext ctx) {
+        return super.visitExprReadChar(ctx);
+    }
+
+    @Override
+    public Object visitExprReadLine(JavanaParser.ExprReadLineContext ctx) {
+        return super.visitExprReadLine(ctx);
+    }
+
+    @Override
+    public Object visitExprFunctionCall(JavanaParser.ExprFunctionCallContext ctx) {
+        return super.visitExprFunctionCall(ctx);
+    }
+
+    @Override
+    public Object visitExprVariable(JavanaParser.ExprVariableContext ctx) {
+        return super.visitExprVariable(ctx);
+    }
+
+    @Override
+    public Object visitExprLiteral(JavanaParser.ExprLiteralContext ctx) {
+        return super.visitExprLiteral(ctx);
+    }
+
+    @Override
+    public Object visitExprNewArray(JavanaParser.ExprNewArrayContext ctx) {
+        return super.visitExprNewArray(ctx);
+    }
+
+    @Override
+    public Object visitExprNewRecord(JavanaParser.ExprNewRecordContext ctx) {
+        return super.visitExprNewRecord(ctx);
     }
 
     //More
