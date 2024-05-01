@@ -1,0 +1,176 @@
+Javana HangmanGame:
+    const MAX_TRIES = 6
+    var WORDS = @string[10]
+
+    func initWords() -> None {
+        WORDS[0] = "yaakov"
+        WORDS[1] = "gabe"
+        WORDS[2] = "sacknovitz"
+        WORDS[3] = "compsci"
+        WORDS[4] = "graduation"
+        WORDS[5] = "awards"
+        WORDS[6] = "stadium"
+        WORDS[7] = "yeshiva"
+        WORDS[8] = "university"
+        WORDS[9] = "donkeykong"
+    }
+
+    func getRandomWord() -> string {
+
+        var index = random(WORDS.length)
+        return WORDS[index]
+    }
+
+    func displayWord(word: string, guessedLetters: bool[]) -> string {
+        var display = ""
+        for (var i = 0; i < word.length; i + 1) {
+            var letter = word[i]
+            var index = convertLetterToIndex(letter)
+            if(index == -1){
+                println("This isnt a good letter")
+            }
+            if (guessedLetters[index]) {
+                display = display + letter + " "
+            } else {
+                display = display + "_ "
+            }
+        }
+        return display
+    }
+
+    func convertLetterToIndex(letter: string) -> int {
+
+        if( letter == "a" || letter == "A"){
+            return 0
+        }
+        if( letter == "b" || letter == "B"){
+            return 1
+        }
+        if (letter == "c" || letter == "C") {
+            return 2
+        }
+        if (letter == "d" || letter == "D") {
+            return 3
+        }
+        if (letter == "e" || letter == "E") {
+            return 4
+        }
+        if (letter == "f" || letter == "F") {
+            return 5
+        }
+        if (letter == "g" || letter == "G") {
+            return 6
+        }
+        if (letter == "h" || letter == "H") {
+            return 7
+        }
+        if (letter == "i" || letter == "I") {
+            return 8
+        }
+        if (letter == "j" || letter == "J") {
+            return 9
+        }
+        if (letter == "k" || letter == "K") {
+            return 10
+        }
+        if (letter == "l" || letter == "L") {
+            return 11
+        }
+        if (letter == "m" || letter == "M") {
+            return 12
+        }
+        if (letter == "n" || letter == "N") {
+            return 13
+        }
+        if (letter == "o" || letter == "O") {
+            return 14
+        }
+        if (letter == "p" || letter == "P") {
+            return 15
+        }
+        if (letter == "q" || letter == "Q") {
+            return 16
+        }
+        if (letter == "r" || letter == "R") {
+            return 17
+        }
+        if (letter == "s" || letter == "S") {
+            return 18
+        }
+        if (letter == "t" || letter == "T") {
+            return 19
+        }
+        if (letter == "u" || letter == "U") {
+            return 20
+        }
+        if (letter == "v" || letter == "V") {
+            return 21
+        }
+        if (letter == "w" || letter == "W") {
+            return 22
+        }
+        if (letter == "x" || letter == "X") {
+            return 23
+        }
+        if (letter == "y" || letter == "Y") {
+            return 24
+        }
+        if (letter == "z" || letter == "Z") {
+            return 25
+        }
+
+        return -1
+
+    }
+
+
+    @main() {
+        println("Welcome to Hangman!")
+        initWords()
+        var word = getRandomWord()
+        var guessedLetters = @bool[26]
+        var tries = 0
+
+        while (tries < MAX_TRIES) {
+            var display = displayWord(word, guessedLetters)
+            println("Word: " + display)
+            println("Enter a letter: ")
+            var guess = readch()
+            var index = convertLetterToIndex(guess)
+            guessedLetters[index] = true
+
+            var found = false
+            for (var i = 0; i < word.length; i + 1) {
+                if (word[i] == guess) {
+                    found = true
+                    break
+                }
+            }
+
+            if (found) {
+                println("Correct guess!")
+            } else {
+                tries = tries + 1
+                println("Incorrect guess! Tries left: " + (MAX_TRIES - tries))
+            }
+
+            var allLettersGuessed = true
+            for (var i = 0; i < 26; i + 1) {
+                if (!guessedLetters[i]) {
+                    allLettersGuessed = false
+                    break
+                }
+            }
+
+            if (allLettersGuessed) {
+                println("Congratulations! You guessed the word: " + word)
+                break
+            }
+        }
+
+        if (tries == MAX_TRIES) {
+            println("Sorry, you've run out of tries. The word was: " + word)
+        }
+
+        println("Thanks for playing Hangman!")
+    }
