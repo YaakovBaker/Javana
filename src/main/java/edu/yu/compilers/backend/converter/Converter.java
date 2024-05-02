@@ -102,6 +102,63 @@ public class Converter extends JavanaBaseVisitor<Object> {
         return null;
     }
 
+    @Override
+    public Object visitConstantDef(JavanaParser.ConstantDefContext ctx) {
+        JavanaParser.NameListContext namelistCtx = ctx.nameList();
+        JavanaParser.ExpressionContext exprCtx = ctx.expression();
+        String exprContextString = (String) visit(exprCtx); //Should be good
+        Typespec typespec = exprCtx.typeSpec;
+        String javaType = typeNameTable.get(typespec.getIdentifier().getName());
+        for (JavanaParser.IdentifierContext idCtx : namelistCtx.identifier()) {
+            String name = idCtx.entry.getName();
+            code.emitStart();
+            if (programVariables) code.emit("private static ");
+            code.emitEnd("final " + javaType + " " + name + " = "
+                    + exprContextString + ";"); // Should be good
+
+        }
+        return null;
+
+    }
+
+    //Same as above, just took out "final"
+    @Override
+    public Object visitVariableDef(JavanaParser.VariableDefContext ctx) {
+        JavanaParser.NameListContext namelistCtx = ctx.nameList();
+        JavanaParser.ExpressionContext exprCtx = ctx.expression();
+        String exprContextString =  (String) visit(exprCtx); //Should be good
+        Typespec typespec = exprCtx.typeSpec;
+        String javaType = typeNameTable.get(typespec.getIdentifier().getName());
+
+        for(JavanaParser.IdentifierContext idCtx: namelistCtx.identifier()) {
+            String name = idCtx.entry.getName();
+            code.emitStart();
+            if (programVariables) code.emit("private static ");
+            code.emitEnd(javaType + " " + name + " = "
+                    + exprContextString + ";"); // Should be good
+
+        }
+        return null;
+    }
+
+
+    @Override
+    public Object visitTypeAssoc(JavanaParser.TypeAssocContext ctx) {
+        JavanaParser.NameListContext nameListContext = ctx.nameList();
+        JavanaParser.TypeContext typeSpecContext = ctx.type();
+        Typespec typespec = typeSpecContext.typeSpec;
+        String javaType = typeNameTable.get(typespec.getIdentifier().getName());
+
+        for(JavanaParser.IdentifierContext idCtx: nameListContext.identifier()) {
+            String name = idCtx.entry.getName();
+            code.emitStart();
+
+            code.emitEnd(javaType + " " + name + ";"); // Should be good
+
+        }
+        return null;
+    }
+
     /**
      * Emit a record type definition for an unnamed record.
      *
