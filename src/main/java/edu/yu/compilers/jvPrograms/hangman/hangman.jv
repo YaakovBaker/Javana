@@ -13,6 +13,8 @@ Javana HangmanGame:
         WORDS[7] = "yeshiva"
         WORDS[8] = "university"
         WORDS[9] = "donkeykong"
+
+        return None
     }
 
     func getRandomWord() -> string {
