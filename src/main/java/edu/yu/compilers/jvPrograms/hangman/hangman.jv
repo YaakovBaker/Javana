@@ -14,7 +14,7 @@ Javana HangmanGame:
         WORDS[8] = "university"
         WORDS[9] = "donkeykong"
 
-        return None
+        return
     }
 
     func getRandomWord() -> string {

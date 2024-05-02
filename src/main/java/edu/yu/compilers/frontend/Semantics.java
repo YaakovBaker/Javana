@@ -459,7 +459,8 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         visit(blockCtx);
         return null;
     }
-    
+
+    //TODO - fix the routineId null problem
     @Override
     public Object visitReturnStatement(JavanaParser.ReturnStatementContext ctx){
         JavanaParser.ExpressionContext exprCtx = ctx.expr;
@@ -468,7 +469,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         }
         Typespec returnType = exprCtx != null ? exprCtx.typeSpec : Predefined.undefinedType;
         //Check the current stack frame's returnType
-        SymTableEntry routineId = symTableStack.getLocalSymTable().getOwner();
+        SymTableEntry routineId = symTableStack.getLocalSymTable().getOwner();//This is null
         Typespec routineType = routineId.getType();
         //Compare and see if we have a type mismatch or not
         if( !TypeChecker.areAssignmentCompatible(routineType, returnType)){
