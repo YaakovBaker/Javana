@@ -106,7 +106,7 @@ public class Converter extends JavanaBaseVisitor<Object> {
     public Object visitConstantDef(JavanaParser.ConstantDefContext ctx) {
         JavanaParser.NameListContext namelistCtx = ctx.nameList();
         JavanaParser.ExpressionContext exprCtx = ctx.expression();
-        String exprContextString = (String) visit(exprCtx); //Should be good
+        String exprContextString = (String) visit(exprCtx); //Should be good, must ensure return statement is not null
         Typespec typespec = exprCtx.typeSpec;
         String javaType = typeNameTable.get(typespec.getIdentifier().getName());
         for (JavanaParser.IdentifierContext idCtx : namelistCtx.identifier()) {
@@ -126,7 +126,7 @@ public class Converter extends JavanaBaseVisitor<Object> {
     public Object visitVariableDef(JavanaParser.VariableDefContext ctx) {
         JavanaParser.NameListContext namelistCtx = ctx.nameList();
         JavanaParser.ExpressionContext exprCtx = ctx.expression();
-        String exprContextString =  (String) visit(exprCtx); //Should be good
+        String exprContextString =  (String) visit(exprCtx); //Should be good, must ensure return statement is not null
         Typespec typespec = exprCtx.typeSpec;
         String javaType = typeNameTable.get(typespec.getIdentifier().getName());
 
@@ -170,6 +170,12 @@ public class Converter extends JavanaBaseVisitor<Object> {
         }
         code.dedent();
         code.emitLine("}");
+        return null;
+    }
+
+    @Override
+    public Object visitMainMethod(JavanaParser.MainMethodContext ctx) {
+        visit(ctx.blockStatement());
         return null;
     }
 
