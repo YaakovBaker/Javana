@@ -469,7 +469,12 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         }
         Typespec returnType = exprCtx != null ? exprCtx.typeSpec : Predefined.undefinedType;
         //Check the current stack frame's returnType
-        SymTableEntry routineId = symTableStack.getLocalSymTable().getOwner();//This is null
+        int nestingLevel = symTableStack.getLocalSymTable().getNestingLevel();
+        SymTableEntry routineId = symTableStack.get(nestingLevel - 1).getOwner();
+        if (routineId == null) {
+            System.err.println("Error: routineId is null");
+            return null;
+        }
         Typespec routineType = routineId.getType();
         //Compare and see if we have a type mismatch or not
         if( !TypeChecker.areAssignmentCompatible(routineType, returnType)){

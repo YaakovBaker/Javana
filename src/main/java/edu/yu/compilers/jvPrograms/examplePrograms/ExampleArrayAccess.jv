@@ -17,6 +17,6 @@ Javana ExampleArrayAccess:
             println("Element at index 0 for c: " + c[0])
         }
 
-    func createArr() -> INT_ARR_TYPE {
+    func createArr() -> INT_TYPE[] {
         return @int[5]
     }
