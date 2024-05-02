@@ -200,16 +200,16 @@ functionCall
     : name=identifier '(' args=exprList? ')'
     ;
 
-newArray locals [Typespec typespec= null ]
+newArray locals [Typespec typeSpec= null ]
     : '@' t=arrayElemType arrIdxSpecifier
     ;
 
-arrayElemType locals [Typespec typespec= null ]
+arrayElemType locals [Typespec typeSpec= null ]
     : scalarType
     | identifier
     ;
 
-newRecord
+newRecord locals [Typespec typeSpec= null ]
     : '@' identifier '{' init=fieldInitList? '}'
     ;
 
@@ -221,7 +221,7 @@ fieldInit
     : field=identifier '=' expr=expression
     ;
 
-literal
+literal locals [ Typespec typeSpec = null ]
     : INTEGER   # IntegerLiteral
     | BOOL      # BooleanLiteral
     | STRING    # StringLiteral

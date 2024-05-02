@@ -2765,7 +2765,7 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class NewArrayContext extends ParserRuleContext {
-		public Typespec typespec = null;
+		public Typespec typeSpec = null;
 		public ArrayElemTypeContext t;
 		public ArrIdxSpecifierContext arrIdxSpecifier() {
 			return getRuleContext(ArrIdxSpecifierContext.class,0);
@@ -2811,7 +2811,7 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class ArrayElemTypeContext extends ParserRuleContext {
-		public Typespec typespec = null;
+		public Typespec typeSpec = null;
 		public ScalarTypeContext scalarType() {
 			return getRuleContext(ScalarTypeContext.class,0);
 		}
@@ -2869,6 +2869,7 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class NewRecordContext extends ParserRuleContext {
+		public Typespec typeSpec = null;
 		public FieldInitListContext init;
 		public IdentifierContext identifier() {
 			return getRuleContext(IdentifierContext.class,0);
@@ -3034,6 +3035,7 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class LiteralContext extends ParserRuleContext {
+		public Typespec typeSpec = null;
 		public LiteralContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -3042,6 +3044,7 @@ public class JavanaParser extends Parser {
 		public LiteralContext() { }
 		public void copyFrom(LiteralContext ctx) {
 			super.copyFrom(ctx);
+			this.typeSpec = ctx.typeSpec;
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")

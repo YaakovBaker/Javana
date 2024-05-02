@@ -691,34 +691,78 @@ public class Semantics extends JavanaBaseVisitor<Object> {
 
     @Override
     public Object visitExprFunctionCall(JavanaParser.ExprFunctionCallContext ctx) {
-        return super.visitExprFunctionCall(ctx);
+        JavanaParser.FunctionCallContext fcCtx = ctx.functionCall();
+        JavanaParser.IdentifierContext idCtx = fcCtx.name;
+        JavanaParser.ExprListContext exprListCtx = fcCtx.args;
+        String funcName = idCtx.getText();
+        SymTableEntry funcId = symTableStack.lookup(funcName);
+        if( funcId == null ){
+            error.flag(SemanticErrorHandler.Code.UNDECLARED_IDENTIFIER, idCtx);
+            ctx.typeSpec = Predefined.undefinedType;
+        }else{
+            ctx.typeSpec = funcId.getType();
+            idCtx.entry = funcId;
+        }
+        if( exprListCtx != null){
+            visit(exprListCtx);
+        }
+        return null;
     }
 
     @Override
     public Object visitExprVariable(JavanaParser.ExprVariableContext ctx) {
-        return super.visitExprVariable(ctx);
+        JavanaParser.VariableContext varCtx = ctx.variable();
+        visit(varCtx);
+        ctx.typeSpec = varCtx.typeSpec;
+        return null;
     }
 
     @Override
     public Object visitExprLiteral(JavanaParser.ExprLiteralContext ctx) {
-        return super.visitExprLiteral(ctx);
+        JavanaParser.LiteralContext litCtx = ctx.literal();
+        ctx.typeSpec = litCtx.typeSpec;
+        return null;
     }
 
     @Override
     public Object visitExprNewArray(JavanaParser.ExprNewArrayContext ctx) {
-        return super.visitExprNewArray(ctx);
+        JavanaParser.NewArrayContext newArrayCtx = ctx.newArray();
+        JavanaParser.ArrayElemTypeContext arrayElemTypeCtx = newArrayCtx.t;
+        JavanaParser.ArrIdxSpecifierContext arrIdCtx = newArrayCtx.arrIdxSpecifier();
+        visit(arrayElemTypeCtx);
+        visit(arrIdCtx);
+        newArrayCtx.typeSpec = arrayElemTypeCtx.typeSpec;
+        return null;
     }
 
     @Override
     public Object visitExprNewRecord(JavanaParser.ExprNewRecordContext ctx) {
-        return super.visitExprNewRecord(ctx);
+        JavanaParser.NewRecordContext newRecordCtx = ctx.newRecord();
+        JavanaParser.IdentifierContext idCtx = newRecordCtx.identifier();
+        JavanaParser.FieldInitListContext fieldInitListCtx = newRecordCtx.fieldInitList();
+        String recordTypeName = idCtx.getText();
+        SymTableEntry recordTypeId = symTableStack.lookup(recordTypeName);
+        if( recordTypeId == null ){
+            error.flag(SemanticErrorHandler.Code.UNDECLARED_IDENTIFIER, idCtx);
+            newRecordCtx.typeSpec = Predefined.undefinedType;
+        }else{
+            newRecordCtx.typeSpec = recordTypeId.getType();
+            idCtx.entry = recordTypeId;
+        }
+        if( fieldInitListCtx != null){
+            visit(fieldInitListCtx);
+        }
+        return null;
     }
 
     //More
 
     @Override
     public Object visitExprList(JavanaParser.ExprListContext ctx){
-        return super.visitExprList(ctx);
+        for(JavanaParser.ExpressionContext exprCtx : ctx.expression()){
+            visit(exprCtx);
+        }
+        return null;
     }
 
     @Override
