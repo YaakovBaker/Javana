@@ -31,6 +31,7 @@ public class Converter extends JavanaBaseVisitor<Object> {
 
     static {
         typeNameTable = new Hashtable<>();
+        typeNameTable.put("None", "null");
         typeNameTable.put("int", "int");
         typeNameTable.put("bool", "boolean");
         typeNameTable.put("string", "String");
@@ -176,6 +177,42 @@ public class Converter extends JavanaBaseVisitor<Object> {
     @Override
     public Object visitMainMethod(JavanaParser.MainMethodContext ctx) {
         visit(ctx.blockStatement());
+        return null;
+    }
+
+    @Override
+    public Object visitFuncDefinition(JavanaParser.FuncDefinitionContext ctx) {
+        code.emit("public static ");
+        code.emit(typeNameTable.get(ctx.funcPrototype().returnType().getText()));
+        code.emit(" " + ctx.funcPrototype().identifier().getText() + "(");
+        //Get Params
+        if(ctx.funcPrototype().funcArgList!=null){
+            for(int i = 0; i<ctx.funcPrototype().funcArgList.args.size(); i++){
+                JavanaParser.FuncArgumentContext funcArgumentContext = ctx.funcPrototype().funcArgList.args.get(i);
+                JavanaParser.TypeAssocContext typeAssocContext = funcArgumentContext.typeAssoc();
+                Typespec typespec = typeAssocContext.type().typeSpec;
+                String javaType = typeNameTable.get(typespec.getIdentifier().getName());
+                JavanaParser.NameListContext nameListContext = typeAssocContext.nameList();
+                for(int j = 0; j<nameListContext.identifier().size(); j++){
+                    code.emit(javaType);
+                    JavanaParser.IdentifierContext identifierContext = nameListContext.identifier(j);
+                    if(i == ctx.funcPrototype().funcArgList.args.size()-1 && j == nameListContext.identifier().size() -1){
+                        //Do nothing
+                        code.emit(" " + identifierContext.getText());
+                    }else{
+                        code.emit(" " + identifierContext.getText() + ", ");
+                    }
+                }
+            }
+        }
+
+        code.emit("){");
+
+
+        visit(ctx.blockStatement());
+
+
+        code.emitLine("}");
         return null;
     }
 
