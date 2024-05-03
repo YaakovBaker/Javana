@@ -334,7 +334,20 @@ public class Converter extends JavanaBaseVisitor<Object> {
 
     @Override
     public Object visitWhileStatement(JavanaParser.WhileStatementContext ctx) {
-        return super.visitWhileStatement(ctx);
+        code.emit("do");
+        code.emitLine("{");
+        code.indent();
+
+        visit(ctx.body);
+
+        code.dedent();
+        code.emitLine("}");
+
+        code.emitStart("while ((");
+        code.emit((String) visit(ctx.expression()));
+        code.emitEnd("));");
+
+        return null;
     }
 
     /**
