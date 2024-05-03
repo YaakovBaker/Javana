@@ -147,11 +147,11 @@ whileStatement
 
 expressionStatement
     : expr=expression
-    ;
+    ; //Handed off because its just visit child
 
 returnStatement locals [ Typespec typeSpec = null ]
     : 'return' expr=expression?
-    ;
+    ; //Done
 
 printStatement
     : 'print' arg=printArgument

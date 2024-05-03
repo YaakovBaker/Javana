@@ -350,6 +350,15 @@ public class Converter extends JavanaBaseVisitor<Object> {
         return null;
     }
 
+    @Override
+    public Object visitReturnStatement(JavanaParser.ReturnStatementContext ctx) {
+        code.emitLine();
+        code.emit("return ");
+        code.emit((String) visit(ctx.expr));
+        code.emit(";");
+        return null;
+    }
+
     /**
      * Emit a record type definition for an unnamed record.
      *
