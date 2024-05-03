@@ -290,8 +290,21 @@ public class Converter extends JavanaBaseVisitor<Object> {
         return variableName.toString();
     }
 
+    @Override
+    public Object visitIfStatement(JavanaParser.IfStatementContext ctx) {
+        code.emit("if(");
+        code.emit((String) visit(ctx.expression()));
+        code.emit("){");
+        visit(ctx.thenStmt); //Make sure all statements are emitting code, and not returning string
+        code.emitLine("}");
+        if(ctx.elseStmt!=null){
+            code.emit("else{");
+            visit(ctx.elseStmt);
+            code.emit("}");
+        }
 
-
+        return null;
+    }
 
 
 
