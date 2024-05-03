@@ -1,0 +1,15 @@
+Javana TestAssignmentStatement:
+
+    decl myInt: int
+    decl myBool: bool
+    decl myString: string
+
+    @main() {
+        myInt = 5
+        myBool = true
+        myString = "Hello, World!"
+
+        print(myInt)
+        print(myBool)
+        print(myString)
+    }

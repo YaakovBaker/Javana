@@ -17,34 +17,34 @@ programHeader
     : 'Javana' name=identifier ':'
     ;
 
-mainMethod
+mainMethod locals [ Typespec typeSpec = null, SymTableEntry entry = null ]
     : '@main' '(' args=mainArg? ')' body=blockStatement
     ;
 
-mainArg
+mainArg locals [ Typespec typeSpec = null, SymTableEntry entry = null ]
     : name=identifier ':' stringArrType
     ;
 
-globalDefinitions
+globalDefinitions locals [ Typespec typeSpec = null, SymTableEntry entry = null ]
     : nameDeclStatement # nameDecl
     | nameDeclDefStatement # nameDeclDef
     ;
 
 // Function Definitions and Declarations ---
 
-funcDefinition
+funcDefinition locals [ Typespec typeSpec = null, SymTableEntry entry = null ]
     : proto=funcPrototype body=blockStatement
     ;
 
-funcPrototype
+funcPrototype locals [ Typespec typeSpec = null, SymTableEntry entry = null ]
     : 'func' name=identifier '(' argList+=funcArgList? ')' '->' return=returnType
     ;
 
-funcArgList
+funcArgList locals [ Typespec typeSpec = null, SymTableEntry entry = null ]
     : args+=funcArgument (',' args+=funcArgument)*
     ;
 
-funcArgument
+funcArgument locals [ Typespec typeSpec = null, SymTableEntry entry = null ]
     : typeAssoc
     ;
 
@@ -59,11 +59,11 @@ recordDecl locals [ Typespec typeSpec = null, SymTableEntry entry = null ]
     : 'record' name=identifier '{' fields+=typeAssoc* '}'
     ;
 
-variableDecl
+variableDecl locals [ Typespec typeSpec = null, SymTableEntry entry = null ]
     : 'decl' assoc=typeAssoc
     ;
 
-typeAssoc
+typeAssoc locals [ Typespec typeSpec = null, SymTableEntry entry = null ]
     : namelst=nameList ':' t=type
     ;
 
@@ -71,7 +71,7 @@ variableDef locals [ Typespec typeSpec = null ]
     : 'var' namelst=nameList '=' expr=expression
     ;
 
-constantDef
+constantDef locals [ Typespec typeSpec = null ]
     : 'const' namelst=nameList '=' expr=expression
     ;
 
@@ -100,12 +100,12 @@ blockStatement
     : '{' stmts+=statement* '}'
     ;
 
-nameDeclStatement
+nameDeclStatement locals [ Typespec typeSpec = null, SymTableEntry entry = null ]
     : variableDecl
     | recordDecl
     ;
 
-nameDeclDefStatement
+nameDeclDefStatement locals [ Typespec typeSpec = null ]
     : variableDef
     | constantDef
     | funcDefinition
@@ -144,7 +144,7 @@ expressionStatement
     : expr=expression
     ;
 
-returnStatement
+returnStatement locals [ Typespec typeSpec = null ]
     : 'return' expr=expression?
     ;
 

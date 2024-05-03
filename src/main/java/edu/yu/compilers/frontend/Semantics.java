@@ -291,14 +291,13 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     
     @Override
     public Object visitVariableDecl(JavanaParser.VariableDeclContext ctx){
-        JavanaParser.TypeAssocContext typeAssocCtx = ctx.typeAssoc();
-
-        JavanaParser.TypeContext typeCtx = typeAssocCtx.type();
+        JavanaParser.TypeAssocContext typeAssocCtx = ctx.assoc;
+        JavanaParser.TypeContext typeCtx = typeAssocCtx.t;
         visit(typeCtx);
 
-        JavanaParser.NameListContext nameListCtx = typeAssocCtx.nameList();
+        JavanaParser.NameListContext nameListCtx = typeAssocCtx.namelst;
 
-        for(JavanaParser.IdentifierContext idCtx : nameListCtx.identifier()){
+        for(JavanaParser.IdentifierContext idCtx : nameListCtx.names){
             int lineNumber = idCtx.getStart().getLine();
             String varName = idCtx.getText();
 
@@ -367,7 +366,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         if( varCtx.entry == null ){
             error.flag(SemanticErrorHandler.Code.UNDECLARED_IDENTIFIER, varCtx);
         }
-
+        System.out.println("VarType: " + varType + " ExprType: " + exprType + " for " + varCtx.getText() + " and " + exprCtx.getText());
         if( !TypeChecker.areAssignmentCompatible(varType, exprType)){
             error.flag(SemanticErrorHandler.Code.INCOMPATIBLE_ASSIGNMENT, exprCtx);
         }
@@ -379,6 +378,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         JavanaParser.IdentifierContext idCtx = ctx.identifier();
         String varName = idCtx.getText();
         SymTableEntry varId = symTableStack.lookup(varName);
+        System.out.println("VarName: " + varName + " VarId: " + varId + " for " + idCtx.getText());
         if( varId != null ){
             int lineNumber = ctx.getStart().getLine();
             ctx.typeSpec = varId.getType();

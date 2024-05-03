@@ -265,6 +265,8 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class MainMethodContext extends ParserRuleContext {
+		public Typespec typeSpec = null;
+		public SymTableEntry entry = null;
 		public MainArgContext args;
 		public BlockStatementContext body;
 		public BlockStatementContext blockStatement() {
@@ -324,6 +326,8 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class MainArgContext extends ParserRuleContext {
+		public Typespec typeSpec = null;
+		public SymTableEntry entry = null;
 		public IdentifierContext name;
 		public StringArrTypeContext stringArrType() {
 			return getRuleContext(StringArrTypeContext.class,0);
@@ -369,6 +373,8 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class GlobalDefinitionsContext extends ParserRuleContext {
+		public Typespec typeSpec = null;
+		public SymTableEntry entry = null;
 		public GlobalDefinitionsContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -377,6 +383,8 @@ public class JavanaParser extends Parser {
 		public GlobalDefinitionsContext() { }
 		public void copyFrom(GlobalDefinitionsContext ctx) {
 			super.copyFrom(ctx);
+			this.typeSpec = ctx.typeSpec;
+			this.entry = ctx.entry;
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")
@@ -447,6 +455,8 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class FuncDefinitionContext extends ParserRuleContext {
+		public Typespec typeSpec = null;
+		public SymTableEntry entry = null;
 		public FuncPrototypeContext proto;
 		public BlockStatementContext body;
 		public FuncPrototypeContext funcPrototype() {
@@ -491,6 +501,8 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class FuncPrototypeContext extends ParserRuleContext {
+		public Typespec typeSpec = null;
+		public SymTableEntry entry = null;
 		public IdentifierContext name;
 		public FuncArgListContext funcArgList;
 		public List<FuncArgListContext> argList = new ArrayList<FuncArgListContext>();
@@ -560,6 +572,8 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class FuncArgListContext extends ParserRuleContext {
+		public Typespec typeSpec = null;
+		public SymTableEntry entry = null;
 		public FuncArgumentContext funcArgument;
 		public List<FuncArgumentContext> args = new ArrayList<FuncArgumentContext>();
 		public List<FuncArgumentContext> funcArgument() {
@@ -621,6 +635,8 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class FuncArgumentContext extends ParserRuleContext {
+		public Typespec typeSpec = null;
+		public SymTableEntry entry = null;
 		public TypeAssocContext typeAssoc() {
 			return getRuleContext(TypeAssocContext.class,0);
 		}
@@ -790,6 +806,8 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class VariableDeclContext extends ParserRuleContext {
+		public Typespec typeSpec = null;
+		public SymTableEntry entry = null;
 		public TypeAssocContext assoc;
 		public TypeAssocContext typeAssoc() {
 			return getRuleContext(TypeAssocContext.class,0);
@@ -830,6 +848,8 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class TypeAssocContext extends ParserRuleContext {
+		public Typespec typeSpec = null;
+		public SymTableEntry entry = null;
 		public NameListContext namelst;
 		public TypeContext t;
 		public NameListContext nameList() {
@@ -925,6 +945,7 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class ConstantDefContext extends ParserRuleContext {
+		public Typespec typeSpec = null;
 		public NameListContext namelst;
 		public ExpressionContext expr;
 		public NameListContext nameList() {
@@ -1237,6 +1258,8 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class NameDeclStatementContext extends ParserRuleContext {
+		public Typespec typeSpec = null;
+		public SymTableEntry entry = null;
 		public VariableDeclContext variableDecl() {
 			return getRuleContext(VariableDeclContext.class,0);
 		}
@@ -1292,6 +1315,7 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class NameDeclDefStatementContext extends ParserRuleContext {
+		public Typespec typeSpec = null;
 		public VariableDefContext variableDef() {
 			return getRuleContext(VariableDefContext.class,0);
 		}
@@ -1818,6 +1842,7 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class ReturnStatementContext extends ParserRuleContext {
+		public Typespec typeSpec = null;
 		public ExpressionContext expr;
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
