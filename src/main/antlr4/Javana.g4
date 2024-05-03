@@ -11,73 +11,78 @@ import edu.yu.compilers.intermediate.type.Typespec;
 
 program 
     : hdr=programHeader defs+=globalDefinitions* main=mainMethod defs+=globalDefinitions*
-    ;
+    ; //Done
 
 programHeader
     : 'Javana' name=identifier ':'
-    ;
+    ; //Done
 
 mainMethod locals [ Typespec typeSpec = null, SymTableEntry entry = null ]
     : '@main' '(' args=mainArg? ')' body=blockStatement
-    ;
+    ; //Passes the torch to blockStataement
 
 mainArg locals [ Typespec typeSpec = null, SymTableEntry entry = null ]
     : name=identifier ':' stringArrType
-    ;
+    ; //Ignoring, I always inputted the classic
+    // "public static void main(String[] args)"
 
 globalDefinitions locals [ Typespec typeSpec = null, SymTableEntry entry = null ]
     : nameDeclStatement # nameDecl
     | nameDeclDefStatement # nameDeclDef
-    ;
+    ; //Handled down stream, most ors are handled this way
+    //will be referenced as HDS from now on
 
 // Function Definitions and Declarations ---
 
 funcDefinition locals [ Typespec typeSpec = null, SymTableEntry entry = null ]
     : proto=funcPrototype body=blockStatement
-    ;
+    ; //Done
 
 funcPrototype locals [ Typespec typeSpec = null, SymTableEntry entry = null ]
     : 'func' name=identifier '(' argList+=funcArgList? ')' '->' return=returnType
-    ;
+    ; //Handled within funcDef
 
 funcArgList locals [ Typespec typeSpec = null, SymTableEntry entry = null ]
     : args+=funcArgument (',' args+=funcArgument)*
-    ;
+    ; //Handled within funcDef
 
 funcArgument locals [ Typespec typeSpec = null, SymTableEntry entry = null ]
     : typeAssoc
-    ;
+    ;//Handled within funcDef
 
 returnType locals [ Typespec typeSpec = null, SymTableEntry entry = null ]
     : type
     | None
-    ;
+    ; //Handled within funcDef
 
 // Name Definitions and Declarations -------
 
 recordDecl locals [ Typespec typeSpec = null, SymTableEntry entry = null ]
     : 'record' name=identifier '{' fields+=typeAssoc* '}'
-    ;
+    ;//Done
 
 variableDecl locals [ Typespec typeSpec = null, SymTableEntry entry = null ]
     : 'decl' assoc=typeAssoc
-    ;
+    ; //Handled DOWN stream, just by typeAssoc,
+    //Since it will just visit children if no method
+    //exists
 
 typeAssoc locals [ Typespec typeSpec = null, SymTableEntry entry = null ]
     : namelst=nameList ':' t=type
-    ;
+    ; //Done
 
 variableDef locals [ Typespec typeSpec = null ]
     : 'var' namelst=nameList '=' expr=expression
-    ;
+    ; //Done
 
 constantDef locals [ Typespec typeSpec = null ]
     : 'const' namelst=nameList '=' expr=expression
-    ;
+    ; //Done
 
 nameList
     : names+=identifier (',' names+=identifier)*
-    ;
+    ;//Handled UP stream, means it is always dealt with
+    //In places it has been called.
 
 
 // Statements ------------------------------
@@ -94,39 +99,39 @@ statement
     | returnStatement
     | printStatement
     | printLineStatement
-    ;
+    ; //Handled due to "OR" statement
 
 blockStatement
     : '{' stmts+=statement* '}'
-    ;
+    ; //Handled
 
 nameDeclStatement locals [ Typespec typeSpec = null, SymTableEntry entry = null ]
     : variableDecl
     | recordDecl
-    ;
+    ; //Handled via OR
 
 nameDeclDefStatement locals [ Typespec typeSpec = null ]
     : variableDef
     | constantDef
     | funcDefinition
-    ;
+    ; //Handled via OR
 
 assignmentStatement
     : var=variable '=' expr=expression
-    ;
+    ; //Done
 
 variable locals [ SymTableEntry entry = null, Typespec typeSpec = null]
     : name=identifier modifiers+=varModifier*
-    ;
+    ; //Done
 
 varModifier
-    : arrIdxSpecifier   # varArrayIndexModfier
-    | '.' identifier    # varRecordFieldModifier
-    ;
+    : arrIdxSpecifier
+    | '.' identifier
+    ; //Handled in variable
 
 arrIdxSpecifier
     : '[' expr=expression ']'
-    ;
+    ; //Must be handled in other places, it is handled in variable
 
 ifStatement
     : 'if' '(' condition=expression ')' thenStmt=blockStatement ('else' elseStmt=blockStatement)?

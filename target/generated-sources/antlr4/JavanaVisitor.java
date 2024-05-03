@@ -156,19 +156,11 @@ public interface JavanaVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitVariable(JavanaParser.VariableContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code varArrayIndexModfier}
-	 * labeled alternative in {@link JavanaParser#varModifier}.
+	 * Visit a parse tree produced by {@link JavanaParser#varModifier}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitVarArrayIndexModfier(JavanaParser.VarArrayIndexModfierContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code varRecordFieldModifier}
-	 * labeled alternative in {@link JavanaParser#varModifier}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitVarRecordFieldModifier(JavanaParser.VarRecordFieldModifierContext ctx);
+	T visitVarModifier(JavanaParser.VarModifierContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link JavanaParser#arrIdxSpecifier}.
 	 * @param ctx the parse tree

@@ -1493,37 +1493,19 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class VarModifierContext extends ParserRuleContext {
+		public ArrIdxSpecifierContext arrIdxSpecifier() {
+			return getRuleContext(ArrIdxSpecifierContext.class,0);
+		}
+		public IdentifierContext identifier() {
+			return getRuleContext(IdentifierContext.class,0);
+		}
 		public VarModifierContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_varModifier; }
-	 
-		public VarModifierContext() { }
-		public void copyFrom(VarModifierContext ctx) {
-			super.copyFrom(ctx);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
-	public static class VarArrayIndexModfierContext extends VarModifierContext {
-		public ArrIdxSpecifierContext arrIdxSpecifier() {
-			return getRuleContext(ArrIdxSpecifierContext.class,0);
-		}
-		public VarArrayIndexModfierContext(VarModifierContext ctx) { copyFrom(ctx); }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof JavanaVisitor ) return ((JavanaVisitor<? extends T>)visitor).visitVarArrayIndexModfier(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
-	public static class VarRecordFieldModifierContext extends VarModifierContext {
-		public IdentifierContext identifier() {
-			return getRuleContext(IdentifierContext.class,0);
-		}
-		public VarRecordFieldModifierContext(VarModifierContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof JavanaVisitor ) return ((JavanaVisitor<? extends T>)visitor).visitVarRecordFieldModifier(this);
+			if ( visitor instanceof JavanaVisitor ) return ((JavanaVisitor<? extends T>)visitor).visitVarModifier(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1536,7 +1518,6 @@ public class JavanaParser extends Parser {
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case T__16:
-				_localctx = new VarArrayIndexModfierContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(249);
@@ -1544,7 +1525,6 @@ public class JavanaParser extends Parser {
 				}
 				break;
 			case T__15:
-				_localctx = new VarRecordFieldModifierContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(250);

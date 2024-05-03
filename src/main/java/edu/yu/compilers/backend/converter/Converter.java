@@ -2,6 +2,7 @@ package edu.yu.compilers.backend.converter;
 
 import antlr4.JavanaBaseVisitor;
 import antlr4.JavanaParser;
+import edu.yu.compilers.intermediate.symtable.Predefined;
 import edu.yu.compilers.intermediate.symtable.SymTable;
 import edu.yu.compilers.intermediate.symtable.SymTableEntry;
 import edu.yu.compilers.intermediate.type.Typespec;
@@ -215,6 +216,84 @@ public class Converter extends JavanaBaseVisitor<Object> {
         code.emitLine("}");
         return null;
     }
+
+    @Override
+    public Object visitBlockStatement(JavanaParser.BlockStatementContext ctx) {
+        code.emitLine("{");
+
+        for(JavanaParser.StatementContext statementContext : ctx.statement()){
+            visit(statementContext);
+        }
+
+        code.emitLine("}");
+
+        return null;
+    }
+
+    @Override
+    public Object visitAssignmentStatement(JavanaParser.AssignmentStatementContext ctx) {
+        String lhs = (String) visit(ctx.variable());
+        String expr = (String) visit(ctx.expression());
+        code.emit(lhs + " = " + expr);
+        code.emitEnd(";");
+
+        return null;
+    }
+
+    @Override
+    public Object visitVariable(JavanaParser.VariableContext ctx) {
+        //Need to return a string here
+        JavanaParser.IdentifierContext idCtx = ctx.identifier();
+        SymTableEntry variableId = idCtx.entry;
+        StringBuilder variableName = new StringBuilder(variableId.getName());
+        Typespec type = idCtx.typeSpec;
+
+        if ((type != Predefined.booleanType)
+                && (variableId.getKind() == ENUMERATION_CONSTANT)) {
+            variableName.insert(0, type.getIdentifier().getName() + ".");
+        }
+
+        // Loop over any subscript and field modifiers.
+        for (JavanaParser.VarModifierContext modCtx : ctx.modifiers) {
+            // Subscripts.
+            if (modCtx.arrIdxSpecifier() != null) {
+                //There used to be a for each loop here, but in Javana, there is only one expr, not multiple
+                Typespec indexType = type.getArrayIndexType();
+                int minIndex = 0;
+
+                if (indexType.getForm() == SUBRANGE) {
+                    minIndex = indexType.getSubrangeMinValue();
+                }
+
+                JavanaParser.ExpressionContext exprCtx = modCtx.arrIdxSpecifier().expression();
+                String expr = (String) visit(exprCtx);
+                String subscript =
+                        (minIndex == 0) ? expr
+                                : (minIndex < 0) ? "(" + expr + ")+" + (-minIndex)
+                                : "(" + expr + ")-" + minIndex;
+
+                variableName.append("[").append(subscript).append("]");
+
+                type = type.getArrayElementType();
+            }
+
+            // Record field.
+            else {
+                JavanaParser.IdentifierContext fieldCtx = ctx.identifier();
+                String fieldName = fieldCtx.entry.getName();
+                variableName.append(".").append(fieldName);
+                type = fieldCtx.typeSpec;
+            }
+        }
+
+
+        return variableName.toString();
+    }
+
+
+
+
+
 
     /**
      * Emit a record type definition for an unnamed record.

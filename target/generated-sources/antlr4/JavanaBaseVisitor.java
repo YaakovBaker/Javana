@@ -184,14 +184,7 @@ public class JavanaBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitVarArrayIndexModfier(JavanaParser.VarArrayIndexModfierContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitVarRecordFieldModifier(JavanaParser.VarRecordFieldModifierContext ctx) { return visitChildren(ctx); }
+	@Override public T visitVarModifier(JavanaParser.VarModifierContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
