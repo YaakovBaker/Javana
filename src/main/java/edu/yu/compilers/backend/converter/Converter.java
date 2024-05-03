@@ -177,6 +177,7 @@ public class Converter extends JavanaBaseVisitor<Object> {
 
     @Override
     public Object visitMainMethod(JavanaParser.MainMethodContext ctx) {
+        programVariables = false;
         visit(ctx.blockStatement());
         return null;
     }
@@ -306,7 +307,35 @@ public class Converter extends JavanaBaseVisitor<Object> {
         return null;
     }
 
+    @Override
+    public Object visitForStatement(JavanaParser.ForStatementContext ctx) {
+        code.emit("for(");
 
+        String initName = (String) visit(ctx.init);
+        // 0   1 2 3
+        // var i = 0;
+        code.emit(initName); //Includes ;
+
+        code.emit((String) visit(ctx.condition));
+        code.emit("; ");
+        //Need to get the variable and the = sign here
+
+        String[] initVarStringArray = initName.split(" ");
+        code.emit(initVarStringArray[1] + " " + initVarStringArray[2]);
+        code.emit((String) visit(ctx.updateExpr));
+
+        code.emit(")");
+
+        visit(ctx.body); //Includes { }
+        code.emitLine();
+
+        return null;
+    }
+
+    @Override
+    public Object visitWhileStatement(JavanaParser.WhileStatementContext ctx) {
+        return super.visitWhileStatement(ctx);
+    }
 
     /**
      * Emit a record type definition for an unnamed record.

@@ -135,11 +135,11 @@ arrIdxSpecifier
 
 ifStatement
     : 'if' '(' condition=expression ')' thenStmt=blockStatement ('else' elseStmt=blockStatement)?
-    ;
+    ; //Done
 
 forStatement
-    : 'for' '(' init=variableDef? ';' condition=expression ';' updateExpr=expression ')' body=blockStatement
-    ;
+    : 'for' '(' init=variableDef ';' condition=expression ';' updateExpr=expression ')' body=blockStatement
+    ; // Done
 
 whileStatement
     : 'while' '(' condition=expression ')' body=blockStatement
