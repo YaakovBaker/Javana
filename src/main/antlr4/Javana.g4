@@ -143,7 +143,7 @@ forStatement
 
 whileStatement
     : 'while' '(' condition=expression ')' body=blockStatement
-    ;
+    ; //Done
 
 expressionStatement
     : expr=expression
