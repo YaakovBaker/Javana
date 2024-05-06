@@ -359,6 +359,40 @@ public class Converter extends JavanaBaseVisitor<Object> {
         return null;
     }
 
+    //I'm not 100% on these prints, but lets see what happens
+    @Override
+    public Object visitPrintStatement(JavanaParser.PrintStatementContext ctx) {
+        code.emit("System.out.printf(");
+        visit(ctx.arg);
+        code.emitEnd(");");
+        return null;
+    }
+
+    @Override
+    public Object visitPrintLineStatement(JavanaParser.PrintLineStatementContext ctx) {
+        if (ctx.arg != null) {
+            code.emit("System.out.printf(");
+            visit(ctx.arg);
+            code.emitEnd(");");
+        } else {
+            code.emitEnd("System.out.println();");
+        }
+
+        return null;
+    }
+
+    @Override
+    public Object visitPrintSingleValue(JavanaParser.PrintSingleValueContext ctx) {
+        code.emit(ctx.getText());
+        return null;
+    }
+
+    @Override
+    public Object visitFormattedPrint(JavanaParser.FormattedPrintContext ctx) {
+        code.emit(ctx.exprList().getText());
+        return null;
+    }
+
     /**
      * Emit a record type definition for an unnamed record.
      *
