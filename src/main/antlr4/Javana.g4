@@ -147,7 +147,7 @@ whileStatement
 
 expressionStatement
     : expr=expression
-    ; //Handed off because its just visit child
+    ; //Done
 
 returnStatement locals [ Typespec typeSpec = null ]
     : 'return' expr=expression?
@@ -155,16 +155,16 @@ returnStatement locals [ Typespec typeSpec = null ]
 
 printStatement
     : 'print' arg=printArgument
-    ;
+    ; //Done - I think
 
 printLineStatement
     : 'println' arg=printArgument?
-    ;
+    ; //Done - I think
 
 printArgument
     : expression        # PrintSingleValue
     | '(' exprList ')'  # FormattedPrint
-    ;
+    ; //Done - I think
 
 // Expressions -----------------------------
 
@@ -182,28 +182,28 @@ expression locals [ Typespec typeSpec = null, SymTableEntry entry = null]
     | '(' expression ')'                                # ExprGroup
     | readCharCall                                      # ExprReadChar
     | readLineCall                                      # ExprReadLine
-    | functionCall                                      # ExprFunctionCall
+    | functionCall                                      # ExprFunctionCall //Done til here
     | variable                                          # ExprVariable
     | literal                                           # ExprLiteral
     | newArray                                          # ExprNewArray
     | newRecord                                         # ExprNewRecord
-    ;
+    ; //Make sure to return String instead of return null
 
 exprList
     : exprs+=expression (',' exprs+=expression)*
-    ;
+    ; //Will be handled upStream, like name list
 
 readCharCall
     : 'readch' '(' ')'
-    ;
+    ; //Done I think, semi-colon?
 
 readLineCall
     : 'readln' '(' ')'
-    ;
+    ; //Done I think, semi-colon?
 
 functionCall
     : name=identifier '(' args=exprList? ')'
-    ;
+    ; //Done
 
 newArray locals [Typespec typeSpec= null ]
     : '@' t=arrayElemType arrIdxSpecifier

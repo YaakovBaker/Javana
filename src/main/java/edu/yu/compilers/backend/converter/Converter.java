@@ -351,6 +351,13 @@ public class Converter extends JavanaBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitExpressionStatement(JavanaParser.ExpressionStatementContext ctx) {
+        code.emit((String) visit(ctx.expression()));
+        code.emit(";");
+        return null;
+    }
+
+    @Override
     public Object visitReturnStatement(JavanaParser.ReturnStatementContext ctx) {
         code.emitLine();
         code.emit("return ");
@@ -392,6 +399,96 @@ public class Converter extends JavanaBaseVisitor<Object> {
         code.emit(ctx.exprList().getText());
         return null;
     }
+
+    @Override
+    public Object visitExprArrayElement(JavanaParser.ExprArrayElementContext ctx) {
+        return ctx.getText();
+    }
+
+    @Override
+    public Object visitExprArrayLength(JavanaParser.ExprArrayLengthContext ctx) {
+        return ctx.getText();
+    }
+
+    @Override
+    public Object visitExprRecordField(JavanaParser.ExprRecordFieldContext ctx) {
+        return ctx.getText();
+    }
+
+    @Override
+    public Object visitExprHigherArith(JavanaParser.ExprHigherArithContext ctx) {
+        return ctx.getText();
+    }
+
+    @Override
+    public Object visitExprArith(JavanaParser.ExprArithContext ctx) {
+        return ctx.getText();
+    }
+
+    @Override
+    public Object visitExprRelational(JavanaParser.ExprRelationalContext ctx) {
+        return ctx.getText();
+    }
+
+    @Override
+    public Object visitExprEquality(JavanaParser.ExprEqualityContext ctx) {
+        return ctx.getText();
+    }
+
+    @Override
+    public Object visitExprHighLogical(JavanaParser.ExprHighLogicalContext ctx) {
+        return ctx.getText();
+    }
+
+    @Override
+    public Object visitExprLowLogical(JavanaParser.ExprLowLogicalContext ctx) {
+        return ctx.getText();
+    }
+
+    @Override
+    public Object visitExprNot(JavanaParser.ExprNotContext ctx) {
+        return ctx.getText();
+    }
+
+    @Override
+    public Object visitExprGroup(JavanaParser.ExprGroupContext ctx) {
+        return ctx.getText();
+    }
+
+    @Override
+    public Object visitReadCharCall(JavanaParser.ReadCharCallContext ctx) {
+        code.emit("(String) _sysin.next().charAt(0)");
+        return null;
+    }
+
+    @Override
+    public Object visitExprReadChar(JavanaParser.ExprReadCharContext ctx) {
+        return "(String) _sysin.next().charAt(0)"; //Semi-colon here?
+    }
+
+    @Override
+    public Object visitReadLineCall(JavanaParser.ReadLineCallContext ctx) {
+        code.emit("(String) _sysin.nextLine()");
+        return null;
+    }
+
+    @Override
+    public Object visitExprReadLine(JavanaParser.ExprReadLineContext ctx) {
+        return "(String) _sysin.nextLine()"; //Semi-colon here?
+    }
+
+    @Override
+    public Object visitFunctionCall(JavanaParser.FunctionCallContext ctx) {
+        code.emit(ctx.getText());
+        return null;
+    }
+
+    @Override
+    public Object visitExprFunctionCall(JavanaParser.ExprFunctionCallContext ctx) {
+        return ctx.getText(); //name(arg, arg)
+    }
+
+
 
     /**
      * Emit a record type definition for an unnamed record.
