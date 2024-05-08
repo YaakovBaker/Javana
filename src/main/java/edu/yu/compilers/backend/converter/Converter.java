@@ -455,40 +455,68 @@ public class Converter extends JavanaBaseVisitor<Object> {
         return ctx.getText();
     }
 
-    @Override
-    public Object visitReadCharCall(JavanaParser.ReadCharCallContext ctx) {
-        code.emit("(String) _sysin.next().charAt(0)");
-        return null;
-    }
+//    @Override
+//    public Object visitReadCharCall(JavanaParser.ReadCharCallContext ctx) {
+//        code.emit("(String) _sysin.next().charAt(0)");
+//        return null;
+//    }
 
     @Override
     public Object visitExprReadChar(JavanaParser.ExprReadCharContext ctx) {
         return "(String) _sysin.next().charAt(0)"; //Semi-colon here?
     }
 
-    @Override
-    public Object visitReadLineCall(JavanaParser.ReadLineCallContext ctx) {
-        code.emit("(String) _sysin.nextLine()");
-        return null;
-    }
+//    @Override
+//    public Object visitReadLineCall(JavanaParser.ReadLineCallContext ctx) {
+//        code.emit("(String) _sysin.nextLine()");
+//        return null;
+//    }
 
     @Override
     public Object visitExprReadLine(JavanaParser.ExprReadLineContext ctx) {
         return "(String) _sysin.nextLine()"; //Semi-colon here?
     }
 
-    @Override
-    public Object visitFunctionCall(JavanaParser.FunctionCallContext ctx) {
-        code.emit(ctx.getText());
-        return null;
-    }
+//    @Override
+//    public Object visitFunctionCall(JavanaParser.FunctionCallContext ctx) {
+//        code.emit(ctx.getText());
+//        return null;
+//    }
 
     @Override
     public Object visitExprFunctionCall(JavanaParser.ExprFunctionCallContext ctx) {
         return ctx.getText(); //name(arg, arg)
     }
 
+    @Override
+    public Object visitIntegerLiteral(JavanaParser.IntegerLiteralContext ctx) {
+        return ctx.getText();
+    }
 
+    @Override
+    public Object visitBooleanLiteral(JavanaParser.BooleanLiteralContext ctx) {
+        return ctx.getText();
+    }
+
+    @Override
+    public Object visitStringLiteral(JavanaParser.StringLiteralContext ctx) {
+        return ctx.getText();
+    }
+
+    @Override
+    public Object visitNoneValue(JavanaParser.NoneValueContext ctx) {
+        return "null";
+    }
+
+    @Override
+    public Object visitNewArray(JavanaParser.NewArrayContext ctx) { //return a string
+        return super.visitNewArray(ctx);
+    }
+
+    @Override
+    public Object visitNewRecord(JavanaParser.NewRecordContext ctx) { //return a string
+        return super.visitNewRecord(ctx);
+    }
 
     /**
      * Emit a record type definition for an unnamed record.

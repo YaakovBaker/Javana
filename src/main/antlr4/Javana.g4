@@ -183,8 +183,8 @@ expression locals [ Typespec typeSpec = null, SymTableEntry entry = null]
     | readCharCall                                      # ExprReadChar
     | readLineCall                                      # ExprReadLine
     | functionCall                                      # ExprFunctionCall //Done til here
-    | variable                                          # ExprVariable
-    | literal                                           # ExprLiteral
+    | variable                                          # ExprVariable //Will just visitVariable, which returns a String
+    | literal                                           # ExprLiteral //Handled by literal
     | newArray                                          # ExprNewArray
     | newRecord                                         # ExprNewRecord
     ; //Make sure to return String instead of return null
@@ -227,10 +227,10 @@ fieldInit
     ;
 
 literal locals [ Typespec typeSpec = null ]
-    : INTEGER   # IntegerLiteral
-    | BOOL      # BooleanLiteral
-    | STRING    # StringLiteral
-    | None      # NoneValue
+    : INTEGER   # IntegerLiteral //Done
+    | BOOL      # BooleanLiteral //Done
+    | STRING    # StringLiteral //Done
+    | None      # NoneValue //Done
     ;
 
 // Types -----------------------------------
