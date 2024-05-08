@@ -771,6 +771,73 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
+
+    //Types
+
+    @Override
+    public Object visitTypeScalar(JavanaParser.TypeScalarContext ctx) {
+        JavanaParser.ScalarTypeContext scalarTypeCtx = ctx.scalarType();
+        visit(scalarTypeCtx);
+        ctx.typeSpec = scalarTypeCtx.typeSpec;
+        return null;
+    }
+
+    @Override
+    public Object visitTypeComposite(JavanaParser.TypeCompositeContext ctx) {
+        JavanaParser.CompositeTypeContext compositeTypeCtx = ctx.compositeType();
+        visit(compositeTypeCtx);
+        ctx.typeSpec = compositeTypeCtx.typeSpec;
+        return null;
+    }
+
+    @Override
+    public Object visitScalarType(JavanaParser.ScalarTypeContext ctx) {
+        JavanaParser.IntegerTypeContext intTypeCtx = ctx.integerType();
+        JavanaParser.BooleanTypeContext boolTypeCtx = ctx.booleanType();
+        JavanaParser.StringTypeContext strTypeCtx = ctx.stringType();
+        if( intTypeCtx != null) {
+            visit(intTypeCtx);
+            ctx.typeSpec = intTypeCtx.typeSpec;
+        }else if( boolTypeCtx != null){
+            visit(boolTypeCtx);
+            ctx.typeSpec = boolTypeCtx.typeSpec;
+        }else if( strTypeCtx != null){
+            visit(strTypeCtx);
+            ctx.typeSpec = strTypeCtx.typeSpec;
+        }else {
+            ctx.typeSpec = Predefined.undefinedType;
+        }
+        return null;
+    }
+
+    @Override
+    public Object visitCompositeType(JavanaParser.CompositeTypeContext ctx) {
+        JavanaParser.RecordTypeContext recordTypeCtx = ctx.recordType();
+        JavanaParser.IntegerArrTypeContext intArrTypeCtx = ctx.integerArrType();
+        JavanaParser.BooleanArrTypeContext boolArrTypeCtx = ctx.booleanArrType();
+        JavanaParser.StringArrTypeContext strArrTypeCtx = ctx.stringArrType();
+        JavanaParser.RecordArrTypeContext recordArrTypeCtx = ctx.recordArrType();
+        if( recordTypeCtx != null ){
+            visit(recordTypeCtx);
+            ctx.typeSpec = recordTypeCtx.typeSpec;
+        }else if( intArrTypeCtx != null ){
+            visit(intArrTypeCtx);
+            ctx.typeSpec = intArrTypeCtx.typeSpec;
+        }else if( boolArrTypeCtx != null ){
+            visit(boolArrTypeCtx);
+            ctx.typeSpec = boolArrTypeCtx.typeSpec;
+        }else if( strArrTypeCtx != null ){
+            visit(strArrTypeCtx);
+            ctx.typeSpec = strArrTypeCtx.typeSpec;
+        }else if( recordArrTypeCtx != null ){
+            visit(recordArrTypeCtx);
+            ctx.typeSpec = recordArrTypeCtx.typeSpec;
+        }else{
+            ctx.typeSpec = Predefined.undefinedType;
+        }
+        return null;
+    }
+
     @Override
     public Object visitIntegerType(JavanaParser.IntegerTypeContext ctx){
         ctx.typeSpec = Predefined.integerType;
@@ -790,11 +857,11 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    //DOn't need?
-//    @Override
-//    public Object visitRecordType(JavanaParser.RecordTypeContext ctx){
-//
-//    }
+    @Override
+    public Object visitRecordType(JavanaParser.RecordTypeContext ctx){
+        ctx.typeSpec = Predefined.undefinedType;
+        return null;
+    }
 
     
     @Override
@@ -832,7 +899,4 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         ctx.entry = symTableStack.lookup(ctx.getText());
         return null;
     }
-
-
-
 }
