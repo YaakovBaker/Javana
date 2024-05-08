@@ -29,7 +29,6 @@ Notes for self
  */
 public class Converter extends JavanaBaseVisitor<Object> {
     private static final Hashtable<String, String> typeNameTable;
-
     static {
         typeNameTable = new Hashtable<>();
         typeNameTable.put("None", "null");
@@ -53,7 +52,6 @@ public class Converter extends JavanaBaseVisitor<Object> {
     public Object visitProgram(JavanaParser.ProgramContext ctx) {
         StringWriter sw = new StringWriter();
         code = new CodeGenerator(new PrintWriter(sw));
-
         visit(ctx.programHeader());
 
         // Execution timer and runtime standard input.
@@ -185,7 +183,11 @@ public class Converter extends JavanaBaseVisitor<Object> {
     @Override
     public Object visitFuncDefinition(JavanaParser.FuncDefinitionContext ctx) {
         code.emit("public static ");
-        code.emit(typeNameTable.get(ctx.funcPrototype().returnType().getText()));
+        if(ctx.funcPrototype().returnType().type() != null){
+            code.emit((String) visit(ctx.funcPrototype().returnType().type()));
+        }else{
+            code.emit("void");
+        }
         code.emit(" " + ctx.funcPrototype().identifier().getText() + "(");
         //Get Params
         if(ctx.funcPrototype().funcArgList!=null){
@@ -510,12 +512,70 @@ public class Converter extends JavanaBaseVisitor<Object> {
 
     @Override
     public Object visitNewArray(JavanaParser.NewArrayContext ctx) { //return a string
-        return super.visitNewArray(ctx);
+        // @type[expr] -> new int[10]
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("new ");
+        String arrayElemType = (String) visit(ctx.arrayElemType());
+        stringBuilder.append(arrayElemType);
+        stringBuilder.append("[");
+        String exprString = (String) visit(ctx.arrIdxSpecifier().expr); //All expressions return a string
+        stringBuilder.append(exprString);
+        stringBuilder.append("]");
+        return stringBuilder.toString();
+    }
+
+    @Override
+    public Object visitArrayElemType(JavanaParser.ArrayElemTypeContext ctx) {
+        if(ctx.identifier()!=null){
+            return ctx.identifier().getText();
+        }else{
+            return typeNameTable.get(ctx.scalarType().getText()); //Else convert the typeName
+        }
     }
 
     @Override
     public Object visitNewRecord(JavanaParser.NewRecordContext ctx) { //return a string
-        return super.visitNewRecord(ctx);
+        // @Point{x=10, y=20} -> new Point(10, 20)
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("new ");
+        String recordName = ctx.identifier().getText();
+        stringBuilder.append(recordName);
+        stringBuilder.append("(");
+        if(ctx.init!=null){
+            for(int i = 0; i< ctx.init.fieldInit().size(); i++){
+                if(i==0){
+                    stringBuilder.append(visit(ctx.init.fieldInit().get(i).expr));
+                }else{
+                    stringBuilder.append(", ");
+                    stringBuilder.append(visit(ctx.init.fieldInit().get(i).expr));
+                }
+            }
+        }
+        stringBuilder.append(")");
+        return stringBuilder.toString();
+
+    }
+
+    @Override
+    public Object visitScalarType(JavanaParser.ScalarTypeContext ctx) {
+        return typeNameTable.get(ctx.getText());
+    }
+
+    @Override
+    public Object visitCompositeType(JavanaParser.CompositeTypeContext ctx) {
+        if(ctx.recordType()!=null){
+            return ctx.recordType().getText();
+        }else if(ctx.recordArrType()!= null){
+            return ctx.recordArrType().getText();
+        }else if(ctx.integerArrType()!= null){
+            return "int[]";
+        }else if(ctx.booleanArrType()!= null){
+            return "boolean[]";
+        }else if(ctx.stringArrType()!= null){
+            return "String[]";
+        }
+
+        return null;
     }
 
     /**
