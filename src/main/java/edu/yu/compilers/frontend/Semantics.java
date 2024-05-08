@@ -378,7 +378,6 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         JavanaParser.IdentifierContext idCtx = ctx.identifier();
         String varName = idCtx.getText();
         SymTableEntry varId = symTableStack.lookup(varName);
-        System.out.println("VarName: " + varName + " VarId: " + varId + " for " + idCtx.getText());
         if( varId != null ){
             int lineNumber = ctx.getStart().getLine();
             ctx.typeSpec = varId.getType();
@@ -726,9 +725,36 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     @Override
     public Object visitExprLiteral(JavanaParser.ExprLiteralContext ctx) {
         JavanaParser.LiteralContext litCtx = ctx.literal();
+        visit(litCtx);
         ctx.typeSpec = litCtx.typeSpec;
         return null;
     }
+
+    //Literals
+    @Override
+    public Object visitIntegerLiteral(JavanaParser.IntegerLiteralContext ctx) {
+        ctx.typeSpec = Predefined.integerType;
+        return null;
+    }
+
+    @Override
+    public Object visitBooleanLiteral(JavanaParser.BooleanLiteralContext ctx) {
+        ctx.typeSpec = Predefined.booleanType;
+        return null;
+    }
+
+    @Override
+    public Object visitStringLiteral(JavanaParser.StringLiteralContext ctx) {
+        ctx.typeSpec = Predefined.stringType;
+        return null;
+    }
+
+    @Override
+    public Object visitNoneValue(JavanaParser.NoneValueContext ctx) {
+        ctx.typeSpec = Predefined.undefinedType;
+        return null;
+    }
+    //End Literals
 
     @Override
     public Object visitExprNewArray(JavanaParser.ExprNewArrayContext ctx) {
