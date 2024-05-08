@@ -237,7 +237,7 @@ literal locals [ Typespec typeSpec = null ]
 
 type locals [ Typespec typeSpec = null ]
     : scalarType    # TypeScalar //Done
-    | compositeType # TypeComposite
+    | compositeType # TypeComposite //Done
     ;
 
 scalarType locals [ Typespec typeSpec = null ]

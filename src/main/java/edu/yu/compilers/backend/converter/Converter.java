@@ -163,7 +163,7 @@ public class Converter extends JavanaBaseVisitor<Object> {
     public Object visitRecordDecl(JavanaParser.RecordDeclContext ctx) {
         JavanaParser.IdentifierContext identifierContext = ctx.identifier();
         code.emitStart();
-        code.emitEnd("class " + identifierContext.entry.getName() + " {");
+        code.emitEnd("static class " + identifierContext.entry.getName() + " {");
         code.indent();
         for(JavanaParser.TypeAssocContext typeAssocContext : ctx.fields){
             visit(typeAssocContext); //Don't need to output code, it does it above
@@ -577,6 +577,13 @@ public class Converter extends JavanaBaseVisitor<Object> {
 
         return null;
     }
+
+    @Override
+    public Object visitIdentifier(JavanaParser.IdentifierContext ctx) {
+        return ctx.getText();
+    }
+
+
 
     /**
      * Emit a record type definition for an unnamed record.
