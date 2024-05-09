@@ -281,7 +281,24 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-
+    @Override
+    public Object visitNameList(JavanaParser.NameListContext ctx) {
+        for(JavanaParser.IdentifierContext idCtx : ctx.names){
+            String varName = idCtx.getText();
+            SymTableEntry variableId = symTableStack.lookupLocal(varName);
+            if (variableId == null) {
+                variableId = symTableStack.enterLocal(varName, VARIABLE);
+                variableId.setType(ctx.typeSpec);
+                idCtx.entry = variableId;
+            }else{
+                error.flag(REDECLARED_IDENTIFIER, ctx);
+                variableId.setType(ctx.typeSpec);
+                idCtx.entry = variableId;
+            }
+            variableId.appendLineNumber(idCtx.getStart().getLine());
+        }
+        return null;
+    }
 
     //Did record Decl
     

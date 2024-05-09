@@ -79,7 +79,7 @@ constantDef locals [ Typespec typeSpec = null ]
     : 'const' namelst=nameList '=' expr=expression
     ; //Done
 
-nameList
+nameList locals [ Typespec typeSpec = null, SymTableEntry entry = null ]
     : names+=identifier (',' names+=identifier)*
     ;//Handled UP stream, means it is always dealt with
     //In places it has been called.
