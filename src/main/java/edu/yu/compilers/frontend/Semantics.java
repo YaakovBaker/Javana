@@ -261,7 +261,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         JavanaParser.NameListContext nameListCtx = ctx.namelst;
         List<JavanaParser.IdentifierContext> identifierContextList = nameListCtx.identifier();
         visit(typeCtx); //Moved this line up, so as not ot be in for each loop
-
+        visit(nameListCtx);
         for(JavanaParser.IdentifierContext identifierContext : identifierContextList){
             String typeName = identifierContext.getText();
             SymTableEntry typeId = symTableStack.lookupLocal(typeName);
@@ -277,25 +277,6 @@ public class Semantics extends JavanaBaseVisitor<Object> {
             identifierContext.typeSpec = typeCtx.typeSpec;
 
             typeId.appendLineNumber(ctx.getStart().getLine());
-        }
-        return null;
-    }
-
-    @Override
-    public Object visitNameList(JavanaParser.NameListContext ctx) {
-        for(JavanaParser.IdentifierContext idCtx : ctx.names){
-            String varName = idCtx.getText();
-            SymTableEntry variableId = symTableStack.lookupLocal(varName);
-            if (variableId == null) {
-                variableId = symTableStack.enterLocal(varName, VARIABLE);
-                variableId.setType(ctx.typeSpec);
-                idCtx.entry = variableId;
-            }else{
-                error.flag(REDECLARED_IDENTIFIER, ctx);
-                variableId.setType(ctx.typeSpec);
-                idCtx.entry = variableId;
-            }
-            variableId.appendLineNumber(idCtx.getStart().getLine());
         }
         return null;
     }
