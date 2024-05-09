@@ -22,7 +22,7 @@ import java.util.Set;
 public class JavanaCCTwo {
 
     public static void main(String[] args) throws Exception {
-        String sourceFileName = "C:\\Users\\yyb20\\Downloads\\YUCompSci\\Javana\\src\\main\\java\\edu\\yu\\compilers\\jvPrograms\\examplePrograms\\TestAssignmentStatements.jv";
+        String sourceFileName = "C:\\Users\\yyb20\\Downloads\\YUCompSci\\Javana\\src\\main\\java\\edu\\yu\\compilers\\jvPrograms\\examplePrograms\\ExampleFunctionWithArgs.jv";
 
         SyntaxErrorHandler syntaxErrorHandler = new SyntaxErrorHandler();
 

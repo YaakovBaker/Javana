@@ -160,14 +160,12 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return argList;
     }
 
-    // TODO
     @Override
     public Object visitFuncArgument(JavanaParser.FuncArgumentContext ctx){
         JavanaParser.TypeAssocContext typeAssocCtx = ctx.typeAssoc();
-
+        visit(typeAssocCtx);
         return null;
     }
-
     
     @Override
     public Object visitReturnType(JavanaParser.ReturnTypeContext ctx){
@@ -259,9 +257,9 @@ public class Semantics extends JavanaBaseVisitor<Object> {
 
     @Override
     public Object visitTypeAssoc(JavanaParser.TypeAssocContext ctx) {
-        JavanaParser.TypeContext typeCtx = ctx.type();
-
-        List<JavanaParser.IdentifierContext> identifierContextList = ctx.nameList().identifier();
+        JavanaParser.TypeContext typeCtx = ctx.t;
+        JavanaParser.NameListContext nameListCtx = ctx.namelst;
+        List<JavanaParser.IdentifierContext> identifierContextList = nameListCtx.identifier();
         visit(typeCtx); //Moved this line up, so as not ot be in for each loop
 
         for(JavanaParser.IdentifierContext identifierContext : identifierContextList){
@@ -279,9 +277,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
             identifierContext.typeSpec = typeCtx.typeSpec;
 
             typeId.appendLineNumber(ctx.getStart().getLine());
-
         }
-
         return null;
     }
 
