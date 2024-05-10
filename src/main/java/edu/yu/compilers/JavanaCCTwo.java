@@ -22,7 +22,10 @@ import java.util.Set;
 public class JavanaCCTwo {
 
     public static void main(String[] args) throws Exception {
-        String sourceFileName = "C:\\Users\\yyb20\\Downloads\\YUCompSci\\Javana\\src\\main\\java\\edu\\yu\\compilers\\jvPrograms\\examplePrograms\\ExampleFunctionWithArgs.jv";
+        String desktop = "C:\\Users\\yyb20\\Downloads\\YUCompSci\\JavanaCompilerProject\\Javana\\";
+        String laptop = "C:\\Users\\yyb20\\Downloads\\YUCompSci\\Javana\\";
+        String pakage = "src\\main\\java\\edu\\yu\\compilers\\jvPrograms\\examplePrograms\\";
+        String sourceFileName = desktop + pakage + "ExampleFunctionWithArgs.jv";
 
         SyntaxErrorHandler syntaxErrorHandler = new SyntaxErrorHandler();
 
