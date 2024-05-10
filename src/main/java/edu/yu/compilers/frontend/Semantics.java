@@ -453,7 +453,6 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    //TODO - double check update Expressions
     @Override
     public Object visitForStatement(JavanaParser.ForStatementContext ctx){
         JavanaParser.VariableDefContext varDefCtx = ctx.init;
@@ -463,8 +462,11 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         //Optional variableDef
         if( varDefCtx != null ){
             visit(varDefCtx);
-            if( varDefCtx.typeSpec != Predefined.integerType){
-                error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_INTEGER, varDefCtx);
+            //Then lookup local the var's name to get varId
+            String varName = varDefCtx.namelst.names.get(0).getText();
+            SymTableEntry varId = symTableStack.lookupLocal(varName);
+            if( varId.getType() != Predefined.integerType){
+                error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_INTEGER, varDefCtx.namelst.names.get(0));
             }
         }
         //Expression 1
