@@ -24,8 +24,12 @@ public class JavanaCCTwo {
     public static void main(String[] args) throws Exception {
         String desktop = "C:\\Users\\yyb20\\Downloads\\YUCompSci\\JavanaCompilerProject\\Javana\\";
         String laptop = "C:\\Users\\yyb20\\Downloads\\YUCompSci\\Javana\\";
-        String pakage = "src\\main\\java\\edu\\yu\\compilers\\jvPrograms\\examplePrograms\\";
-        String sourceFileName = desktop + pakage + "ExampleLoop.jv";
+        String pakage = "src\\main\\java\\edu\\yu\\compilers\\jvPrograms\\";
+        String folderExample = "examplePrograms\\";
+        String folderHangMan = "hangMan\\";
+        String sourceFileName = desktop + pakage + folderExample + "ExampleLoop.jv";
+        String hangMan = desktop + pakage + folderHangMan + "HangMan.jv";
+        //String sourceFileName = hangMan;
 
         SyntaxErrorHandler syntaxErrorHandler = new SyntaxErrorHandler();
 
