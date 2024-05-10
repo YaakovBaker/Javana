@@ -25,7 +25,7 @@ public class JavanaCCTwo {
         String desktop = "C:\\Users\\yyb20\\Downloads\\YUCompSci\\JavanaCompilerProject\\Javana\\";
         String laptop = "C:\\Users\\yyb20\\Downloads\\YUCompSci\\Javana\\";
         String pakage = "src\\main\\java\\edu\\yu\\compilers\\jvPrograms\\examplePrograms\\";
-        String sourceFileName = desktop + pakage + "ExampleFunctionWithArgs.jv";
+        String sourceFileName = desktop + pakage + "ExampleConditional.jv";
 
         SyntaxErrorHandler syntaxErrorHandler = new SyntaxErrorHandler();
 

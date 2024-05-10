@@ -316,19 +316,65 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    //TODO
     @Override
     public Object visitVariableDef(JavanaParser.VariableDefContext ctx){
-        visit(ctx.nameList());
-        visit(ctx.expression());
+        JavanaParser.NameListContext nameListCtx = ctx.namelst;
+        JavanaParser.ExpressionContext exprCtx = ctx.expr;
+        visit(exprCtx);
+        Typespec exprType = exprCtx.typeSpec;
+        //For Each name in the name List
+        for(JavanaParser.IdentifierContext idCtx : nameListCtx.names){
+            //Get the name
+            String varName = idCtx.getText();
+            //Look up the name in the current stack
+            SymTableEntry varId = symTableStack.lookupLocal(varName);
+            //If the varId is null then lets create it
+            if( varId == null ){
+                varId = symTableStack.enterLocal(varName, VARIABLE);
+                varId.setType(exprType);
+                // Assign slot numbers to local variables.
+                SymTable symTable = varId.getSymTable();
+                if (symTable.getNestingLevel() > 1) {
+                    varId.setSlotNumber(symTable.nextSlotNumber());
+                }
+                idCtx.entry = varId;
+            }else{//Else we already declared this ident
+                error.flag(REDECLARED_IDENTIFIER, ctx);
+            }
+            //Append the line number
+            varId.appendLineNumber(ctx.getStart().getLine());
+        }
         return null;
     }
 
-    //TODO
     @Override
     public Object visitConstantDef(JavanaParser.ConstantDefContext ctx){
-        visit(ctx.nameList());
-        visit(ctx.expression());
+        JavanaParser.NameListContext nameListCtx = ctx.namelst;
+        JavanaParser.ExpressionContext exprCtx = ctx.expr;
+        visit(exprCtx);
+        Typespec exprType = exprCtx.typeSpec;
+        //For Each name in the name List
+        for(JavanaParser.IdentifierContext idCtx : nameListCtx.names){
+            //Get the name
+            String varName = idCtx.getText();
+            //Look up the name in the current stack
+            SymTableEntry constId = symTableStack.lookupLocal(varName);
+            //If the varId is null then lets create it
+            if( constId == null ){
+                constId = symTableStack.enterLocal(varName, CONSTANT);
+                constId.setType(exprType);
+                // Assign slot numbers to local variables.
+                SymTable symTable = constId.getSymTable();
+                if (symTable.getNestingLevel() > 1) {
+                    constId.setSlotNumber(symTable.nextSlotNumber());
+                }
+                idCtx.entry = constId;
+            }else{//Else we already declared this ident
+                error.flag(REDECLARED_IDENTIFIER, ctx);
+            }
+            //Append the line number
+            constId.appendLineNumber(ctx.getStart().getLine());
+        }
         return null;
     }
 
@@ -398,7 +444,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         visit(exprCtx);
         //Make sure the expression is a boolean
         if( exprCtx.typeSpec != Predefined.booleanType){
-            error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_BOOLEAN, ctx);
+            error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_BOOLEAN, exprCtx);
         }
 
         visit(trueCtx);
@@ -573,6 +619,10 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         else if (TypeChecker.areBothString(leftType, rightType)) {
             ctx.typeSpec = Predefined.stringType;
         }
+        //If at least one is a string then concat them
+        else if( TypeChecker.isString(leftType) || TypeChecker.isString(rightType) ){
+            ctx.typeSpec = Predefined.stringType;
+        }
         // Type mismatch.
         else {
             error.flag(TYPE_MISMATCH, ctx);
@@ -595,6 +645,8 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         if( rightCtx.typeSpec != Predefined.integerType ){
             error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_INTEGER, rightCtx);
         }
+        //Set the type of the expression
+        ctx.typeSpec = Predefined.booleanType;
         return null;
     }
 
