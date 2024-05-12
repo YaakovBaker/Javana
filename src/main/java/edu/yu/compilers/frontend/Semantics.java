@@ -188,22 +188,27 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     // Name Definitions and Declarations -------
     @Override
     public Object visitRecordDecl(JavanaParser.RecordDeclContext ctx){
+        //Get the fields and name for the record
+        List<JavanaParser.TypeAssocContext> typeAssocCtxList = ctx.fields;
+        JavanaParser.IdentifierContext idCtx = ctx.name;
         //TODO
         //Pretty sure this is actually wrong... Ugh, look at createRecordType in Pascal and createRecordTypeSpec here
-        String recordTypeName = SymTable.generateUnnamedName();
+        //Create the record's type
+        String recordTypeName = idCtx.getText();
         Typespec recordType = new Typespec(RECORD);
 
+        //Enter the record type into the symbol table
         SymTableEntry recordTypeId = symTableStack.enterLocal(recordTypeName, TYPE);
         recordTypeId.setType(recordType);
         recordType.setIdentifier(recordTypeId);
-
+        //Create the record type path
         String recordTypePath = createRecordTypePath(recordType);
         recordType.setRecordTypePath(recordTypePath);
 
         // Enter the record fields into the record type's symbol table.
         SymTable recordSymTable = createRecordSymTable(ctx.fields, recordTypeId);
         recordType.setRecordSymTable(recordSymTable);
-
+        //Set the context
         ctx.entry = recordTypeId;
         ctx.typeSpec = recordType;
         return null;
