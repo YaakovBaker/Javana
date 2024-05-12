@@ -27,9 +27,12 @@ public class JavanaCCTwo {
         String pakage = "src\\main\\java\\edu\\yu\\compilers\\jvPrograms\\";
         String folderExample = "examplePrograms\\";
         String folderHangMan = "hangMan\\";
+        String folderFinished = "finished\\";
         String sourceFileName = laptop + pakage + folderExample + "ExampleRecordInitialization.jv";
-        String hangMan = desktop + pakage + folderHangMan + "HangMan.jv";
-        //String sourceFileName = hangMan;
+        String hangMan = laptop + pakage + folderHangMan + "HangMan.jv";
+        String finished = laptop + pakage + folderFinished + "ExampleFunctionWithArgs.jv";
+        //sourceFileName = hangMan;
+//        sourceFileName = finished;
 
         SyntaxErrorHandler syntaxErrorHandler = new SyntaxErrorHandler();
 

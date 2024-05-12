@@ -76,11 +76,19 @@ public class Semantics extends JavanaBaseVisitor<Object> {
 
     @Override
     public Object visitMainMethod(JavanaParser.MainMethodContext ctx){
+        //EnterLocal for Main?
+        String mainName = "@main";
+        SymTableEntry mainId = symTableStack.enterLocal(mainName, FUNCTION);
+        mainId.appendLineNumber(ctx.getStart().getLine());
+        mainId.setRoutineCode(SymTableEntry.Routine.DECLARED);
+        mainId.setRoutineSymTable(symTableStack.push());
         JavanaParser.MainArgContext mArgCtx = ctx.mainArg();
         if( mArgCtx != null){
             visit(mArgCtx);
         }
         visit(ctx.blockStatement());
+        mainId.setExecutable(ctx.blockStatement());
+        symTableStack.pop();
         return null;
     }
 
@@ -114,6 +122,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
             return null;
         }
         funcId = symTableStack.enterLocal(funcName, FUNCTION);
+        funcId.appendLineNumber(protoCtx.getStart().getLine());
         funcId.setRoutineCode(SymTableEntry.Routine.DECLARED);
         idCtx.entry = funcId;
 

@@ -3,7 +3,7 @@ Javana ExampleFunctionWithArgs:
         return x + y
     }
 
-@main() {
-    var result = add(10, 20)
-    println("Result: " + result)
-}
+    @main() {
+        var result = add(10, 20)
+        println("Result: " + result)
+    }
