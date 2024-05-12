@@ -160,34 +160,25 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return argList;
     }
 
-    // TODO
     @Override
     public Object visitFuncArgument(JavanaParser.FuncArgumentContext ctx){
         JavanaParser.TypeAssocContext typeAssocCtx = ctx.typeAssoc();
-
-        return null;
+        visit(typeAssocCtx);
+        ctx.typeSpec = typeAssocCtx.t.typeSpec;
+        ctx.entry = typeAssocCtx.namelst.names.get(0).entry;
+        return ctx.entry;
     }
-
     
     @Override
     public Object visitReturnType(JavanaParser.ReturnTypeContext ctx){
         String typeName = ctx.getText();
-        SymTableEntry typeId = symTableStack.lookup(typeName);
-        if( typeId != null){
-            if( typeId.getKind() != TYPE ){
-                error.flag(SemanticErrorHandler.Code.INVALID_TYPE, ctx);
-                ctx.typeSpec = Predefined.undefinedType;//Or IntegerType
-            }else{
-                ctx.typeSpec = typeId.getType();
-            }
-            typeId.appendLineNumber(ctx.getStart().getLine());
+        JavanaParser.TypeContext typeCtx = ctx.type();
+        if( typeCtx != null){
+            visit(typeCtx);
+            ctx.typeSpec = typeCtx.typeSpec;
         }else{
-            error.flag(SemanticErrorHandler.Code.UNDECLARED_IDENTIFIER, ctx);
-            ctx.typeSpec = Predefined.undefinedType;//Or IntegerType
-        }
-        ctx.entry = typeId;
-        if( ctx.type() != null){
-            visit(ctx.type());
+            //None Type
+            ctx.typeSpec = Predefined.undefinedType;
         }
         return null;
     }
@@ -197,22 +188,27 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     // Name Definitions and Declarations -------
     @Override
     public Object visitRecordDecl(JavanaParser.RecordDeclContext ctx){
+        //Get the fields and name for the record
+        List<JavanaParser.TypeAssocContext> recordFields = ctx.fields;
+        JavanaParser.IdentifierContext idCtx = ctx.name;
         //TODO
         //Pretty sure this is actually wrong... Ugh, look at createRecordType in Pascal and createRecordTypeSpec here
-        String recordTypeName = SymTable.generateUnnamedName();
+        //Create the record's type
+        String recordTypeName = idCtx.getText();
         Typespec recordType = new Typespec(RECORD);
 
+        //Enter the record type into the symbol table
         SymTableEntry recordTypeId = symTableStack.enterLocal(recordTypeName, TYPE);
         recordTypeId.setType(recordType);
         recordType.setIdentifier(recordTypeId);
-
+        //Create the record type path
         String recordTypePath = createRecordTypePath(recordType);
         recordType.setRecordTypePath(recordTypePath);
 
         // Enter the record fields into the record type's symbol table.
-        SymTable recordSymTable = createRecordSymTable(ctx.fields, recordTypeId);
+        SymTable recordSymTable = createRecordSymTable(recordFields, recordTypeId);
         recordType.setRecordSymTable(recordSymTable);
-
+        //Set the context
         ctx.entry = recordTypeId;
         ctx.typeSpec = recordType;
         return null;
@@ -226,7 +222,8 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         recordSymTable.setOwner(ownerId);
         //visit each field
         for(JavanaParser.TypeAssocContext typeAssocCtx : fields){
-            //TODO
+            visit(typeAssocCtx);
+            //Put each on a new slot?
         }
 
         recordSymTable.resetVariables(RECORD_FIELD);
@@ -259,33 +256,33 @@ public class Semantics extends JavanaBaseVisitor<Object> {
 
     @Override
     public Object visitTypeAssoc(JavanaParser.TypeAssocContext ctx) {
-        JavanaParser.TypeContext typeCtx = ctx.type();
-
-        List<JavanaParser.IdentifierContext> identifierContextList = ctx.nameList().identifier();
-        visit(typeCtx); //Moved this line up, so as not ot be in for each loop
-
-        for(JavanaParser.IdentifierContext identifierContext : identifierContextList){
-            String typeName = identifierContext.getText();
-            SymTableEntry typeId = symTableStack.lookupLocal(typeName);
+        JavanaParser.TypeContext typeCtx = ctx.t;
+        JavanaParser.NameListContext nameListCtx = ctx.namelst;
+        List<JavanaParser.IdentifierContext> names = nameListCtx.names;
+        visit(typeCtx);
+        //For each Identifier in the NameList
+        for(JavanaParser.IdentifierContext name : names){
+            //Get the name
+            String typeAssocName = name.getText();
+            //Look up the name in the current stack
+            SymTableEntry typeId = symTableStack.lookupLocal(typeAssocName);
             //There is something about "createRecordType" here in Pascal, need //TODO
+
+            //If the typeId is null then lets create it
             if(typeId == null){
-                typeId = symTableStack.enterLocal(typeName, TYPE);
+                typeId = symTableStack.enterLocal(typeAssocName, TYPE);
                 typeId.setType(typeCtx.typeSpec);
                 typeCtx.typeSpec.setIdentifier(typeId);
-            }else{
+            }else{//Else we already declared this ident
                 error.flag(REDECLARED_IDENTIFIER, ctx);
             }
-            identifierContext.entry = typeId;
-            identifierContext.typeSpec = typeCtx.typeSpec;
+            name.entry = typeId;
+            name.typeSpec = typeCtx.typeSpec;
 
             typeId.appendLineNumber(ctx.getStart().getLine());
-
         }
-
         return null;
     }
-
-
 
     //Did record Decl
     
@@ -325,19 +322,65 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    //TODO
     @Override
     public Object visitVariableDef(JavanaParser.VariableDefContext ctx){
-        visit(ctx.nameList());
-        visit(ctx.expression());
+        JavanaParser.NameListContext nameListCtx = ctx.namelst;
+        JavanaParser.ExpressionContext exprCtx = ctx.expr;
+        visit(exprCtx);
+        Typespec exprType = exprCtx.typeSpec;
+        //For Each name in the name List
+        for(JavanaParser.IdentifierContext idCtx : nameListCtx.names){
+            //Get the name
+            String varName = idCtx.getText();
+            //Look up the name in the current stack
+            SymTableEntry varId = symTableStack.lookupLocal(varName);
+            //If the varId is null then lets create it
+            if( varId == null ){
+                varId = symTableStack.enterLocal(varName, VARIABLE);
+                varId.setType(exprType);
+                // Assign slot numbers to local variables.
+                SymTable symTable = varId.getSymTable();
+                if (symTable.getNestingLevel() > 1) {
+                    varId.setSlotNumber(symTable.nextSlotNumber());
+                }
+                idCtx.entry = varId;
+            }else{//Else we already declared this ident
+                error.flag(REDECLARED_IDENTIFIER, ctx);
+            }
+            //Append the line number
+            varId.appendLineNumber(ctx.getStart().getLine());
+        }
         return null;
     }
 
-    //TODO
     @Override
     public Object visitConstantDef(JavanaParser.ConstantDefContext ctx){
-        visit(ctx.nameList());
-        visit(ctx.expression());
+        JavanaParser.NameListContext nameListCtx = ctx.namelst;
+        JavanaParser.ExpressionContext exprCtx = ctx.expr;
+        visit(exprCtx);
+        Typespec exprType = exprCtx.typeSpec;
+        //For Each name in the name List
+        for(JavanaParser.IdentifierContext idCtx : nameListCtx.names){
+            //Get the name
+            String varName = idCtx.getText();
+            //Look up the name in the current stack
+            SymTableEntry constId = symTableStack.lookupLocal(varName);
+            //If the varId is null then lets create it
+            if( constId == null ){
+                constId = symTableStack.enterLocal(varName, CONSTANT);
+                constId.setType(exprType);
+                // Assign slot numbers to local variables.
+                SymTable symTable = constId.getSymTable();
+                if (symTable.getNestingLevel() > 1) {
+                    constId.setSlotNumber(symTable.nextSlotNumber());
+                }
+                idCtx.entry = constId;
+            }else{//Else we already declared this ident
+                error.flag(REDECLARED_IDENTIFIER, ctx);
+            }
+            //Append the line number
+            constId.appendLineNumber(ctx.getStart().getLine());
+        }
         return null;
     }
 
@@ -366,7 +409,6 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         if( varCtx.entry == null ){
             error.flag(SemanticErrorHandler.Code.UNDECLARED_IDENTIFIER, varCtx);
         }
-        System.out.println("VarType: " + varType + " ExprType: " + exprType + " for " + varCtx.getText() + " and " + exprCtx.getText());
         if( !TypeChecker.areAssignmentCompatible(varType, exprType)){
             error.flag(SemanticErrorHandler.Code.INCOMPATIBLE_ASSIGNMENT, exprCtx);
         }
@@ -408,7 +450,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         visit(exprCtx);
         //Make sure the expression is a boolean
         if( exprCtx.typeSpec != Predefined.booleanType){
-            error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_BOOLEAN, ctx);
+            error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_BOOLEAN, exprCtx);
         }
 
         visit(trueCtx);
@@ -417,7 +459,6 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    //TODO - double check update Expressions
     @Override
     public Object visitForStatement(JavanaParser.ForStatementContext ctx){
         JavanaParser.VariableDefContext varDefCtx = ctx.init;
@@ -427,8 +468,11 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         //Optional variableDef
         if( varDefCtx != null ){
             visit(varDefCtx);
-            if( varDefCtx.typeSpec != Predefined.integerType){
-                error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_INTEGER, varDefCtx);
+            //Then lookup local the var's name to get varId
+            String varName = varDefCtx.namelst.names.get(0).getText();
+            SymTableEntry varId = symTableStack.lookupLocal(varName);
+            if( varId.getType() != Predefined.integerType){
+                error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_INTEGER, varDefCtx.namelst.names.get(0));
             }
         }
         //Expression 1
@@ -466,8 +510,9 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         if( exprCtx != null ){
             visit(exprCtx);
         }
+        //Get the returnType
         Typespec returnType = exprCtx != null ? exprCtx.typeSpec : Predefined.undefinedType;
-        //Check the current stack frame's returnType
+        //Check the current stack frame's routineIdType
         int nestingLevel = symTableStack.getLocalSymTable().getNestingLevel();
         SymTableEntry routineId = symTableStack.get(nestingLevel - 1).getOwner();
         if (routineId == null) {
@@ -569,32 +614,27 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         visit(rightCtx);
         Typespec leftType = leftCtx.typeSpec;
         Typespec rightType = rightCtx.typeSpec;
-        // Both operands integer ==> integer result
+            // Both operands integer ==> integer result
         if (TypeChecker.areBothInteger(leftType, rightType)) {
-            rightType = Predefined.integerType;
+            ctx.typeSpec = Predefined.integerType;
         }
-
-        // Both real operands ==> real result
-        // One real and one integer operand ==> real result
+            // Both real operands ==> real result
+            // One real and one integer operand ==> real result
         else if (TypeChecker.isAtLeastOneReal(leftType, rightType)) {
-            rightType = Predefined.realType;
+            ctx.typeSpec = Predefined.realType;
         }
-
-        // Both operands string ==> string result
+            // Both operands string ==> string result
         else if (TypeChecker.areBothString(leftType, rightType)) {
-            rightType = Predefined.stringType;
+            ctx.typeSpec = Predefined.stringType;
         }
-
+        //If at least one is a string then concat them
+        else if( TypeChecker.isString(leftType) || TypeChecker.isString(rightType) ){
+            ctx.typeSpec = Predefined.stringType;
+        }
         // Type mismatch.
         else {
-            if (!TypeChecker.isIntegerOrReal(leftType)) {
-                error.flag(TYPE_MISMATCH, leftCtx);
-                rightType = Predefined.integerType;
-            }
-            if (!TypeChecker.isIntegerOrReal(rightType)) {
-                error.flag(TYPE_MISMATCH, rightCtx);
-                rightType = Predefined.integerType;
-            }
+            error.flag(TYPE_MISMATCH, ctx);
+            ctx.typeSpec = Predefined.integerType;
         }
         return null;
     }
@@ -613,6 +653,8 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         if( rightCtx.typeSpec != Predefined.integerType ){
             error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_INTEGER, rightCtx);
         }
+        //Set the type of the expression
+        ctx.typeSpec = Predefined.booleanType;
         return null;
     }
 
@@ -780,9 +822,9 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         }else{
             newRecordCtx.typeSpec = recordTypeId.getType();
             idCtx.entry = recordTypeId;
-        }
-        if( fieldInitListCtx != null){
-            visit(fieldInitListCtx);
+            if( fieldInitListCtx != null){
+                visit(fieldInitListCtx);
+            }
         }
         return null;
     }

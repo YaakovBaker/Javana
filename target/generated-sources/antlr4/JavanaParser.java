@@ -994,6 +994,8 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class NameListContext extends ParserRuleContext {
+		public Typespec typeSpec = null;
+		public SymTableEntry entry = null;
 		public IdentifierContext identifier;
 		public List<IdentifierContext> names = new ArrayList<IdentifierContext>();
 		public List<IdentifierContext> identifier() {
