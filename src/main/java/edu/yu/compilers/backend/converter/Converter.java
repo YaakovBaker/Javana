@@ -93,7 +93,7 @@ public class Converter extends JavanaBaseVisitor<Object> {
 
     @Override
     public Object visitProgramHeader(JavanaParser.ProgramHeaderContext ctx) {
-        programName = ctx.name.entry.getName();
+        programName = ctx.name.getText();
 
         // Emit the Java program class.
         code.emitLine("public class " + programName);
