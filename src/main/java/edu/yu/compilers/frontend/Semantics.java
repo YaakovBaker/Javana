@@ -816,9 +816,9 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         }else{
             newRecordCtx.typeSpec = recordTypeId.getType();
             idCtx.entry = recordTypeId;
-        }
-        if( fieldInitListCtx != null){
-            visit(fieldInitListCtx);
+            if( fieldInitListCtx != null){
+                visit(fieldInitListCtx);
+            }
         }
         return null;
     }
