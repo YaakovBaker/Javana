@@ -211,6 +211,8 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         //Set the context
         ctx.entry = recordTypeId;
         ctx.typeSpec = recordType;
+        //assign line number(s)
+        recordTypeId.appendLineNumber(ctx.getStart().getLine());
         return null;
     }
 
@@ -223,7 +225,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         //visit each field
         for(JavanaParser.TypeAssocContext typeAssocCtx : fields){
             visit(typeAssocCtx);
-            //Put each on a new slot?
+
         }
 
         recordSymTable.resetVariables(RECORD_FIELD);
@@ -260,6 +262,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         JavanaParser.NameListContext nameListCtx = ctx.namelst;
         List<JavanaParser.IdentifierContext> names = nameListCtx.names;
         visit(typeCtx);
+        Typespec typespecCtx = typeCtx.typeSpec;
         //For each Identifier in the NameList
         for(JavanaParser.IdentifierContext name : names){
             //Get the name
@@ -267,12 +270,15 @@ public class Semantics extends JavanaBaseVisitor<Object> {
             //Look up the name in the current stack
             SymTableEntry typeId = symTableStack.lookupLocal(typeAssocName);
             //There is something about "createRecordType" here in Pascal, need //TODO
+//            if( typespecCtx.getForm() == RECORD){
+//                typeId = symTableStack.enterLocal(typeAssocName, TYPE);
+//            }
 
             //If the typeId is null then lets create it
             if(typeId == null){
                 typeId = symTableStack.enterLocal(typeAssocName, TYPE);
                 typeId.setType(typeCtx.typeSpec);
-                typeCtx.typeSpec.setIdentifier(typeId);
+//                typeCtx.typeSpec.setIdentifier(typeId);
             }else{//Else we already declared this ident
                 error.flag(REDECLARED_IDENTIFIER, ctx);
             }
