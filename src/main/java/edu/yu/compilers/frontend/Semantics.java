@@ -189,7 +189,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     @Override
     public Object visitRecordDecl(JavanaParser.RecordDeclContext ctx){
         //Get the fields and name for the record
-        List<JavanaParser.TypeAssocContext> typeAssocCtxList = ctx.fields;
+        List<JavanaParser.TypeAssocContext> recordFields = ctx.fields;
         JavanaParser.IdentifierContext idCtx = ctx.name;
         //TODO
         //Pretty sure this is actually wrong... Ugh, look at createRecordType in Pascal and createRecordTypeSpec here
@@ -206,7 +206,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         recordType.setRecordTypePath(recordTypePath);
 
         // Enter the record fields into the record type's symbol table.
-        SymTable recordSymTable = createRecordSymTable(ctx.fields, recordTypeId);
+        SymTable recordSymTable = createRecordSymTable(recordFields, recordTypeId);
         recordType.setRecordSymTable(recordSymTable);
         //Set the context
         ctx.entry = recordTypeId;
@@ -222,7 +222,8 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         recordSymTable.setOwner(ownerId);
         //visit each field
         for(JavanaParser.TypeAssocContext typeAssocCtx : fields){
-            //TODO
+            visit(typeAssocCtx);
+            //Put each on a new slot?
         }
 
         recordSymTable.resetVariables(RECORD_FIELD);
