@@ -71,7 +71,6 @@ public class Converter extends JavanaBaseVisitor<Object> {
         // Main.
         code.emitLine();
         code.emitLine("public static void main(String[] args)");
-        code.emitLine("{");
         code.indent();
 
         // Allocate structured data.
@@ -82,8 +81,6 @@ public class Converter extends JavanaBaseVisitor<Object> {
         visit(ctx.mainMethod());
 
         code.dedent();
-        code.emitLine("}");
-
         code.dedent();
         code.emitLine("}");
 
@@ -128,13 +125,13 @@ public class Converter extends JavanaBaseVisitor<Object> {
         JavanaParser.ExpressionContext exprCtx = ctx.expression();
         String exprContextString =  (String) visit(exprCtx); //Should be good, must ensure return statement is not null
         Typespec typespec = exprCtx.typeSpec;
-        String javaType = typeNameTable.get(typespec.getIdentifier().getName());
+
 
         for(JavanaParser.IdentifierContext idCtx: namelistCtx.identifier()) {
-            String name = idCtx.entry.getName();
+            String name = idCtx.getText();
             code.emitStart();
             if (programVariables) code.emit("private static ");
-            code.emitEnd(javaType + " " + name + " = "
+            code.emitEnd("var " + name + " = "
                     + exprContextString + ";"); // Should be good
 
         }
@@ -146,8 +143,7 @@ public class Converter extends JavanaBaseVisitor<Object> {
     public Object visitTypeAssoc(JavanaParser.TypeAssocContext ctx) {
         JavanaParser.NameListContext nameListContext = ctx.nameList();
         JavanaParser.TypeContext typeSpecContext = ctx.type();
-        Typespec typespec = typeSpecContext.typeSpec;
-        String javaType = typeNameTable.get(typespec.getIdentifier().getName());
+        String javaType = typeNameTable.get(typeSpecContext.getText());
 
         for(JavanaParser.IdentifierContext idCtx: nameListContext.identifier()) {
             String name = idCtx.entry.getName();
@@ -159,17 +155,38 @@ public class Converter extends JavanaBaseVisitor<Object> {
         return null;
     }
 
+    private String visitTypeAssocForRecord(JavanaParser.TypeAssocContext ctx){
+        JavanaParser.NameListContext nameListContext = ctx.nameList();
+        JavanaParser.TypeContext typeSpecContext = ctx.type();
+        String javaType = typeNameTable.get(typeSpecContext.getText());
+        StringBuilder stringBuilder = new StringBuilder();
+        for(int i = 0; i< ctx.namelst.names.size(); i++) {
+            if(i!=0){
+                code.emit(", ");
+            }
+            JavanaParser.IdentifierContext idCtx = ctx.namelst.identifier(i);
+            String name = idCtx.entry.getName();
+            code.emitEnd(javaType + " " + name); // Should be good
+        }
+
+        return stringBuilder.toString();
+    }
+
     @Override
     public Object visitRecordDecl(JavanaParser.RecordDeclContext ctx) {
         JavanaParser.IdentifierContext identifierContext = ctx.identifier();
         code.emitStart();
-        code.emitEnd("static class " + identifierContext.entry.getName() + " {");
-        code.indent();
-        for(JavanaParser.TypeAssocContext typeAssocContext : ctx.fields){
-            visit(typeAssocContext); //Don't need to output code, it does it above
+        code.emit("public record " + identifierContext.getText());
+        code.emit("(");
+        for(int i = 0; i< ctx.fields.size(); i++){
+            if(i != 0){
+                code.emit(", ");
+            }
+            code.emit(visitTypeAssocForRecord(ctx.typeAssoc(i)));
         }
-        code.dedent();
-        code.emitLine("}");
+        code.emitEnd("){}");
+        code.emitLine();
+
         return null;
     }
 
@@ -380,9 +397,9 @@ public class Converter extends JavanaBaseVisitor<Object> {
     @Override
     public Object visitPrintLineStatement(JavanaParser.PrintLineStatementContext ctx) {
         if (ctx.arg != null) {
-            code.emit("System.out.printf(");
+            code.emit("System.out.printf");
             visit(ctx.arg);
-            code.emitEnd(");");
+            code.emitEnd(";");
         } else {
             code.emitEnd("System.out.println();");
         }
@@ -392,6 +409,7 @@ public class Converter extends JavanaBaseVisitor<Object> {
 
     @Override
     public Object visitPrintSingleValue(JavanaParser.PrintSingleValueContext ctx) {
+        //System.out.printf(("Point coordinates: ("+p.x+", "+p.y+")") - problem
         code.emit(ctx.getText());
         return null;
     }
