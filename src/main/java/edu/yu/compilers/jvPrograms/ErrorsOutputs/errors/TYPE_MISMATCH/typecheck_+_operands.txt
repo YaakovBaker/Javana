@@ -1,0 +1,6 @@
+
+===== SEMANTIC ERRORS =====
+
+Line Message                                  Found near
+---- -------                                  ----------
+003  Mismatched datatype                      "1+"hi""

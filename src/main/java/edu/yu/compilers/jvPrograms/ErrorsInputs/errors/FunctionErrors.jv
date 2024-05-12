@@ -1,0 +1,26 @@
+Javana Functions:
+    func myFunc(a: int, b: string) -> bool {
+        var c = a
+        println(a)
+        println(c)
+        println(b)
+        return false
+    }
+
+    func func2(a: int, b: string) -> bool {
+        return 1
+    }
+    @main() {
+
+        var a = "goodbye"
+        var b = 1
+        var c = myFunc(b, a)
+
+        a( )
+        b( )
+        c( )
+        myFunc(a, b, c)
+        println(c)
+    
+
+    }

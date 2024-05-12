@@ -1,0 +1,17 @@
+
+===== SEMANTIC ERRORS =====
+
+Line Message                                  Found near
+---- -------                                  ----------
+005  Mismatched datatype                      "1*"1""
+006  Mismatched datatype                      ""1"*1"
+007  Mismatched datatype                      "true*"1""
+011  Mismatched datatype                      "1/"1""
+012  Mismatched datatype                      ""1"/1"
+013  Mismatched datatype                      "true/"1""
+017  Mismatched datatype                      "1%"1""
+017  Redeclared identifier                    "d"
+018  Mismatched datatype                      ""1"%1"
+018  Redeclared identifier                    "e"
+019  Mismatched datatype                      "true%"1""
+019  Redeclared identifier                    "f"

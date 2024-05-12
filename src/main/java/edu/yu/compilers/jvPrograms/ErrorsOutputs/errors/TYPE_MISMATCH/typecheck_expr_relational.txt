@@ -1,0 +1,20 @@
+
+===== SEMANTIC ERRORS =====
+
+Line Message                                  Found near
+---- -------                                  ----------
+005  Mismatched datatype                      "1<"hi""
+006  Mismatched datatype                      "false<1"
+007  Mismatched datatype                      "true<"hi""
+011  Mismatched datatype                      "1>"hi""
+012  Mismatched datatype                      "false>1"
+013  Mismatched datatype                      "true>"hi""
+017  Mismatched datatype                      "1<="hi""
+017  Redeclared identifier                    "d"
+018  Mismatched datatype                      "false<=1"
+018  Redeclared identifier                    "e"
+019  Mismatched datatype                      "true<="hi""
+019  Redeclared identifier                    "f"
+023  Mismatched datatype                      "1>="hi""
+024  Mismatched datatype                      "false>=1"
+025  Mismatched datatype                      "true>="hi""

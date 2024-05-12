@@ -1,0 +1,14 @@
+Javana UndecIdent:
+    decl c : type1
+    decl b : int
+    record r1 {
+        a : type2
+        b : string
+    }
+    @main() {
+        a = 1
+        add()
+        a[1]
+        a.length
+        a.field
+    }

@@ -1,0 +1,11 @@
+
+===== SEMANTIC ERRORS =====
+
+Line Message                                  Found near
+---- -------                                  ----------
+005  Mismatched datatype                      "1+"1""
+006  Mismatched datatype                      ""1"+1"
+007  Mismatched datatype                      "true+"1""
+009  Mismatched datatype                      "1-"1""
+010  Mismatched datatype                      ""1"-1"
+011  Mismatched datatype                      "true-"1""

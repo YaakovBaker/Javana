@@ -1,0 +1,18 @@
+Javana SampleProgram:
+    decl a, b : type1
+
+    func add(x: type2, y: int) -> type3
+    {
+        var a = @type4[10]
+        return 1
+    }
+
+
+    @main () {
+        record b {
+            a : type1
+            b : type2
+            c : type3
+        }
+    }
+
