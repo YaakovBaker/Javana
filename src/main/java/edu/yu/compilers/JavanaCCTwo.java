@@ -2,13 +2,8 @@ package edu.yu.compilers;
 
 import antlr4.JavanaLexer;
 import antlr4.JavanaParser;
-import edu.yu.compilers.backend.compiler.Compiler;
-import edu.yu.compilers.backend.converter.Converter;
-import edu.yu.compilers.backend.interpreter.Executor;
 import edu.yu.compilers.frontend.Semantics;
 import edu.yu.compilers.frontend.SyntaxErrorHandler;
-import edu.yu.compilers.intermediate.symtable.SymTableEntry;
-import edu.yu.compilers.intermediate.util.ParseTreePrinter;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
@@ -17,7 +12,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Set;
 
 public class JavanaCCTwo {
 
@@ -28,11 +22,14 @@ public class JavanaCCTwo {
         String folderExample = "examplePrograms\\";
         String folderHangMan = "hangMan\\";
         String folderFinished = "finished\\";
-        String sourceFileName = laptop + pakage + folderExample + "ExampleRecordInitialization.jv";
+        String errorChecking = "ErrorsInputs\\errors\\TYPE_MISMATCH\\";
+        String sourceFileName = laptop + pakage + folderExample + "ExampleArrayAccess.jv";
         String hangMan = laptop + pakage + folderHangMan + "HangMan.jv";
         String finished = laptop + pakage + folderFinished + "ExampleFunctionWithArgs.jv";
+        String testingPath = laptop + pakage + errorChecking + "typecheck_expr_equality.jv";
         //sourceFileName = hangMan;
 //        sourceFileName = finished;
+        sourceFileName = testingPath;
 
         SyntaxErrorHandler syntaxErrorHandler = new SyntaxErrorHandler();
 
