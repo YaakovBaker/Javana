@@ -6,17 +6,18 @@ Javana ExampleArrayAccess:
         println("Element at index 0: " + arr[0])
         println("Element at index 1: " + arr[1])
     }
+
+    func createArr() -> INT_TYPE[] {
+            return @int[5]
+    }
+
     //Test ExprArrayElement
     func test() -> None {
             var arr = @int[5]
             arr[0] = 10
-            b = arr[0]
-            c = createArr()[5]
+            var b = arr[0]
+            var c = createArr()[5]
             c[0] = 15
             println("Element at index 0: " + arr[0])
             println("Element at index 0 for c: " + c[0])
-        }
-
-    func createArr() -> INT_TYPE[] {
-        return @int[5]
     }
