@@ -59,7 +59,6 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-
     @Override
     public Object visitProgramHeader(JavanaParser.ProgramHeaderContext ctx){
         JavanaParser.IdentifierContext idCtx = ctx.identifier();
@@ -72,7 +71,6 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         idCtx.entry = programId;
         return null;
     }
-
 
     @Override
     public Object visitMainMethod(JavanaParser.MainMethodContext ctx){
@@ -287,7 +285,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
             if(typeId == null){
                 typeId = symTableStack.enterLocal(typeAssocName, TYPE);
                 typeId.setType(typeCtx.typeSpec);
-//                typeCtx.typeSpec.setIdentifier(typeId);
+                typeCtx.typeSpec.setIdentifier(typeId);
             }else{//Else we already declared this ident
                 error.flag(REDECLARED_IDENTIFIER, ctx);
             }
@@ -410,38 +408,65 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         symTableStack.pop();
         return null;
     }
-
+    //Done
+    @Override
+    public Object visitNameDecl(JavanaParser.NameDeclContext ctx){
+        JavanaParser.NameDeclStatementContext nameDeclCtx = ctx.nameDeclStatement();
+        visit(nameDeclCtx);
+        ctx.typeSpec = nameDeclCtx.typeSpec;
+        return null;
+    }
+    //Done
+    @Override
+    public Object visitNameDeclDef(JavanaParser.NameDeclDefContext ctx){
+        JavanaParser.NameDeclDefStatementContext nameDeclDefCtx = ctx.nameDeclDefStatement();
+        visit(nameDeclDefCtx);
+        ctx.typeSpec = nameDeclDefCtx.typeSpec;
+        return null;
+    }
+    //Done
     @Override
     public Object visitAssignmentStatement(JavanaParser.AssignmentStatementContext ctx){
-        JavanaParser.VariableContext varCtx = ctx.var;
-        JavanaParser.ExpressionContext exprCtx = ctx.expr;
-        visit(varCtx);
-        visit(exprCtx);
+        JavanaParser.VariableContext lhs = ctx.var;
+        JavanaParser.ExpressionContext rhs = ctx.expr;
+        visit(lhs);
+        visit(rhs);
 
-        Typespec varType = varCtx.typeSpec;
-        Typespec exprType = exprCtx.typeSpec;
-
-        if( varCtx.entry == null ){
-            error.flag(SemanticErrorHandler.Code.UNDECLARED_IDENTIFIER, varCtx);
-        }
-        if( !TypeChecker.areAssignmentCompatible(varType, exprType)){
-            error.flag(SemanticErrorHandler.Code.INCOMPATIBLE_ASSIGNMENT, exprCtx);
+        Typespec lhsType = lhs.typeSpec;
+        Typespec rhsType = rhs.typeSpec;
+        //If the lhs is null then it's an undeclared identifier
+//        if( lhs.entry == null ){
+//            error.flag(SemanticErrorHandler.Code.UNDECLARED_IDENTIFIER, lhs);
+//        }
+        //Check if the type of the variable of the lhs can have the expression assigned to it
+        if( !TypeChecker.areAssignmentCompatible(lhsType, rhsType) ){
+            error.flag(SemanticErrorHandler.Code.INCOMPATIBLE_ASSIGNMENT, rhs);
         }
         return null;
     }
-
+    //Should be Done
     @Override
     public Object visitVariable(JavanaParser.VariableContext ctx) {
         JavanaParser.IdentifierContext idCtx = ctx.identifier();
         String varName = idCtx.getText();
+        //Look up the name in the current stack
         SymTableEntry varId = symTableStack.lookup(varName);
-        if( varId != null ){
+        if( varId != null ){//If the varId is not null then we found the variable
             int lineNumber = ctx.getStart().getLine();
             ctx.typeSpec = varId.getType();
             ctx.entry = varId;
             varId.appendLineNumber(lineNumber);
-        }else{
-            ctx.typeSpec = Predefined.undefinedType;
+
+            SymTableEntry.Kind kind = varId.getKind();
+            switch (kind) {
+                case TYPE, PROGRAM, PROGRAM_PARAMETER, PROCEDURE, UNDEFINED -> error.flag(SemanticErrorHandler.Code.INVALID_TYPE, ctx);
+                default -> {
+                }
+            }
+        }else{//Else we didn't find the variable
+            error.flag(SemanticErrorHandler.Code.UNDECLARED_IDENTIFIER, ctx);
+            ctx.typeSpec = Predefined.integerType;
+//            ctx.typeSpec = Predefined.undefinedType;
         }
         return null;
     }
@@ -740,12 +765,12 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    //TODO and the lower levels
+    //TODO
     @Override
     public Object visitExprReadChar(JavanaParser.ExprReadCharContext ctx) {
         return super.visitExprReadChar(ctx);
     }
-
+    //TODO
     @Override
     public Object visitExprReadLine(JavanaParser.ExprReadLineContext ctx) {
         return super.visitExprReadLine(ctx);

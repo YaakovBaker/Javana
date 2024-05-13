@@ -4,12 +4,25 @@ Javana TestAssignmentStatement:
     decl myBool: bool
     decl myString: string
 
+    decl myWrongInt: int
+    decl myWrongBool: bool
+    decl myWrongString: string
+
     @main() {
         myInt = 5
         myBool = true
         myString = "Hello, World!"
+        //Should all throw errors
+        myWrongInt = "5.5"
+        myWrongBool = 1
+        myWrongString = 5
+        //Undeclared identifier
+        bobInt = 5
+        //This isn't right now but should be declared into main's stack?
+        var bobby = 5
 
         print(myInt)
         print(myBool)
         print(myString)
+        print(bobby)
     }
