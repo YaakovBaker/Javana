@@ -643,9 +643,9 @@ public class Semantics extends JavanaBaseVisitor<Object> {
             ctx.typeSpec = Predefined.stringType;
         }
         //If at least one is a string then concat them
-        else if( TypeChecker.isString(leftType) || TypeChecker.isString(rightType) ){
-            ctx.typeSpec = Predefined.stringType;
-        }
+//        else if( TypeChecker.isString(leftType) || TypeChecker.isString(rightType) ){
+//            ctx.typeSpec = Predefined.stringType;
+//        }
         // Type mismatch.
         else {
             error.flag(TYPE_MISMATCH, ctx);
