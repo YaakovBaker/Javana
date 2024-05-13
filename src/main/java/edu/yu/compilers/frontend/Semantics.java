@@ -821,6 +821,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         visit(arrayElemTypeCtx);
         visit(arrIdCtx);
         newArrayCtx.typeSpec = arrayElemTypeCtx.typeSpec;
+        ctx.typeSpec = newArrayCtx.typeSpec;
         return null;
     }
 
@@ -946,7 +947,14 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    
+    @Override
+    public Object visitArrayElemType(JavanaParser.ArrayElemTypeContext ctx) {
+        JavanaParser.ScalarTypeContext scalarTypeCtx = ctx.scalarType();
+        visit(scalarTypeCtx);
+        ctx.typeSpec = scalarTypeCtx.typeSpec;
+        return null;
+    }
+
     @Override
     public Object visitIntegerArrType(JavanaParser.IntegerArrTypeContext ctx){
         ctx.typeSpec = Predefined.integerType;
