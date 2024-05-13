@@ -22,15 +22,17 @@ public class JavanaCCTwo {
         String folderExample = "examplePrograms\\";
         String folderHangMan = "hangMan\\";
         String folderFinished = "finished\\";
-        String errorChecking = "ErrorsInputs\\errors\\TYPE_MISMATCH\\";
-        String sourceFileName = laptop + pakage + folderExample + "ExampleArrayAccess.jv";
-        String hangMan = laptop + pakage + folderHangMan + "HangMan.jv";
-        String finished = laptop + pakage + folderFinished + "ExampleFunctionWithArgs.jv";
-        String testingPath = laptop + pakage + errorChecking + "typecheck_expr_equality.jv";
+        String errorChecking = "ErrorsInputs\\errors\\";
+        String typeMismatch = "TYPE_MISMATCH\\";
+        String sourceFileName = desktop + pakage + folderExample + "ExampleArrayAccess.jv";
+        String hangMan = desktop + pakage + folderHangMan + "HangMan.jv";
+        String finished = desktop + pakage + folderFinished + "TestAssignmentStatements.jv";
+        String testingPath = desktop + pakage + errorChecking + typeMismatch + "typecheck_expr_relational.jv";
+        String errorCheckingPath = desktop + pakage + errorChecking + "FunctionErrors.jv";
         //sourceFileName = hangMan;
 //        sourceFileName = finished;
-        sourceFileName = testingPath;
-
+//        sourceFileName = testingPath;
+        sourceFileName = errorCheckingPath;
         SyntaxErrorHandler syntaxErrorHandler = new SyntaxErrorHandler();
 
         var lexer = createLexer(sourceFileName, syntaxErrorHandler);

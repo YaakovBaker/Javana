@@ -49,6 +49,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     }
 
     // Program and routines --------------------
+    //Done
     @Override
     public Object visitProgram(JavanaParser.ProgramContext ctx){
         visit(ctx.programHeader());
@@ -58,7 +59,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         visit(ctx.mainMethod());
         return null;
     }
-
+    //Done
     @Override
     public Object visitProgramHeader(JavanaParser.ProgramHeaderContext ctx){
         JavanaParser.IdentifierContext idCtx = ctx.identifier();
@@ -71,15 +72,27 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         idCtx.entry = programId;
         return null;
     }
-
+    //Done
     @Override
     public Object visitMainMethod(JavanaParser.MainMethodContext ctx){
-        //EnterLocal for Main?
         String mainName = "@main";
-        SymTableEntry mainId = symTableStack.enterLocal(mainName, FUNCTION);
+        //See if we have a main method
+        SymTableEntry mainId = symTableStack.lookupLocal(mainName);
+        if( mainId != null ){
+            error.flag(SemanticErrorHandler.Code.REDECLARED_IDENTIFIER, ctx);
+            return null;
+        }
+        //Create the main method
+        mainId = symTableStack.enterLocal(mainName, FUNCTION);
         mainId.appendLineNumber(ctx.getStart().getLine());
         mainId.setRoutineCode(SymTableEntry.Routine.DECLARED);
+        ctx.entry = mainId;
+        //Append to the parent list
+        symTableStack.getLocalSymTable().getOwner().appendSubroutine(mainId);
         mainId.setRoutineSymTable(symTableStack.push());
+        ctx.entry = mainId;
+        //mainId.setType(Predefined.undefinedType);
+        symTableStack.getLocalSymTable().setOwner(mainId);
         JavanaParser.MainArgContext mArgCtx = ctx.mainArg();
         if( mArgCtx != null){
             visit(mArgCtx);
@@ -90,7 +103,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-
+    //Done
     @Override
     public Object visitMainArg(JavanaParser.MainArgContext ctx){
         JavanaParser.IdentifierContext idCtx = ctx.identifier();
@@ -103,7 +116,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     }
 
     // Function Definitions and Declarations ---
-    
+    //Done
     @Override
     public Object visitFuncDefinition(JavanaParser.FuncDefinitionContext ctx){
         JavanaParser.FuncPrototypeContext protoCtx = ctx.funcPrototype();
@@ -156,7 +169,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         symTableStack.pop();
         return null;
     }
-    
+    //Done
     @Override
     public Object visitFuncArgList(JavanaParser.FuncArgListContext ctx){
         ArrayList<SymTableEntry> argList = new ArrayList<>();
@@ -166,7 +179,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         }
         return argList;
     }
-
+    //Done
     @Override
     public Object visitFuncArgument(JavanaParser.FuncArgumentContext ctx){
         JavanaParser.TypeAssocContext typeAssocCtx = ctx.typeAssoc();
@@ -175,7 +188,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         ctx.entry = typeAssocCtx.namelst.names.get(0).entry;
         return ctx.entry;
     }
-    
+    //Done
     @Override
     public Object visitReturnType(JavanaParser.ReturnTypeContext ctx){
         String typeName = ctx.getText();
@@ -193,6 +206,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
 
 
     // Name Definitions and Declarations -------
+    //Done - double check eventually
     @Override
     public Object visitRecordDecl(JavanaParser.RecordDeclContext ctx){
         //Get the fields and name for the record
@@ -262,7 +276,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return path;
     }
 
-
+    //Should be done?
     @Override
     public Object visitTypeAssoc(JavanaParser.TypeAssocContext ctx) {
         JavanaParser.TypeContext typeCtx = ctx.t;
@@ -296,9 +310,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         }
         return null;
     }
-
-    //Did record Decl
-    
+    //Done
     @Override
     public Object visitVariableDecl(JavanaParser.VariableDeclContext ctx){
         JavanaParser.TypeAssocContext typeAssocCtx = ctx.assoc;
@@ -334,38 +346,54 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         }
         return null;
     }
-
+    //Done but var's in main are not being added under main
     @Override
     public Object visitVariableDef(JavanaParser.VariableDefContext ctx){
         JavanaParser.NameListContext nameListCtx = ctx.namelst;
+        //The names of the nameList
+        List<JavanaParser.IdentifierContext> names = nameListCtx.names;
+        //The Expression being evaluated
         JavanaParser.ExpressionContext exprCtx = ctx.expr;
         visit(exprCtx);
+        //The type of the expression
         Typespec exprType = exprCtx.typeSpec;
+
         //For Each name in the name List
-        for(JavanaParser.IdentifierContext idCtx : nameListCtx.names){
+        for(JavanaParser.IdentifierContext idCtx : names){
+            int lineNumber = idCtx.getStart().getLine();
             //Get the name
             String varName = idCtx.getText();
             //Look up the name in the current stack
             SymTableEntry varId = symTableStack.lookupLocal(varName);
             //If the varId is null then lets create it
             if( varId == null ){
+                //Create the variable
                 varId = symTableStack.enterLocal(varName, VARIABLE);
+                //Verify the variable got entered
+                if( varId == null ){
+                    System.err.println("Error: varId is null");
+                    return null;
+                }
+                //Set the type of the variable to the expression's type
                 varId.setType(exprType);
-                // Assign slot numbers to local variables.
+                //Assign slot numbers to local variables.
                 SymTable symTable = varId.getSymTable();
-                if (symTable.getNestingLevel() > 1) {
+                if( symTable.getNestingLevel() > 1 ){
                     varId.setSlotNumber(symTable.nextSlotNumber());
                 }
                 idCtx.entry = varId;
             }else{//Else we already declared this ident
-                error.flag(REDECLARED_IDENTIFIER, ctx);
+                error.flag(REDECLARED_IDENTIFIER, idCtx);
+                //Set the type of the variable to the expression's type
+                varId.setType(exprType);
+                idCtx.entry = varId;
             }
             //Append the line number
-            varId.appendLineNumber(ctx.getStart().getLine());
+            varId.appendLineNumber(lineNumber);
         }
         return null;
     }
-
+    //Done
     @Override
     public Object visitConstantDef(JavanaParser.ConstantDefContext ctx){
         JavanaParser.NameListContext nameListCtx = ctx.namelst;
@@ -398,7 +426,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     }
 
     // Statements ------------------------------
-    
+    //Done
     @Override
     public Object visitBlockStatement(JavanaParser.BlockStatementContext ctx){
         symTableStack.push();
@@ -470,18 +498,18 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         }
         return null;
     }
-
+    //Done
     @Override
     public Object visitArrIdxSpecifier(JavanaParser.ArrIdxSpecifierContext ctx){
         JavanaParser.ExpressionContext exprCtx = ctx.expr;
         visit(exprCtx);
-        if( exprCtx.typeSpec != Predefined.integerType){
+        if( !TypeChecker.isInteger(exprCtx.typeSpec) ){
             error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_INTEGER, ctx);
         }
         return null;
     }
 
-    
+    //Done
     @Override
     public Object visitIfStatement(JavanaParser.IfStatementContext ctx){
         JavanaParser.ExpressionContext exprCtx = ctx.condition;
@@ -499,6 +527,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
+    //Done
     @Override
     public Object visitForStatement(JavanaParser.ForStatementContext ctx){
         JavanaParser.VariableDefContext varDefCtx = ctx.init;
@@ -530,7 +559,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    
+    //Check
     @Override
     public Object visitWhileStatement(JavanaParser.WhileStatementContext ctx){
         JavanaParser.ExpressionContext conditionCtx = ctx.condition;
@@ -543,7 +572,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    //TODO - fix the routineId null problem
+    //Done
     @Override
     public Object visitReturnStatement(JavanaParser.ReturnStatementContext ctx){
         JavanaParser.ExpressionContext exprCtx = ctx.expr;
@@ -592,7 +621,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     }
 
 
-
+    //TODO - Test
     @Override
     public Object visitExprArrayLength(JavanaParser.ExprArrayLengthContext ctx) {
         JavanaParser.ExpressionContext exprCtx = ctx.expr;
@@ -606,6 +635,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
+    //TODO - Test
     @Override
     public Object visitExprRecordField(JavanaParser.ExprRecordFieldContext ctx) {
         JavanaParser.ExpressionContext exprCtx = ctx.expr;
@@ -628,24 +658,34 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    //May need to fix the error
+    //Done
     @Override
     public Object visitExprHigherArith(JavanaParser.ExprHigherArithContext ctx) {
         JavanaParser.ExpressionContext leftCtx = ctx.lhs;
         JavanaParser.ExpressionContext rightCtx = ctx.rhs;
         visit(leftCtx);
-        //Check if a scalar type like integer or real
-        if( leftCtx.typeSpec != Predefined.integerType ){
-            error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_INTEGER, leftCtx);
-        }
         visit(rightCtx);
-        //Check if a scalar type like integer or real
-        if( rightCtx.typeSpec != Predefined.integerType ){
-            error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_INTEGER, rightCtx);
+        //Get the types
+        Typespec leftType = leftCtx.typeSpec;
+        Typespec rightType = rightCtx.typeSpec;
+        // Both operands integer ==> integer result
+        if( TypeChecker.areBothInteger(leftType, rightType) ){
+            ctx.typeSpec = Predefined.integerType;
+        }
+        // Both real operands ==> real result
+        // One real and one integer operand ==> real result
+        else if( TypeChecker.isAtLeastOneReal(leftType, rightType) ){
+            ctx.typeSpec = Predefined.realType;
+        }
+        // Type mismatch.
+        else {
+            error.flag(TYPE_MISMATCH, ctx);
+            ctx.typeSpec = Predefined.integerType;
         }
         return null;
     }
 
+    //Done
     @Override
     public Object visitExprArith(JavanaParser.ExprArithContext ctx) {
         JavanaParser.ExpressionContext leftCtx = ctx.lhs;
@@ -667,10 +707,6 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         else if (TypeChecker.areBothString(leftType, rightType)) {
             ctx.typeSpec = Predefined.stringType;
         }
-        //If at least one is a string then concat them
-//        else if( TypeChecker.isString(leftType) || TypeChecker.isString(rightType) ){
-//            ctx.typeSpec = Predefined.stringType;
-//        }
         // Type mismatch.
         else {
             error.flag(TYPE_MISMATCH, ctx);
@@ -678,69 +714,54 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         }
         return null;
     }
-
+    //Done
     @Override
     public Object visitExprRelational(JavanaParser.ExprRelationalContext ctx) {
-        JavanaParser.ExpressionContext leftCtx = ctx.lhs;
-        JavanaParser.ExpressionContext rightCtx = ctx.rhs;
+        evaluateComparison(ctx.lhs, ctx.rhs, ctx);
+        return null;
+    }
+    //Done
+    @Override
+    public Object visitExprEquality(JavanaParser.ExprEqualityContext ctx) {
+        evaluateComparison(ctx.lhs, ctx.rhs, ctx);
+        return null;
+    }
+
+    private void evaluateComparison(JavanaParser.ExpressionContext leftCtx, JavanaParser.ExpressionContext rightCtx, JavanaParser.ExpressionContext ctx){
         visit(leftCtx);
-        //Check if a scalar type like integer or real
-        if( leftCtx.typeSpec != Predefined.integerType ){
-            error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_INTEGER, leftCtx);
-        }
         visit(rightCtx);
-        //Check if a scalar type like integer or real
-        if( rightCtx.typeSpec != Predefined.integerType ){
-            error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_INTEGER, rightCtx);
+        Typespec leftType = leftCtx.typeSpec;
+        Typespec rightType = rightCtx.typeSpec;
+        //Both operands must be the same type
+        if( !TypeChecker.areComparisonCompatible(leftType, rightType) ){
+            error.flag(TYPE_MISMATCH, ctx);
         }
         //Set the type of the expression
         ctx.typeSpec = Predefined.booleanType;
-        return null;
     }
-
-    @Override
-    public Object visitExprEquality(JavanaParser.ExprEqualityContext ctx) {
-        JavanaParser.ExpressionContext leftCtx = ctx.lhs;
-        JavanaParser.ExpressionContext rightCtx = ctx.rhs;
-        visit(leftCtx);
-        //Check if a scalar type like integer or real
-        if( leftCtx.typeSpec != Predefined.integerType ){
-            error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_INTEGER, leftCtx);
-        }
-        visit(rightCtx);
-        //Check if a scalar type like integer or real
-        if( rightCtx.typeSpec != Predefined.integerType ){
-            error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_INTEGER, rightCtx);
-        }
-        return null;
-    }
-
+    //Done
     @Override
     public Object visitExprHighLogical(JavanaParser.ExprHighLogicalContext ctx) {
-        JavanaParser.ExpressionContext leftCtx = ctx.lhs;
-        JavanaParser.ExpressionContext rightCtx = ctx.rhs;
-        visit(leftCtx);
-        visit(rightCtx);
-        Typespec leftType = leftCtx.typeSpec;
-        Typespec rightType = rightCtx.typeSpec;
-        if( TypeChecker.areBothBoolean(leftType, rightType)){
-            error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_BOOLEAN, ctx);
-        }
+        evaluateBooleanLogical(ctx.lhs, ctx.rhs, ctx);
+        return null;
+    }
+    //Done
+    @Override
+    public Object visitExprLowLogical(JavanaParser.ExprLowLogicalContext ctx) {
+        evaluateBooleanLogical(ctx.lhs, ctx.rhs, ctx);
         return null;
     }
 
-    @Override
-    public Object visitExprLowLogical(JavanaParser.ExprLowLogicalContext ctx) {
-        JavanaParser.ExpressionContext leftCtx = ctx.lhs;
-        JavanaParser.ExpressionContext rightCtx = ctx.rhs;
+    private void evaluateBooleanLogical(JavanaParser.ExpressionContext leftCtx, JavanaParser.ExpressionContext rightCtx, JavanaParser.ExpressionContext ctx){
         visit(leftCtx);
         visit(rightCtx);
         Typespec leftType = leftCtx.typeSpec;
         Typespec rightType = rightCtx.typeSpec;
-        if( TypeChecker.areBothBoolean(leftType, rightType)){
+        if( !TypeChecker.areBothBoolean(leftType, rightType)){
             error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_BOOLEAN, ctx);
         }
-        return null;
+        //Set the type of the expression
+        ctx.typeSpec = Predefined.booleanType;
     }
 
     @Override
@@ -750,6 +771,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         if( exprCtx.typeSpec != Predefined.booleanType){
             error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_BOOLEAN, ctx);
         }
+        ctx.typeSpec = Predefined.booleanType;
         return null;
     }
 
