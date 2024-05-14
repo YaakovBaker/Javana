@@ -598,8 +598,37 @@ public class Semantics extends JavanaBaseVisitor<Object> {
 
     //TODO
     @Override
+    public Object visitPrintStatement(JavanaParser.PrintStatementContext ctx){
+        JavanaParser.PrintArgumentContext printArgCtx = ctx.printArgument();
+        visit(printArgCtx);
+        return null;
+    }
+
+    //TODO
+    @Override
+    public Object visitPrintLineStatement(JavanaParser.PrintLineStatementContext ctx){
+        JavanaParser.PrintArgumentContext printArgCtx = ctx.printArgument();
+        if( printArgCtx != null ){
+            visit(printArgCtx);
+        }
+        return null;
+    }
+
+    //TODO
+    @Override
+    public Object visitPrintSingleValue(JavanaParser.PrintSingleValueContext ctx){
+        JavanaParser.ExpressionContext exprCtx = ctx.expression();
+        visit(exprCtx);
+
+        return null;
+    }
+
+    //TODO
+    @Override
     public Object visitFormattedPrint(JavanaParser.FormattedPrintContext ctx) {
-        return super.visitFormattedPrint(ctx);
+        JavanaParser.ExprListContext exprListCtx = ctx.exprList();
+        visit(exprListCtx);
+        return null;
     }
 
 
