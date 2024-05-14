@@ -619,7 +619,6 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     public Object visitPrintSingleValue(JavanaParser.PrintSingleValueContext ctx){
         JavanaParser.ExpressionContext exprCtx = ctx.expression();
         visit(exprCtx);
-
         return null;
     }
 
@@ -819,12 +818,20 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     //TODO
     @Override
     public Object visitExprReadChar(JavanaParser.ExprReadCharContext ctx) {
-        return super.visitExprReadChar(ctx);
+        JavanaParser.ReadCharCallContext readCharCtx = ctx.readCharCall();
+        String readCharName = readCharCtx.getText();
+        SymTableEntry readCharId = symTableStack.lookup(readCharName);
+
+        return null;
     }
     //TODO
     @Override
     public Object visitExprReadLine(JavanaParser.ExprReadLineContext ctx) {
-        return super.visitExprReadLine(ctx);
+        JavanaParser.ReadLineCallContext readLineCtx = ctx.readLineCall();
+        String readCharName = readLineCtx.getText();
+        SymTableEntry readCharId = symTableStack.lookup(readCharName);
+
+        return null;
     }
 
     @Override
