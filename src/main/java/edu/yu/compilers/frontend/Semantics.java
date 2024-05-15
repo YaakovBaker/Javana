@@ -601,7 +601,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         }
         Typespec routineType = routineId.getType();
         //Compare and see if we have a type mismatch or not
-        if( !TypeChecker.areAssignmentCompatible(routineType, returnType)){
+        if( !TypeChecker.areComparisonCompatible(routineType, returnType) ){//Have to adjust to a proper .equals
             error.flag(SemanticErrorHandler.Code.TYPE_MISMATCH, ctx);
         }
         return null;
@@ -920,16 +920,13 @@ public class Semantics extends JavanaBaseVisitor<Object> {
 
     @Override
     public Object visitExprNewArray(JavanaParser.ExprNewArrayContext ctx) {
-        JavanaParser.NewArrayContext newArrayCtx = ctx.newArray();
-        JavanaParser.ArrayElemTypeContext arrayElemTypeCtx = newArrayCtx.t;
-        JavanaParser.ArrIdxSpecifierContext arrIdCtx = newArrayCtx.arrIdxSpecifier();
+        JavanaParser.ArrayElemTypeContext arrayElemTypeCtx = ctx.newArray().t;
+        JavanaParser.ArrIdxSpecifierContext arrIdCtx = ctx.newArray().arrId;
+        //Visit The Array Element type and set the typeSpec accordingly
         visit(arrayElemTypeCtx);
+        ctx.typeSpec = arrayElemTypeCtx.typeSpec;
+        //Evaluate the array index specifier and its expression
         visit(arrIdCtx);
-        newArrayCtx.typeSpec = arrayElemTypeCtx.typeSpec;
-        ctx.typeSpec = newArrayCtx.typeSpec;
-
-
-
         return null;
     }
 
@@ -997,7 +994,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
             visit(strTypeCtx);
             ctx.typeSpec = strTypeCtx.typeSpec;
         }else {
-            ctx.typeSpec = Predefined.undefinedType;
+            ctx.typeSpec = Predefined.undefinedType;//Shouldn't happen
         }
         return null;
     }
@@ -1058,35 +1055,56 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     @Override
     public Object visitArrayElemType(JavanaParser.ArrayElemTypeContext ctx) {
         JavanaParser.ScalarTypeContext scalarTypeCtx = ctx.scalarType();
-        visit(scalarTypeCtx);
-        ctx.typeSpec = scalarTypeCtx.typeSpec;
+        JavanaParser.IdentifierContext idCtx = ctx.identifier();
+        ctx.typeSpec = new Typespec(ARRAY);
+        ctx.typeSpec.setArrayIndexType(Predefined.integerType);
+        if( scalarTypeCtx != null ){
+            visit(scalarTypeCtx);
+            ctx.typeSpec.setArrayElementType(scalarTypeCtx.typeSpec);
+        }else if( idCtx != null ){
+            visit(idCtx);
+            if( idCtx.entry != null ){
+                ctx.typeSpec.setArrayElementType(idCtx.entry.getType());
+            }else{
+                error.flag(SemanticErrorHandler.Code.UNDECLARED_IDENTIFIER, idCtx);
+                ctx.typeSpec.setArrayElementType(Predefined.undefinedType);
+            }
+        }
         return null;
     }
 
     @Override
     public Object visitIntegerArrType(JavanaParser.IntegerArrTypeContext ctx){
-        ctx.typeSpec = Predefined.integerType;
+        ctx.typeSpec = new Typespec(ARRAY);
+        ctx.typeSpec.setArrayIndexType(Predefined.integerType);
+        ctx.typeSpec.setArrayElementType(Predefined.integerType);
         return null;
     }
 
     
     @Override
     public Object visitBooleanArrType(JavanaParser.BooleanArrTypeContext ctx){
-        ctx.typeSpec = Predefined.booleanType;
+        ctx.typeSpec = new Typespec(ARRAY);
+        ctx.typeSpec.setArrayIndexType(Predefined.integerType);
+        ctx.typeSpec.setArrayElementType(Predefined.booleanType);
         return null;
     }
 
     
     @Override
     public Object visitStringArrType(JavanaParser.StringArrTypeContext ctx){
-        ctx.typeSpec = Predefined.stringType;
+        ctx.typeSpec = new Typespec(ARRAY);
+        ctx.typeSpec.setArrayIndexType(Predefined.integerType);
+        ctx.typeSpec.setArrayElementType(Predefined.stringType);
         return null;
     }
 
     
     @Override
     public Object visitRecordArrType(JavanaParser.RecordArrTypeContext ctx){
-        ctx.typeSpec = Predefined.undefinedType;
+        ctx.typeSpec = new Typespec(ARRAY);
+        ctx.typeSpec.setArrayIndexType(Predefined.integerType);
+        ctx.typeSpec.setArrayElementType(Predefined.undefinedType);
         return null;
     }
 
@@ -1094,8 +1112,15 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     
     @Override
     public Object visitIdentifier(JavanaParser.IdentifierContext ctx){
-        ctx.typeSpec = Predefined.undefinedType;
-        ctx.entry = symTableStack.lookup(ctx.getText());
+        SymTableEntry idEntry = symTableStack.lookup(ctx.getText());
+        if( idEntry == null ){
+            error.flag(SemanticErrorHandler.Code.UNDECLARED_IDENTIFIER, ctx);
+            ctx.typeSpec = Predefined.undefinedType;
+        }else{
+            ctx.typeSpec = idEntry.getType();
+            ctx.entry = idEntry;
+        }
         return null;
     }
+
 }

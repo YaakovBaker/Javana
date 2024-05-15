@@ -206,7 +206,7 @@ functionCall
     ; //Done
 
 newArray locals [Typespec typeSpec= null ]
-    : '@' t=arrayElemType arrIdxSpecifier
+    : '@' t=arrayElemType arrId=arrIdxSpecifier
     ; //Done
 
 arrayElemType locals [Typespec typeSpec= null ]

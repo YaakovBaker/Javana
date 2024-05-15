@@ -32,7 +32,7 @@ public class JavanaCCTwo {
         //sourceFileName = hangMan;
 //        sourceFileName = finished;
 //        sourceFileName = testingPath;
-        sourceFileName = errorCheckingPath;
+//        sourceFileName = errorCheckingPath;
         SyntaxErrorHandler syntaxErrorHandler = new SyntaxErrorHandler();
 
         var lexer = createLexer(sourceFileName, syntaxErrorHandler);

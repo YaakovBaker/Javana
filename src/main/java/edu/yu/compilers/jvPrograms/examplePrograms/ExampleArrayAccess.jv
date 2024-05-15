@@ -7,7 +7,7 @@ Javana ExampleArrayAccess:
         println("Element at index 1: " + arr[1])
     }
 
-    func createArr() -> INT_TYPE[] {
+    func createArr() -> int[] {
             return @int[5]
     }
 

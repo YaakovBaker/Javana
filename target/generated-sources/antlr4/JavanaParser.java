@@ -2766,11 +2766,12 @@ public class JavanaParser extends Parser {
 	public static class NewArrayContext extends ParserRuleContext {
 		public Typespec typeSpec = null;
 		public ArrayElemTypeContext t;
-		public ArrIdxSpecifierContext arrIdxSpecifier() {
-			return getRuleContext(ArrIdxSpecifierContext.class,0);
-		}
+		public ArrIdxSpecifierContext arrId;
 		public ArrayElemTypeContext arrayElemType() {
 			return getRuleContext(ArrayElemTypeContext.class,0);
+		}
+		public ArrIdxSpecifierContext arrIdxSpecifier() {
+			return getRuleContext(ArrIdxSpecifierContext.class,0);
 		}
 		public NewArrayContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -2794,7 +2795,7 @@ public class JavanaParser extends Parser {
 			setState(374);
 			((NewArrayContext)_localctx).t = arrayElemType();
 			setState(375);
-			arrIdxSpecifier();
+			((NewArrayContext)_localctx).arrId = arrIdxSpecifier();
 			}
 		}
 		catch (RecognitionException re) {
