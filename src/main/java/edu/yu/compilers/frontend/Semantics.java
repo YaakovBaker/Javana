@@ -595,14 +595,10 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         //Check the current stack frame's routineIdType
         int nestingLevel = symTableStack.getLocalSymTable().getNestingLevel();
         SymTableEntry routineId = symTableStack.get(nestingLevel - 1).getOwner();
-        if (routineId == null) {
-            System.err.println("Error: routineId is null");
-            return null;
-        }
         Typespec routineType = routineId.getType();
         //Compare and see if we have a type mismatch or not
-        if( !TypeChecker.areComparisonCompatible(routineType, returnType) ){//Have to adjust to a proper .equals
-            error.flag(SemanticErrorHandler.Code.TYPE_MISMATCH, ctx);
+        if( !TypeChecker.areAssignmentCompatible(routineType, returnType) ){//Have to adjust to a proper .equals
+            error.flag(SemanticErrorHandler.Code.INVALID_RETURN_TYPE, exprCtx);
         }
         return null;
     }
