@@ -69,7 +69,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
 
         symTableStack.setProgramId(programId);
         symTableStack.getLocalSymTable().setOwner(programId);
-        idCtx.entry = programId;
+        ctx.entry = programId;
         return null;
     }
     //Done
@@ -206,18 +206,31 @@ public class Semantics extends JavanaBaseVisitor<Object> {
 
 
     // Name Definitions and Declarations -------
-    //Done - double check eventually
+    //Done
     @Override
     public Object visitRecordDecl(JavanaParser.RecordDeclContext ctx){
         //Get the fields and name for the record
         List<JavanaParser.TypeAssocContext> recordFields = ctx.fields;
         JavanaParser.IdentifierContext idCtx = ctx.name;
-        //TODO
-        //Pretty sure this is actually wrong... Ugh, look at createRecordType in Pascal and createRecordTypeSpec here
-        //Create the record's type
         String recordTypeName = idCtx.getText();
-        Typespec recordType = new Typespec(RECORD);
+        //Look up our record
+        SymTableEntry recordTypeId = symTableStack.lookupLocal(recordTypeName);
+        if( recordTypeId == null ){
+            recordTypeId = createRecordType(recordFields, recordTypeName);
+        }else{
+            error.flag(REDECLARED_IDENTIFIER, ctx);
+        }
+        //Set the context
+        ctx.entry = recordTypeId;
+        ctx.typeSpec = recordTypeId.getType();
+        //assign line number(s)
+        recordTypeId.appendLineNumber(ctx.getStart().getLine());
+        return null;
+    }
 
+    //Done
+    private SymTableEntry createRecordType( List<JavanaParser.TypeAssocContext> recordFields, String recordTypeName) {
+        Typespec recordType = new Typespec(RECORD);
         //Enter the record type into the symbol table
         SymTableEntry recordTypeId = symTableStack.enterLocal(recordTypeName, TYPE);
         recordTypeId.setType(recordType);
@@ -225,33 +238,34 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         //Create the record type path
         String recordTypePath = createRecordTypePath(recordType);
         recordType.setRecordTypePath(recordTypePath);
-
         // Enter the record fields into the record type's symbol table.
         SymTable recordSymTable = createRecordSymTable(recordFields, recordTypeId);
         recordType.setRecordSymTable(recordSymTable);
-        //Set the context
-        ctx.entry = recordTypeId;
-        ctx.typeSpec = recordType;
-        //assign line number(s)
-        recordTypeId.appendLineNumber(ctx.getStart().getLine());
-        return null;
+        return recordTypeId;
     }
+    
 
-    //TODO
+    //Done
     private SymTable createRecordSymTable(List<JavanaParser.TypeAssocContext> fields, SymTableEntry ownerId) {
-
         SymTable recordSymTable = symTableStack.push();
-
         recordSymTable.setOwner(ownerId);
         //visit each field
         for(JavanaParser.TypeAssocContext typeAssocCtx : fields){
-            visit(typeAssocCtx);
+            //Deal with TypeAssoc here since can't deal with it there
+            for(JavanaParser.IdentifierContext idCtx : typeAssocCtx.namelst.names){
+                String fieldName = idCtx.getText();
+                SymTableEntry fieldId = recordSymTable.lookup(fieldName);
+                if( fieldId != null ){
+                    error.flag(REDECLARED_IDENTIFIER, idCtx);
+                }
 
+                fieldId = recordSymTable.enter(fieldName, RECORD_FIELD);
+                fieldId.setType(typeAssocCtx.t.typeSpec);
+                fieldId.appendLineNumber(idCtx.getStart().getLine());
+            }
         }
-
         recordSymTable.resetVariables(RECORD_FIELD);
         symTableStack.pop();
-
         return recordSymTable;
 
     }
@@ -262,6 +276,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
      * @param recordType the record type.
      * @return the pathname.
      */
+    //Done
     private String createRecordTypePath(Typespec recordType) {
         SymTableEntry recordId = recordType.getIdentifier();
         SymTableEntry parentId = recordId.getSymTable().getOwner();
@@ -283,17 +298,13 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         JavanaParser.NameListContext nameListCtx = ctx.namelst;
         List<JavanaParser.IdentifierContext> names = nameListCtx.names;
         visit(typeCtx);
-        Typespec typespecCtx = typeCtx.typeSpec;
+        Typespec typespec = typeCtx.typeSpec;
         //For each Identifier in the NameList
         for(JavanaParser.IdentifierContext name : names){
             //Get the name
             String typeAssocName = name.getText();
             //Look up the name in the current stack
             SymTableEntry typeId = symTableStack.lookupLocal(typeAssocName);
-            //There is something about "createRecordType" here in Pascal, need //TODO
-//            if( typespecCtx.getForm() == RECORD){
-//                typeId = symTableStack.enterLocal(typeAssocName, TYPE);
-//            }
 
             //If the typeId is null then lets create it
             if(typeId == null){
@@ -635,35 +646,42 @@ public class Semantics extends JavanaBaseVisitor<Object> {
 
     // Expressions -----------------------------
 
-    //Currently working on
+    //Done
     @Override
     public Object visitExprArrayElement(JavanaParser.ExprArrayElementContext ctx) {
         JavanaParser.ExpressionContext exprCtx = ctx.expr;
         JavanaParser.ArrIdxSpecifierContext arrIdxCtx = ctx.arrIdx;
-        visit(exprCtx);
-        //This expression should return an array c = arrayReturn()[5]
-
         visit(arrIdxCtx);
-        //I feel like there is more to this. This expression should return an array
+        //Index must be int
+        if( arrIdxCtx.expr.typeSpec != Predefined.integerType){
+            error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_INTEGER, arrIdxCtx);
+        }
+        visit(exprCtx);
+        //Expression should be an array type
+        if( exprCtx.typeSpec.getForm() != ARRAY){
+            error.flag(SemanticErrorHandler.Code.INVALID_TYPE, exprCtx);
+        }
+        //Set the type of the expression
+        ctx.typeSpec = exprCtx.typeSpec.getArrayElementType();
         return null;
     }
 
 
-    //TODO - Test
+    //Done
     @Override
     public Object visitExprArrayLength(JavanaParser.ExprArrayLengthContext ctx) {
         JavanaParser.ExpressionContext exprCtx = ctx.expr;
         visit(exprCtx);
         //This expression should return an array
         Typespec exprType = exprCtx.typeSpec;
-        //THis should be an array
-        if( exprType.getForm() != ARRAY){
-            error.flag(SemanticErrorHandler.Code.INVALID_TYPE, ctx);
+        //This should be an array
+        if( exprType != null && exprType.getForm() != ARRAY){
+            error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_ARRAY, exprCtx);
         }
         return null;
     }
 
-    //TODO - Test
+    //Done-ish
     @Override
     public Object visitExprRecordField(JavanaParser.ExprRecordFieldContext ctx) {
         JavanaParser.ExpressionContext exprCtx = ctx.expr;
@@ -673,16 +691,20 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         Typespec exprType = exprCtx.typeSpec;
         //THis should be a record
         if( exprType.getForm() != RECORD){
-            error.flag(SemanticErrorHandler.Code.INVALID_TYPE, ctx);
+            error.flag(SemanticErrorHandler.Code.INVALID_TYPE, exprCtx);
+        }else{
+            //Check if the field exists
+//            SymTable recordSymTable = exprType.getRecordSymTable();
+            SymTableEntry recordId = exprType.getIdentifier();
+            SymTable recordSymTable = recordId.getSymTable();
+            SymTableEntry fieldId = recordSymTable.lookup(idCtx.getText());
+            if( fieldId == null ){
+                error.flag(SemanticErrorHandler.Code.UNDECLARED_IDENTIFIER, ctx);
+                ctx.typeSpec = Predefined.undefinedType;
+            }else{
+                ctx.typeSpec = fieldId.getType();
+            }
         }
-        //Check if the field exists
-        SymTableEntry recordId = exprType.getIdentifier();
-        SymTable recordSymTable = recordId.getSymTable();
-        SymTableEntry fieldId = recordSymTable.lookup(idCtx.getText());
-        if( fieldId == null ){
-            error.flag(SemanticErrorHandler.Code.UNDECLARED_IDENTIFIER, ctx);
-        }
-        idCtx.entry = fieldId;
         return null;
     }
 
@@ -905,6 +927,9 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         visit(arrIdCtx);
         newArrayCtx.typeSpec = arrayElemTypeCtx.typeSpec;
         ctx.typeSpec = newArrayCtx.typeSpec;
+
+
+
         return null;
     }
 

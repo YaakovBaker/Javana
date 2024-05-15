@@ -13,7 +13,7 @@ program
     : hdr=programHeader defs+=globalDefinitions* main=mainMethod defs+=globalDefinitions*
     ; //Done
 
-programHeader
+programHeader locals [ SymTableEntry entry = null ]
     : 'Javana' name=identifier ':'
     ; //Done
 

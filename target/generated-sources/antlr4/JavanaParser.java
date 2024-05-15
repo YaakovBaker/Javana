@@ -223,6 +223,7 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class ProgramHeaderContext extends ParserRuleContext {
+		public SymTableEntry entry = null;
 		public IdentifierContext name;
 		public IdentifierContext identifier() {
 			return getRuleContext(IdentifierContext.class,0);
