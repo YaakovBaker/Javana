@@ -124,12 +124,12 @@ variable locals [ SymTableEntry entry = null, Typespec typeSpec = null]
     : name=identifier modifiers+=varModifier*
     ; //Done
 
-varModifier
+varModifier locals [ SymTableEntry entry = null, Typespec typeSpec = null]
     : arrIdxSpecifier
     | '.' identifier
     ; //Handled in variable
 
-arrIdxSpecifier
+arrIdxSpecifier locals [ SymTableEntry entry = null, Typespec typeSpec = null]
     : '[' expr=expression ']'
     ; //Must be handled in other places, it is handled in variable
 

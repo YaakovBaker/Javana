@@ -1496,6 +1496,8 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class VarModifierContext extends ParserRuleContext {
+		public SymTableEntry entry = null;
+		public Typespec typeSpec = null;
 		public ArrIdxSpecifierContext arrIdxSpecifier() {
 			return getRuleContext(ArrIdxSpecifierContext.class,0);
 		}
@@ -1553,6 +1555,8 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class ArrIdxSpecifierContext extends ParserRuleContext {
+		public SymTableEntry entry = null;
+		public Typespec typeSpec = null;
 		public ExpressionContext expr;
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);

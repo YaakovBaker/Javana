@@ -13,8 +13,7 @@ import edu.yu.compilers.intermediate.util.CrossReferencer;
 import java.util.ArrayList;
 import java.util.List;
 
-import static edu.yu.compilers.frontend.SemanticErrorHandler.Code.REDECLARED_IDENTIFIER;
-import static edu.yu.compilers.frontend.SemanticErrorHandler.Code.TYPE_MISMATCH;
+import static edu.yu.compilers.frontend.SemanticErrorHandler.Code.*;
 import static edu.yu.compilers.intermediate.symtable.SymTableEntry.Kind.*;
 import static edu.yu.compilers.intermediate.type.Typespec.Form.*;
 
@@ -477,9 +476,13 @@ public class Semantics extends JavanaBaseVisitor<Object> {
 //        if( lhs.entry == null ){
 //            error.flag(SemanticErrorHandler.Code.UNDECLARED_IDENTIFIER, lhs);
 //        }
+        //If LHS is an array element then we need to get the array element type
+        if( lhsType.getForm() == ARRAY ){
+            lhsType = lhsType.getArrayElementType();
+        }
         //Check if the type of the variable of the lhs can have the expression assigned to it
         if( !TypeChecker.areAssignmentCompatible(lhsType, rhsType) ){
-            error.flag(SemanticErrorHandler.Code.INCOMPATIBLE_ASSIGNMENT, rhs);
+            error.flag(SemanticErrorHandler.Code.ILLEGAL_ASSIGNMENT, rhs);
         }
         return null;
     }
@@ -509,14 +512,16 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         }
         return null;
     }
+
     //Done
     @Override
     public Object visitArrIdxSpecifier(JavanaParser.ArrIdxSpecifierContext ctx){
         JavanaParser.ExpressionContext exprCtx = ctx.expr;
         visit(exprCtx);
         if( !TypeChecker.isInteger(exprCtx.typeSpec) ){
-            error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_INTEGER, ctx);
+            error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_INTEGER, exprCtx);
         }
+        ctx.typeSpec = exprCtx.typeSpec;
         return null;
     }
 
@@ -597,8 +602,15 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         SymTableEntry routineId = symTableStack.get(nestingLevel - 1).getOwner();
         Typespec routineType = routineId.getType();
         //Compare and see if we have a type mismatch or not
-        if( !TypeChecker.areAssignmentCompatible(routineType, returnType) ){//Have to adjust to a proper .equals
-            error.flag(SemanticErrorHandler.Code.INVALID_RETURN_TYPE, exprCtx);
+        //If our form is array then we need to check the array element type
+        if( routineType.getForm() == ARRAY ){
+            if( !TypeChecker.areAssignmentCompatible(routineType.getArrayElementType(), returnType.getArrayElementType()) ){
+                error.flag(SemanticErrorHandler.Code.INVALID_RETURN_TYPE, exprCtx);
+            }
+        }else{
+            if( !TypeChecker.areAssignmentCompatible(routineType, returnType) ){
+                error.flag(SemanticErrorHandler.Code.INVALID_RETURN_TYPE, exprCtx);
+            }
         }
         return null;
     }
@@ -872,6 +884,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
+    //Done?
     @Override
     public Object visitExprVariable(JavanaParser.ExprVariableContext ctx) {
         JavanaParser.VariableContext varCtx = ctx.variable();
@@ -880,6 +893,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
+    //Done
     @Override
     public Object visitExprLiteral(JavanaParser.ExprLiteralContext ctx) {
         JavanaParser.LiteralContext litCtx = ctx.literal();
@@ -889,24 +903,26 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     }
 
     //Literals
+    //Done
     @Override
     public Object visitIntegerLiteral(JavanaParser.IntegerLiteralContext ctx) {
         ctx.typeSpec = Predefined.integerType;
         return null;
     }
 
+    //Done
     @Override
     public Object visitBooleanLiteral(JavanaParser.BooleanLiteralContext ctx) {
         ctx.typeSpec = Predefined.booleanType;
         return null;
     }
-
+    //Done
     @Override
     public Object visitStringLiteral(JavanaParser.StringLiteralContext ctx) {
         ctx.typeSpec = Predefined.stringType;
         return null;
     }
-
+    //Done
     @Override
     public Object visitNoneValue(JavanaParser.NoneValueContext ctx) {
         ctx.typeSpec = Predefined.undefinedType;
@@ -916,13 +932,12 @@ public class Semantics extends JavanaBaseVisitor<Object> {
 
     @Override
     public Object visitExprNewArray(JavanaParser.ExprNewArrayContext ctx) {
-        JavanaParser.ArrayElemTypeContext arrayElemTypeCtx = ctx.newArray().t;
-        JavanaParser.ArrIdxSpecifierContext arrIdCtx = ctx.newArray().arrId;
         //Visit The Array Element type and set the typeSpec accordingly
-        visit(arrayElemTypeCtx);
+        JavanaParser.ArrayElemTypeContext arrayElemTypeCtx = ctx.newArray().t;
+        visit(ctx.newArray().t);
+        //Evaluate the array index specifier
+        visit(ctx.newArray().arrId);
         ctx.typeSpec = arrayElemTypeCtx.typeSpec;
-        //Evaluate the array index specifier and its expression
-        visit(arrIdCtx);
         return null;
     }
 
@@ -1052,17 +1067,25 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     public Object visitArrayElemType(JavanaParser.ArrayElemTypeContext ctx) {
         JavanaParser.ScalarTypeContext scalarTypeCtx = ctx.scalarType();
         JavanaParser.IdentifierContext idCtx = ctx.identifier();
+        //Set the array index type to integer
         ctx.typeSpec = new Typespec(ARRAY);
         ctx.typeSpec.setArrayIndexType(Predefined.integerType);
+        //If the scalarTypeCtx is not null then we have a scalar type to visit
         if( scalarTypeCtx != null ){
             visit(scalarTypeCtx);
             ctx.typeSpec.setArrayElementType(scalarTypeCtx.typeSpec);
         }else if( idCtx != null ){
-            visit(idCtx);
-            if( idCtx.entry != null ){
-                ctx.typeSpec.setArrayElementType(idCtx.entry.getType());
+            //Search symbol table for the identifier that is the type in question
+            SymTableEntry idEntry = symTableStack.lookup(idCtx.getText());
+            if( idEntry != null ){
+                if( idEntry.getKind() == TYPE ){
+                    ctx.typeSpec.setArrayElementType(idEntry.getType());
+                }else{
+                    error.flag(SemanticErrorHandler.Code.INVALID_TYPE, idCtx);
+                    ctx.typeSpec.setArrayElementType(Predefined.undefinedType);
+                }
             }else{
-                error.flag(SemanticErrorHandler.Code.UNDECLARED_IDENTIFIER, idCtx);
+                error.flag(SemanticErrorHandler.Code.INVALID_TYPE, idCtx);
                 ctx.typeSpec.setArrayElementType(Predefined.undefinedType);
             }
         }
