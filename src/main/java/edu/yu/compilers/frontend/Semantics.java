@@ -309,7 +309,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
             if(typeId == null){
                 typeId = symTableStack.enterLocal(typeAssocName, TYPE);
                 typeId.setType(typeCtx.typeSpec);
-                typeCtx.typeSpec.setIdentifier(typeId);
+//                typeCtx.typeSpec.setIdentifier(typeId);
             }else{//Else we already declared this ident
                 error.flag(REDECLARED_IDENTIFIER, ctx);
             }
@@ -499,12 +499,12 @@ public class Semantics extends JavanaBaseVisitor<Object> {
             ctx.entry = varId;
             varId.appendLineNumber(lineNumber);
 
-            SymTableEntry.Kind kind = varId.getKind();
-            switch (kind) {
-                case TYPE, PROGRAM, PROGRAM_PARAMETER, PROCEDURE, UNDEFINED -> error.flag(SemanticErrorHandler.Code.INVALID_TYPE, ctx);
-                default -> {
-                }
-            }
+//            SymTableEntry.Kind kind = varId.getKind();
+//            switch (kind) {
+//                case TYPE, PROGRAM, PROGRAM_PARAMETER, PROCEDURE, UNDEFINED -> error.flag(SemanticErrorHandler.Code.INVALID_TYPE, ctx);
+//                default -> {
+//                }
+//            }
         }else{//Else we didn't find the variable
             error.flag(SemanticErrorHandler.Code.UNDECLARED_IDENTIFIER, ctx);
             ctx.typeSpec = Predefined.integerType;
@@ -644,7 +644,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    //TODO
+    //
     @Override
     public Object visitPrintSingleValue(JavanaParser.PrintSingleValueContext ctx){
         JavanaParser.ExpressionContext exprCtx = ctx.expression();
@@ -652,7 +652,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    //TODO
+    //
     @Override
     public Object visitFormattedPrint(JavanaParser.FormattedPrintContext ctx) {
         JavanaParser.ExprListContext exprListCtx = ctx.exprList();
@@ -696,9 +696,10 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         //This should be an array
         //TODO
         //Java is fine with calling.length on a string, so lets keep that functionality too for hangman
-        if( exprType != null && exprType.getForm() != ARRAY){
+        if( exprType != null && exprType.getForm() != ARRAY && exprType != Predefined.stringType){
             error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_ARRAY, exprCtx);
         }
+        ctx.typeSpec = Predefined.integerType;
         return null;
     }
 
@@ -1155,4 +1156,21 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
+    @Override
+    public Object visitExprCharAt(JavanaParser.ExprCharAtContext ctx) {
+        JavanaParser.ExpressionContext strCtx = ctx.str;
+        JavanaParser.ExpressionContext indexCtx = ctx.index;
+        visit(strCtx);
+        //Make sure it is a string type
+        if( strCtx.typeSpec != Predefined.stringType){
+            error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_STRING, strCtx);
+        }
+        visit(indexCtx);
+        //Must be a integer type
+        if( indexCtx.typeSpec != Predefined.integerType){
+            error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_INTEGER, indexCtx);
+        }
+        ctx.typeSpec = Predefined.stringType;
+        return null;
+    }
 }

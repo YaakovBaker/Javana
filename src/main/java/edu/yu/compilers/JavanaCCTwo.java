@@ -24,11 +24,11 @@ public class JavanaCCTwo {
         String folderFinished = "finished\\";
         String errorChecking = "ErrorsInputs\\errors\\";
         String typeMismatch = "TYPE_MISMATCH\\";
-        String sourceFileName = desktop + pakage + folderExample + "ExampleArrayAccess.jv";
-        String hangMan = desktop + pakage + folderHangMan + "hangman.jv";
-        String finished = desktop + pakage + folderFinished + "TestAssignmentStatements.jv";
-        String testingPath = desktop + pakage + errorChecking + typeMismatch + "typecheck_expr_relational.jv";
-        String errorCheckingPath = desktop + pakage + errorChecking + "FunctionErrors.jv";
+        String sourceFileName = laptop + pakage + folderExample + "ExampleArrayAccess.jv";
+        String hangMan = laptop + pakage + folderHangMan + "hangman.jv";
+        String finished = laptop + pakage + folderFinished + "TestAssignmentStatements.jv";
+        String testingPath = laptop + pakage + errorChecking + typeMismatch + "typecheck_expr_relational.jv";
+        String errorCheckingPath = laptop + pakage + errorChecking + "FunctionErrors.jv";
         sourceFileName = hangMan;
 //        sourceFileName = finished;
 //        sourceFileName = testingPath;

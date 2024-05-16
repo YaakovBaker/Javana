@@ -2270,7 +2270,8 @@ public class JavanaParser extends Parser {
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class ExprCharAtContext extends ExpressionContext {
-		public ExpressionContext expr;
+		public ExpressionContext str;
+		public ExpressionContext index;
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
@@ -2559,7 +2560,7 @@ public class JavanaParser extends Parser {
 					case 9:
 						{
 						_localctx = new ExprCharAtContext(new ExpressionContext(_parentctx, _parentState));
-						((ExprCharAtContext)_localctx).expr = _prevctx;
+						((ExprCharAtContext)_localctx).str = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(342);
 						if (!(precpred(_ctx, 17))) throw new FailedPredicateException(this, "precpred(_ctx, 17)");
@@ -2570,7 +2571,7 @@ public class JavanaParser extends Parser {
 						setState(345);
 						match(T__3);
 						setState(346);
-						expression(0);
+						((ExprCharAtContext)_localctx).index = expression(0);
 						setState(347);
 						match(T__4);
 						}

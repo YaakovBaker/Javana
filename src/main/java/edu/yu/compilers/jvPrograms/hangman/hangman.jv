@@ -21,6 +21,91 @@ Javana HangmanGame:
         return WORDS[index]
     }
 
+    func convertLetterToIndex(letter: string) -> int {
+
+            if( letter == "a" || letter == "A"){
+                return 0
+            }
+            if( letter == "b" || letter == "B"){
+                return 1
+            }
+            if (letter == "c" || letter == "C") {
+                return 2
+            }
+            if (letter == "d" || letter == "D") {
+                return 3
+            }
+            if (letter == "e" || letter == "E") {
+                return 4
+            }
+            if (letter == "f" || letter == "F") {
+                return 5
+            }
+            if (letter == "g" || letter == "G") {
+                return 6
+            }
+            if (letter == "h" || letter == "H") {
+                return 7
+            }
+            if (letter == "i" || letter == "I") {
+                return 8
+            }
+            if (letter == "j" || letter == "J") {
+                return 9
+            }
+            if (letter == "k" || letter == "K") {
+                return 10
+            }
+            if (letter == "l" || letter == "L") {
+                return 11
+            }
+            if (letter == "m" || letter == "M") {
+                return 12
+            }
+            if (letter == "n" || letter == "N") {
+                return 13
+            }
+            if (letter == "o" || letter == "O") {
+                return 14
+            }
+            if (letter == "p" || letter == "P") {
+                return 15
+            }
+            if (letter == "q" || letter == "Q") {
+                return 16
+            }
+            if (letter == "r" || letter == "R") {
+                return 17
+            }
+            if (letter == "s" || letter == "S") {
+                return 18
+            }
+            if (letter == "t" || letter == "T") {
+                return 19
+            }
+            if (letter == "u" || letter == "U") {
+                return 20
+            }
+            if (letter == "v" || letter == "V") {
+                return 21
+            }
+            if (letter == "w" || letter == "W") {
+                return 22
+            }
+            if (letter == "x" || letter == "X") {
+                return 23
+            }
+            if (letter == "y" || letter == "Y") {
+                return 24
+            }
+            if (letter == "z" || letter == "Z") {
+                return 25
+            }
+
+            return -1
+
+        }
+
     func displayWord(word: string, guessedLetters: bool[]) -> string {
         var display = ""
         for (var i = 0; i < word.length; i + 1) {
@@ -30,99 +115,14 @@ Javana HangmanGame:
                 println("This isnt a good letter")
             }
             if (guessedLetters[index] == true) {
-                display = display + letter + " "
+                display = display + letter
+                display = display + " "
             } else {
                 display = display + "_ "
             }
         }
         return display
     }
-
-    func convertLetterToIndex(letter: string) -> int {
-
-        if( letter == "a" || letter == "A"){
-            return 0
-        }
-        if( letter == "b" || letter == "B"){
-            return 1
-        }
-        if (letter == "c" || letter == "C") {
-            return 2
-        }
-        if (letter == "d" || letter == "D") {
-            return 3
-        }
-        if (letter == "e" || letter == "E") {
-            return 4
-        }
-        if (letter == "f" || letter == "F") {
-            return 5
-        }
-        if (letter == "g" || letter == "G") {
-            return 6
-        }
-        if (letter == "h" || letter == "H") {
-            return 7
-        }
-        if (letter == "i" || letter == "I") {
-            return 8
-        }
-        if (letter == "j" || letter == "J") {
-            return 9
-        }
-        if (letter == "k" || letter == "K") {
-            return 10
-        }
-        if (letter == "l" || letter == "L") {
-            return 11
-        }
-        if (letter == "m" || letter == "M") {
-            return 12
-        }
-        if (letter == "n" || letter == "N") {
-            return 13
-        }
-        if (letter == "o" || letter == "O") {
-            return 14
-        }
-        if (letter == "p" || letter == "P") {
-            return 15
-        }
-        if (letter == "q" || letter == "Q") {
-            return 16
-        }
-        if (letter == "r" || letter == "R") {
-            return 17
-        }
-        if (letter == "s" || letter == "S") {
-            return 18
-        }
-        if (letter == "t" || letter == "T") {
-            return 19
-        }
-        if (letter == "u" || letter == "U") {
-            return 20
-        }
-        if (letter == "v" || letter == "V") {
-            return 21
-        }
-        if (letter == "w" || letter == "W") {
-            return 22
-        }
-        if (letter == "x" || letter == "X") {
-            return 23
-        }
-        if (letter == "y" || letter == "Y") {
-            return 24
-        }
-        if (letter == "z" || letter == "Z") {
-            return 25
-        }
-
-        return -1
-
-    }
-
 
     @main() {
         println("Welcome to Hangman!")
