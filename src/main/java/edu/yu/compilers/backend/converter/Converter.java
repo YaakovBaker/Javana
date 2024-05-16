@@ -409,7 +409,6 @@ public class Converter extends JavanaBaseVisitor<Object> {
 
     @Override
     public Object visitPrintSingleValue(JavanaParser.PrintSingleValueContext ctx) {
-        //System.out.printf(("Point coordinates: ("+p.x+", "+p.y+")") - problem
         code.emit(ctx.getText());
         return null;
     }
@@ -526,6 +525,11 @@ public class Converter extends JavanaBaseVisitor<Object> {
     @Override
     public Object visitNoneValue(JavanaParser.NoneValueContext ctx) {
         return "null";
+    }
+
+    @Override
+    public Object visitExprCharAt(JavanaParser.ExprCharAtContext ctx) {
+        return ctx.getText();
     }
 
     @Override

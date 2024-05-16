@@ -600,6 +600,14 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         //Check the current stack frame's routineIdType
         int nestingLevel = symTableStack.getLocalSymTable().getNestingLevel();
         SymTableEntry routineId = symTableStack.get(nestingLevel - 1).getOwner();
+
+        /*
+        Exception in thread "main" java.lang.NullPointerException: Cannot invoke "edu.yu.compilers.intermediate.symtable.SymTableEntry.getType()" because "routineId" is null
+	at edu.yu.compilers.frontend.Semantics.visitReturnStatement(Semantics.java:603)
+
+	This happens here when returning a literal, we dont want that
+         */
+
         Typespec routineType = routineId.getType();
         //Compare and see if we have a type mismatch or not
         //If our form is array then we need to check the array element type
@@ -609,6 +617,9 @@ public class Semantics extends JavanaBaseVisitor<Object> {
             }
         }else{
             if( !TypeChecker.areAssignmentCompatible(routineType, returnType) ){
+                //TODO
+                //021  Invalid function return type             "WORDS[index]"
+                //Problem is here, it seems routineType.getForm is not an array type, but it should be.
                 error.flag(SemanticErrorHandler.Code.INVALID_RETURN_TYPE, exprCtx);
             }
         }
@@ -683,6 +694,8 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         //This expression should return an array
         Typespec exprType = exprCtx.typeSpec;
         //This should be an array
+        //TODO
+        //Java is fine with calling.length on a string, so lets keep that functionality too for hangman
         if( exprType != null && exprType.getForm() != ARRAY){
             error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_ARRAY, exprCtx);
         }

@@ -17,21 +17,19 @@ Javana HangmanGame:
         return
     }
 
-    func getRandomWord() -> string {
-
-        var index = random(WORDS.length)
+    func getRandomWord(index: int) -> string {
         return WORDS[index]
     }
 
     func displayWord(word: string, guessedLetters: bool[]) -> string {
         var display = ""
         for (var i = 0; i < word.length; i + 1) {
-            var letter = word[i]
+            var letter = word.charAt(i)
             var index = convertLetterToIndex(letter)
             if(index == -1){
                 println("This isnt a good letter")
             }
-            if (guessedLetters[index]) {
+            if (guessedLetters[index] == true) {
                 display = display + letter + " "
             } else {
                 display = display + "_ "
@@ -129,7 +127,13 @@ Javana HangmanGame:
     @main() {
         println("Welcome to Hangman!")
         initWords()
-        var word = getRandomWord()
+        println("Please input a letter form a to j")
+        var indexFromPlayer = readch()
+        var indexFromPlayerConverted = convertLetterToIndex(indexFromPlayer)
+        if(indexFromPlayerConverted < 0 || indexFromPlayerConverted > 9){
+            println("Input is INVALID")
+        }
+        var word = getRandomWord(indexFromPlayerConverted)
         var guessedLetters = @bool[26]
         var tries = 0
 
@@ -143,7 +147,7 @@ Javana HangmanGame:
 
             var found = false
             for (var i = 0; i < word.length; i + 1) {
-                if (word[i] == guess) {
+                if (word.charAt(i) == guess) {
                     found = true
                     break
                 }

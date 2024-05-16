@@ -329,6 +329,13 @@ public interface JavanaVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitExprLiteral(JavanaParser.ExprLiteralContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code ExprCharAt}
+	 * labeled alternative in {@link JavanaParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExprCharAt(JavanaParser.ExprCharAtContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code ExprArith}
 	 * labeled alternative in {@link JavanaParser#expression}.
 	 * @param ctx the parse tree
