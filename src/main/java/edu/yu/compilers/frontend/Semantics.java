@@ -609,7 +609,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     public Object visitReturnStatement(JavanaParser.ReturnStatementContext ctx){
         JavanaParser.ExpressionContext exprCtx = ctx.expr;
         if( exprCtx != null ){
-            visit(exprCtx);//This should be calling ExprArrayElement
+            visit(exprCtx);
         }
         //Get the returnType
         Typespec returnType = exprCtx != null ? exprCtx.typeSpec : Predefined.undefinedType;
@@ -1180,6 +1180,33 @@ public class Semantics extends JavanaBaseVisitor<Object> {
             error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_INTEGER, indexCtx);
         }
         ctx.typeSpec = Predefined.stringType;
+        return null;
+    }
+
+    @Override
+    public Object visitExprDotEquals(JavanaParser.ExprDotEqualsContext ctx){
+        JavanaParser.ExpressionContext lhs = ctx.lhs;
+        JavanaParser.ExpressionContext rhs = ctx.rhs;
+        //lhs type should be the same as rhs type
+        visit(lhs);
+        visit(rhs);
+        if( lhs.typeSpec != rhs.typeSpec ){
+            error.flag(TYPE_MISMATCH, ctx);
+        }
+        //Set the type of the expression to boolean
+        ctx.typeSpec = Predefined.booleanType;
+        return null;
+    }
+
+    @Override
+    public Object visitExprIntegerParseInt(JavanaParser.ExprIntegerParseIntContext ctx){
+        JavanaParser.ExpressionContext strCtx = ctx.expression();
+        visit(strCtx);
+        //The expression should be a string
+        if( strCtx.typeSpec != Predefined.stringType){
+            error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_STRING, strCtx);
+        }
+        ctx.typeSpec = Predefined.integerType;
         return null;
     }
 }
