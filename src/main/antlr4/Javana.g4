@@ -170,6 +170,7 @@ printArgument
 
 expression locals [ Typespec typeSpec = null, SymTableEntry entry = null]
     : expr=expression arrIdx=arrIdxSpecifier                # ExprArrayElement
+    | expr=expression '.' 'length()'                        # ExprStringLength
     | expr=expression '.' 'length'                          # ExprArrayLength
     | str=expression '.' 'charAt' '(' index=expression ')'  # ExprCharAt
     | 'Integer.parseInt(' expression ')'                    # ExprIntegerParseInt

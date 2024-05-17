@@ -1,4 +1,4 @@
-Javana HangmanGame:
+Javana Hangman:
 
 
 
@@ -90,7 +90,7 @@ Javana HangmanGame:
 
     func displayWord(word: string, guessedLetters: bool[]) -> string {
             var display = ""
-            for (var i = 0; i < word.length; i + 1) {
+            for (var i = 0; i < word.length(); i + 1) {
                 var letter = word.charAt(i)
                 var index = convertLetterToIndex(letter)
                 if(index == -1){
@@ -113,6 +113,7 @@ Javana HangmanGame:
         var MAX_TRIES = Integer.parseInt(maxGuesses)
         var guessedLetters = @bool[26]
         var tries = 0
+        var numOfGuessesUserMade = 0
 
         print("Welcome. Try and guess my secret word: :")
         var displayToUser = displayWord(playerWord, guessedLetters)
@@ -131,7 +132,7 @@ Javana HangmanGame:
 
             println("Select a letter: ")
             var guess = readch()
-
+            numOfGuessesUserMade = numOfGuessesUserMade + 1
             var index = convertLetterToIndex(guess)
             if(guessedLetters[index] == true){
                 alreadyGuessedThisLetter = true
@@ -140,7 +141,7 @@ Javana HangmanGame:
 
             var howMany = 0
 
-            for (var i = 0; i < playerWord.length; i + 1) {
+            for (var i = 0; i < playerWord.length(); i + 1) {
 
                 var letterInWord = playerWord.charAt(i)
 
@@ -180,8 +181,10 @@ Javana HangmanGame:
 
 
             var allLettersGuessed = true
-            for (var i = 0; i < 26; i + 1) {
-                if (!guessedLetters[i]) {
+            for (var i = 0; i < playerWord.length(); i + 1) {
+                var upToLetter = playerWord.charAt(i)
+                var covertIndex = convertLetterToIndex(upToLetter)
+                if (!guessedLetters[covertIndex]) {
                     allLettersGuessed = false
                 }
             }
@@ -195,7 +198,7 @@ Javana HangmanGame:
             println("You have struck out. Goodbye!")
         }else{
             print("You won with ")
-            print(tries)
+            print(numOfGuessesUserMade)
             print(" guesses. Goodbye!")
             println
         }

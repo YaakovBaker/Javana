@@ -65,7 +65,7 @@ public class Converter extends JavanaBaseVisitor<Object> {
         for(JavanaParser.GlobalDefinitionsContext globalDefinitionsContext:  ctx.globalDefinitions()) {
             visit(globalDefinitionsContext);
         }
-        emitUnnamedRecordDefinitions(idCtx.entry.getRoutineSymTable());
+        //emitUnnamedRecordDefinitions(idCtx.entry.getRoutineSymTable());
 
 
         // Main.
@@ -74,7 +74,7 @@ public class Converter extends JavanaBaseVisitor<Object> {
         code.indent();
 
         // Allocate structured data.
-        emitAllocateStructuredVariables("", idCtx.entry.getRoutineSymTable());
+        //emitAllocateStructuredVariables("", idCtx.entry.getRoutineSymTable());
         code.emitLine();
 
         // Main compound statement.
@@ -109,7 +109,6 @@ public class Converter extends JavanaBaseVisitor<Object> {
         for (JavanaParser.IdentifierContext idCtx : namelistCtx.identifier()) {
             String name = idCtx.entry.getName();
             code.emitStart();
-            if (programVariables) code.emit("private static ");
             code.emitEnd("final " + javaType + " " + name + " = "
                     + exprContextString + ";"); // Should be good
 
@@ -130,7 +129,6 @@ public class Converter extends JavanaBaseVisitor<Object> {
         for(JavanaParser.IdentifierContext idCtx: namelistCtx.identifier()) {
             String name = idCtx.getText();
             code.emitStart();
-            if (programVariables) code.emit("private static ");
             code.emitEnd("var " + name + " = "
                     + exprContextString + ";"); // Should be good
 
@@ -212,7 +210,16 @@ public class Converter extends JavanaBaseVisitor<Object> {
                 JavanaParser.FuncArgumentContext funcArgumentContext = ctx.funcPrototype().funcArgList.args.get(i);
                 JavanaParser.TypeAssocContext typeAssocContext = funcArgumentContext.typeAssoc();
                 Typespec typespec = typeAssocContext.type().typeSpec;
-                String javaType = typeNameTable.get(typespec.getIdentifier().getName());
+
+                String javaType;
+                //I never Check if it's an array here
+                if(typespec.getForm()==ARRAY){
+                    javaType = typespec.getArrayElementType().getIdentifier().getName();
+                    javaType = javaType + "[]";
+                }else{
+                    javaType = typeNameTable.get(typespec.getIdentifier().getName());
+                }
+
                 JavanaParser.NameListContext nameListContext = typeAssocContext.nameList();
                 for(int j = 0; j<nameListContext.identifier().size(); j++){
                     code.emit(javaType);
@@ -262,52 +269,56 @@ public class Converter extends JavanaBaseVisitor<Object> {
 
     @Override
     public Object visitVariable(JavanaParser.VariableContext ctx) {
+
+        return ctx.getText();
+
+
         //Need to return a string here
-        JavanaParser.IdentifierContext idCtx = ctx.identifier();
-        SymTableEntry variableId = idCtx.entry;
-        StringBuilder variableName = new StringBuilder(variableId.getName());
-        Typespec type = idCtx.typeSpec;
-
-        if ((type != Predefined.booleanType)
-                && (variableId.getKind() == ENUMERATION_CONSTANT)) {
-            variableName.insert(0, type.getIdentifier().getName() + ".");
-        }
-
-        // Loop over any subscript and field modifiers.
-        for (JavanaParser.VarModifierContext modCtx : ctx.modifiers) {
-            // Subscripts.
-            if (modCtx.arrIdxSpecifier() != null) {
-                //There used to be a for each loop here, but in Javana, there is only one expr, not multiple
-                Typespec indexType = type.getArrayIndexType();
-                int minIndex = 0;
-
-                if (indexType.getForm() == SUBRANGE) {
-                    minIndex = indexType.getSubrangeMinValue();
-                }
-
-                JavanaParser.ExpressionContext exprCtx = modCtx.arrIdxSpecifier().expression();
-                String expr = (String) visit(exprCtx);
-                String subscript =
-                        (minIndex == 0) ? expr
-                                : (minIndex < 0) ? "(" + expr + ")+" + (-minIndex)
-                                : "(" + expr + ")-" + minIndex;
-
-                variableName.append("[").append(subscript).append("]");
-
-                type = type.getArrayElementType();
-            }
-
-            // Record field.
-            else {
-                JavanaParser.IdentifierContext fieldCtx = ctx.identifier();
-                String fieldName = fieldCtx.entry.getName();
-                variableName.append(".").append(fieldName);
-                type = fieldCtx.typeSpec;
-            }
-        }
-
-
-        return variableName.toString();
+//        JavanaParser.IdentifierContext idCtx = ctx.identifier();
+//        SymTableEntry variableId = idCtx.entry;
+//        StringBuilder variableName = new StringBuilder(variableId.getName());
+//        Typespec type = idCtx.typeSpec;
+//
+//        if ((type != Predefined.booleanType)
+//                && (variableId.getKind() == ENUMERATION_CONSTANT)) {
+//            variableName.insert(0, type.getIdentifier().getName() + ".");
+//        }
+//
+//        // Loop over any subscript and field modifiers.
+//        for (JavanaParser.VarModifierContext modCtx : ctx.modifiers) {
+//            // Subscripts.
+//            if (modCtx.arrIdxSpecifier() != null) {
+//                //There used to be a for each loop here, but in Javana, there is only one expr, not multiple
+//                Typespec indexType = type.getArrayIndexType();
+//                int minIndex = 0;
+//
+//                if (indexType.getForm() == SUBRANGE) {
+//                    minIndex = indexType.getSubrangeMinValue();
+//                }
+//
+//                JavanaParser.ExpressionContext exprCtx = modCtx.arrIdxSpecifier().expression();
+//                String expr = (String) visit(exprCtx);
+//                String subscript =
+//                        (minIndex == 0) ? expr
+//                                : (minIndex < 0) ? "(" + expr + ")+" + (-minIndex)
+//                                : "(" + expr + ")-" + minIndex;
+//
+//                variableName.append("[").append(subscript).append("]");
+//
+//                type = type.getArrayElementType();
+//            }
+//
+//            // Record field.
+//            else {
+//                JavanaParser.IdentifierContext fieldCtx = ctx.identifier();
+//                String fieldName = fieldCtx.entry.getName();
+//                variableName.append(".").append(fieldName);
+//                type = fieldCtx.typeSpec;
+//            }
+//        }
+//
+//
+//        return variableName.toString();
     }
 
     @Override
@@ -330,17 +341,23 @@ public class Converter extends JavanaBaseVisitor<Object> {
     public Object visitForStatement(JavanaParser.ForStatementContext ctx) {
         code.emit("for(");
 
-        String initName = (String) visit(ctx.init);
+        //Includes ;
         // 0   1 2 3
         // var i = 0;
-        code.emit(initName); //Includes ;
+        JavanaParser.NameListContext namelistCtx = ctx.init.nameList();
+        JavanaParser.ExpressionContext exprCtx = ctx.init.expression();
+        String exprContextString =  (String) visit(exprCtx);
+
+        JavanaParser.IdentifierContext idCtx = namelistCtx.identifier(0);
+        String name = idCtx.getText();
+        code.emit("var " + name + " = "
+                + exprContextString + ";"); // Should be good
 
         code.emit((String) visit(ctx.condition));
         code.emit("; ");
         //Need to get the variable and the = sign here
 
-        String[] initVarStringArray = initName.split(" ");
-        code.emit(initVarStringArray[1] + " " + initVarStringArray[2]);
+        code.emit(name + " " + "=");
         code.emit((String) visit(ctx.updateExpr));
 
         code.emit(")");
@@ -409,7 +426,7 @@ public class Converter extends JavanaBaseVisitor<Object> {
 
     @Override
     public Object visitPrintSingleValue(JavanaParser.PrintSingleValueContext ctx) {
-        code.emit(ctx.getText());
+        code.emit("(String.valueOf" + ctx.getText() + ")");
         return null;
     }
 
@@ -482,7 +499,7 @@ public class Converter extends JavanaBaseVisitor<Object> {
 
     @Override
     public Object visitExprReadChar(JavanaParser.ExprReadCharContext ctx) {
-        return "(String) _sysin.next().charAt(0)"; //Semi-colon here?
+        return "String.valueOf(_sysin.next().charAt(0))"; //Semi-colon here?
     }
 
 //    @Override
@@ -529,7 +546,7 @@ public class Converter extends JavanaBaseVisitor<Object> {
 
     @Override
     public Object visitExprCharAt(JavanaParser.ExprCharAtContext ctx) {
-        return "(String) " + ctx.getText();
+        return "String.valueOf(" + ctx.getText() + ")" ;
     }
 
     @Override

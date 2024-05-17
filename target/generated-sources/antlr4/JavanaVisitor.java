@@ -280,6 +280,13 @@ public interface JavanaVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitExprRelational(JavanaParser.ExprRelationalContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code ExprStringLength}
+	 * labeled alternative in {@link JavanaParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExprStringLength(JavanaParser.ExprStringLengthContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code ExprReadLine}
 	 * labeled alternative in {@link JavanaParser#expression}.
 	 * @param ctx the parse tree

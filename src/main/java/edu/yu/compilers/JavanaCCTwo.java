@@ -2,6 +2,7 @@ package edu.yu.compilers;
 
 import antlr4.JavanaLexer;
 import antlr4.JavanaParser;
+import edu.yu.compilers.backend.converter.Converter;
 import edu.yu.compilers.frontend.Semantics;
 import edu.yu.compilers.frontend.SyntaxErrorHandler;
 import org.antlr.v4.runtime.CharStreams;
@@ -29,7 +30,8 @@ public class JavanaCCTwo {
         String finished = laptop + pakage + folderFinished + "TestAssignmentStatements.jv";
         String testingPath = laptop + pakage + errorChecking + typeMismatch + "typecheck_expr_relational.jv";
         String errorCheckingPath = laptop + pakage + errorChecking + "FunctionErrors.jv";
-        sourceFileName = hangMan;
+        //sourceFileName = hangMan;
+        sourceFileName = "/Users/gabrielaspir/DataStructuresGithub/Javana Compilers Project/Javana/src/main/java/edu/yu/compilers/jvPrograms/hangman/hangman.jv";
 //        sourceFileName = finished;
 //        sourceFileName = testingPath;
 //        sourceFileName = errorCheckingPath;
@@ -54,7 +56,13 @@ public class JavanaCCTwo {
 
         if (errorCount > 0)
             System.err.printf("There were %d semantic errors.\n", errorCount);
-        pass2.printSymbolTableStack();
+        //pass2.printSymbolTableStack();
+
+        Converter pass3 = new Converter();
+        String objectCode = (String) pass3.visit(tree);
+        System.out.println(objectCode);
+
+
         System.exit(errorCount);
     }
 

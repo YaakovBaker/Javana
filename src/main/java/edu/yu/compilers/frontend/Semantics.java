@@ -712,9 +712,17 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         //This expression should return an array
         Typespec exprType = exprCtx.typeSpec;
         //Java is fine with calling.length on a string, so lets keep that functionality too for hangman
-        if( exprType != null && exprType.getForm() != ARRAY && exprType != Predefined.stringType){
+        if( exprType != null && exprType.getForm() != ARRAY){
             error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_ARRAY, exprCtx);
         }
+        ctx.typeSpec = Predefined.integerType;
+        return null;
+    }
+
+    @Override
+    public Object visitExprStringLength(JavanaParser.ExprStringLengthContext ctx) {
+        JavanaParser.ExpressionContext exprCtx = ctx.expr;
+        visit(exprCtx);
         ctx.typeSpec = Predefined.integerType;
         return null;
     }
