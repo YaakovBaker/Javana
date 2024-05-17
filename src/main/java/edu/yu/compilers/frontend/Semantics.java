@@ -24,12 +24,14 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     private final SymTableStack symTableStack;
     private final SemanticErrorHandler error;
     private SymTableEntry programId;
+    private int currentNestingLevel;
 
     public Semantics() {
         // Create and initialize the symbol table stack.
         this.symTableStack = new SymTableStack();
         Predefined.initialize(symTableStack);
         this.error = new SemanticErrorHandler();
+        this.currentNestingLevel = 0;
     }
 
 
@@ -109,7 +111,8 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         JavanaParser.StringArrTypeContext strArrTypeCtx = ctx.stringArrType();
         String argName = idCtx.getText();
         SymTableEntry argId = symTableStack.enterLocal(argName, VARIABLE);
-        argId.setType(new Typespec(ARRAY));
+        visit(strArrTypeCtx);
+        argId.setType(strArrTypeCtx.typeSpec);
         idCtx.entry = argId;
         return null;
     }
@@ -131,6 +134,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
             error.flag(SemanticErrorHandler.Code.REDECLARED_IDENTIFIER, protoCtx.getStart().getLine(), funcName);
             return null;
         }
+        this.currentNestingLevel = symTableStack.getLocalSymTable().getNestingLevel();
         funcId = symTableStack.enterLocal(funcName, FUNCTION);
         funcId.appendLineNumber(protoCtx.getStart().getLine());
         funcId.setRoutineCode(SymTableEntry.Routine.DECLARED);
@@ -166,6 +170,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         visit(ctx.blockStatement());
         funcId.setExecutable(ctx.blockStatement());
         symTableStack.pop();
+//        this.currentNestingLevel = 0;
         return null;
     }
     //Done
@@ -477,8 +482,12 @@ public class Semantics extends JavanaBaseVisitor<Object> {
 //            error.flag(SemanticErrorHandler.Code.UNDECLARED_IDENTIFIER, lhs);
 //        }
         //If LHS is an array element then we need to get the array element type
-        if( lhsType.getForm() == ARRAY ){
+        if( lhsType.getForm() != null && lhsType.getForm() == ARRAY ){
             lhsType = lhsType.getArrayElementType();
+        }
+        //if the rhs is an array element then we need to get the array element type
+        if( rhsType.getForm() != null && rhsType.getForm() == ARRAY ){
+            rhsType = rhsType.getArrayElementType();
         }
         //Check if the type of the variable of the lhs can have the expression assigned to it
         if( !TypeChecker.areAssignmentCompatible(lhsType, rhsType) ){
@@ -496,7 +505,8 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         if( varId != null ){//If the varId is not null then we found the variable
             int lineNumber = ctx.getStart().getLine();
             //If the varId's type is Array then we need to get the array element type
-            if( varId.getType().getForm() == ARRAY ){
+            Typespec varType = varId.getType();
+            if( varType != null && varType.getForm() != null && varType.getForm() == ARRAY ){
                 ctx.typeSpec = varId.getType().getArrayElementType();
             }else{
                 ctx.typeSpec = varId.getType();
@@ -614,8 +624,8 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         //Get the returnType
         Typespec returnType = exprCtx != null ? exprCtx.typeSpec : Predefined.undefinedType;
         //Check the current stack frame's routineIdType
-        int nestingLevel = symTableStack.getLocalSymTable().getNestingLevel();
-        SymTableEntry routineId = symTableStack.get(nestingLevel - 1).getOwner();
+        SymTable stack = symTableStack.get(this.currentNestingLevel + 1);
+        SymTableEntry routineId = stack.getOwner();
 
         Typespec routineType = routineId.getType();
         //Compare and see if we have a type mismatch or not
@@ -626,9 +636,6 @@ public class Semantics extends JavanaBaseVisitor<Object> {
             }
         }else{
             if( !TypeChecker.areAssignmentCompatible(routineType, returnType) ){
-                //TODO
-                //021  Invalid function return type             "WORDS[index]"
-                //Problem is here, it seems routineType.getForm is not an array type, but it should be.
                 error.flag(SemanticErrorHandler.Code.INVALID_RETURN_TYPE, exprCtx);
             }
         }
@@ -702,8 +709,6 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         visit(exprCtx);
         //This expression should return an array
         Typespec exprType = exprCtx.typeSpec;
-        //This should be an array
-        //TODO
         //Java is fine with calling.length on a string, so lets keep that functionality too for hangman
         if( exprType != null && exprType.getForm() != ARRAY && exprType != Predefined.stringType){
             error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_ARRAY, exprCtx);
@@ -868,22 +873,16 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    //TODO
+    //Done
     @Override
     public Object visitExprReadChar(JavanaParser.ExprReadCharContext ctx) {
-        JavanaParser.ReadCharCallContext readCharCtx = ctx.readCharCall();
-        String readCharName = readCharCtx.getText();
-        SymTableEntry readCharId = symTableStack.lookup(readCharName);
-
+        ctx.typeSpec = Predefined.stringType;
         return null;
     }
-    //TODO
+    //Done
     @Override
     public Object visitExprReadLine(JavanaParser.ExprReadLineContext ctx) {
-        JavanaParser.ReadLineCallContext readLineCtx = ctx.readLineCall();
-        String readCharName = readLineCtx.getText();
-        SymTableEntry readCharId = symTableStack.lookup(readCharName);
-
+        ctx.typeSpec = Predefined.stringType;
         return null;
     }
 
