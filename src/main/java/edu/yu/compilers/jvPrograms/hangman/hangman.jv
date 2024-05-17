@@ -6,10 +6,11 @@ Javana HangmanGame:
             var letter = word.charAt(i)
             var index = convertLetterToIndex(letter)
             if(index == -1){
-                println("This isnt a good letter")
+                println("This is not a good letter")
             }
             if (guessedLetters[index] == true) {
-                display = display + letter + " "
+                display = display + letter
+                display = display + " "
             } else {
                 display = display + "_ "
             }
@@ -19,84 +20,85 @@ Javana HangmanGame:
 
     func convertLetterToIndex(letter: string) -> int {
 
-        if( letter == "a"){
+        if( letter.equals("a") ){
             return 0
         }
-        if( letter == "b"){
+        if( letter.equals("b") ){
             return 1
         }
-        if (letter == "c") {
+        if (letter.equals("c")) {
             return 2
         }
-        if (letter == "d") {
+        if (letter.equals("d")) {
             return 3
         }
-        if (letter == "e") {
+        if (letter.equals("e")) {
             return 4
         }
-        if (letter == "f") {
+        if (letter.equals("f")) {
             return 5
         }
-        if (letter == "g") {
+        if (letter.equals("g")) {
             return 6
         }
-        if (letter == "h") {
+        if (letter.equals("h")) {
             return 7
         }
-        if (letter == "i") {
+        if (letter.equals("i")) {
             return 8
         }
-        if (letter == "j" ) {
+        if (letter.equals("j")) {
             return 9
         }
-        if (letter == "k") {
+        if (letter.equals("k")) {
             return 10
         }
-        if (letter == "l") {
+        if (letter.equals("l")) {
             return 11
         }
-        if (letter == "m") {
+        if (letter.equals("m")) {
             return 12
         }
-        if (letter == "n") {
+        if (letter.equals("n")) {
             return 13
         }
-        if (letter == "o") {
+        if (letter.equals("o")) {
             return 14
         }
-        if (letter == "p") {
+        if (letter.equals("p")) {
             return 15
         }
-        if (letter == "q") {
+        if (letter.equals("q")) {
             return 16
         }
-        if (letter == "r") {
+        if (letter.equals("r")) {
             return 17
         }
-        if (letter == "s") {
+        if (letter.equals("s")) {
             return 18
         }
-        if (letter == "t") {
-            return 19
+        if (letter.equals("t")) {
+            return 19;
         }
-        if (letter == "u") {
+        if (letter.equals("u")) {
             return 20
         }
-        if (letter == "v") {
+        if (letter.equals("v")) {
             return 21
         }
-        if (letter == "w") {
+        if (letter.equals("w")) {
             return 22
         }
-        if (letter == "x") {
+        if (letter.equals("x")) {
             return 23
         }
-        if (letter == "y") {
+        if (letter.equals("y")) {
             return 24
         }
-        if (letter == "z") {
+        if (letter.equals("z")) {
             return 25
         }
+
 
         return -1
 
@@ -120,46 +122,79 @@ Javana HangmanGame:
         println()
         println()
 
+        var exitLoop = false
+        while (tries < MAX_TRIES && exitLoop == false) {
 
-        while (tries < MAX_TRIES) {
+            var alreadyGuessedThisLetter = false
+
             println("Select a letter: ")
             var guess = readch()
 
             var index = convertLetterToIndex(guess)
+            if(guessedLetters[index] == true){
+                alreadyGuessedThisLetter = true
+            }
             guessedLetters[index] = true
 
-            var found = false
+            var howMany = 0
+
             for (var i = 0; i < word.length; i + 1) {
-                if (word.charAt(i) == guess) {
-                    found = true
-                    break
+
+                var letterInWord = word.charAt(i)
+
+                if ( letterInWord.equals(guess) ) {
+                    howMany = howMany + 1
                 }
             }
-
-            if (found) {
-                println("Correct guess!")
+            if(alreadyGuessed == true){
+                print("'")
+                print(guess)
+                print("' was already guessed: ")
+                displayToUser = displayWord(playerWord, guessedLetters)
+                print(displayToUser)
+                println()
+            } else
+            if (howMany > 0) {
+                print("The letter '")
+                print(guess)
+                print("' appears ")
+                print(howMany)
+                print(" time(s):")
+                displayToUser = displayWord(playerWord, guessedLetters)
+                print(displayToUser)
+                println()
             } else {
                 tries = tries + 1
-                println("Incorrect guess! Tries left: " + (MAX_TRIES - tries))
+                print("The letter '")
+                print(guess)
+                print("' does not appear. You have ")
+                print(tries)
+                print(" strike(s): ")
+                displayToUser = displayWord(playerWord, guessedLetters)
+                print(displayToUser)
+                println()
             }
 
             var allLettersGuessed = true
             for (var i = 0; i < 26; i + 1) {
                 if (!guessedLetters[i]) {
                     allLettersGuessed = false
-                    break
                 }
             }
 
             if (allLettersGuessed) {
-                println("Congratulations! You guessed the word: " + word)
-                break
+                exitLoop = true
             }
         }
 
         if (tries == MAX_TRIES) {
             println("You have struck out. Goodbye!")
+        }else{
+            print("You won with ")
+            print(tries)
+            print(" guesses. Goodbye!")
+            println()
         }
 
-        println("Thanks for playing Hangman!")
+
     }

@@ -224,6 +224,13 @@ public interface JavanaVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFormattedPrint(JavanaParser.FormattedPrintContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code ExprIntegerParseInt}
+	 * labeled alternative in {@link JavanaParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExprIntegerParseInt(JavanaParser.ExprIntegerParseIntContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code ExprLowLogical}
 	 * labeled alternative in {@link JavanaParser#expression}.
 	 * @param ctx the parse tree
@@ -328,6 +335,13 @@ public interface JavanaVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitExprLiteral(JavanaParser.ExprLiteralContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code ExprDotEquals}
+	 * labeled alternative in {@link JavanaParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExprDotEquals(JavanaParser.ExprDotEqualsContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code ExprCharAt}
 	 * labeled alternative in {@link JavanaParser#expression}.

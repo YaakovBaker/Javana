@@ -529,6 +529,16 @@ public class Converter extends JavanaBaseVisitor<Object> {
 
     @Override
     public Object visitExprCharAt(JavanaParser.ExprCharAtContext ctx) {
+        return "(String) " + ctx.getText();
+    }
+
+    @Override
+    public Object visitExprDotEquals(JavanaParser.ExprDotEqualsContext ctx) {
+        return ctx.getText();
+    }
+
+    @Override
+    public Object visitExprIntegerParseInt(JavanaParser.ExprIntegerParseIntContext ctx) {
         return ctx.getText();
     }
 

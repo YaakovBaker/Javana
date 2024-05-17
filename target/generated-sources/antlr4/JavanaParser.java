@@ -26,11 +26,11 @@ public class JavanaParser extends Parser {
 		T__9=10, T__10=11, T__11=12, T__12=13, T__13=14, T__14=15, T__15=16, T__16=17, 
 		T__17=18, T__18=19, T__19=20, T__20=21, T__21=22, T__22=23, T__23=24, 
 		T__24=25, T__25=26, T__26=27, T__27=28, T__28=29, T__29=30, T__30=31, 
-		T__31=32, None=33, INT_ARR_TYPE=34, BOOL_ARR_TYPE=35, STR_ARR_TYPE=36, 
-		REC_ARR_TYPE=37, INT_TYPE=38, BOOL_TYPE=39, STR_TYPE=40, HIGHER_ARITH_OP=41, 
-		ARITH_OP=42, REL_OP=43, EQ_OP=44, HIGH_LOGIC_OP=45, LOW_LOGIC_OP=46, BOOL=47, 
-		NULL_VALUE=48, IDENT=49, STRING=50, INTEGER=51, NEWLINE=52, WS=53, COMMENT=54, 
-		LINE_COMMENT=55;
+		T__31=32, T__32=33, T__33=34, None=35, INT_ARR_TYPE=36, BOOL_ARR_TYPE=37, 
+		STR_ARR_TYPE=38, REC_ARR_TYPE=39, INT_TYPE=40, BOOL_TYPE=41, STR_TYPE=42, 
+		HIGHER_ARITH_OP=43, ARITH_OP=44, REL_OP=45, EQ_OP=46, HIGH_LOGIC_OP=47, 
+		LOW_LOGIC_OP=48, BOOL=49, NULL_VALUE=50, IDENT=51, STRING=52, INTEGER=53, 
+		NEWLINE=54, WS=55, COMMENT=56, LINE_COMMENT=57;
 	public static final int
 		RULE_program = 0, RULE_programHeader = 1, RULE_mainMethod = 2, RULE_mainArg = 3, 
 		RULE_globalDefinitions = 4, RULE_funcDefinition = 5, RULE_funcPrototype = 6, 
@@ -71,9 +71,10 @@ public class JavanaParser extends Parser {
 			null, "'Javana'", "':'", "'@main'", "'('", "')'", "'func'", "'->'", "','", 
 			"'record'", "'{'", "'}'", "'decl'", "'var'", "'='", "'const'", "'.'", 
 			"'['", "']'", "'if'", "'else'", "'for'", "';'", "'while'", "'return'", 
-			"'print'", "'println'", "'length'", "'charAt'", "'!'", "'readch'", "'readln'", 
-			"'@'", null, null, null, null, null, "'int'", "'bool'", "'string'", null, 
-			null, null, null, "'&&'", "'||'", null, "'None'"
+			"'print'", "'println'", "'length'", "'charAt'", "'Integer.parseInt('", 
+			"'.equals('", "'!'", "'readch'", "'readln'", "'@'", null, null, null, 
+			null, null, "'int'", "'bool'", "'string'", null, null, null, null, "'&&'", 
+			"'||'", null, "'None'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
@@ -81,11 +82,11 @@ public class JavanaParser extends Parser {
 		return new String[] {
 			null, null, null, null, null, null, null, null, null, null, null, null, 
 			null, null, null, null, null, null, null, null, null, null, null, null, 
-			null, null, null, null, null, null, null, null, null, "None", "INT_ARR_TYPE", 
-			"BOOL_ARR_TYPE", "STR_ARR_TYPE", "REC_ARR_TYPE", "INT_TYPE", "BOOL_TYPE", 
-			"STR_TYPE", "HIGHER_ARITH_OP", "ARITH_OP", "REL_OP", "EQ_OP", "HIGH_LOGIC_OP", 
-			"LOW_LOGIC_OP", "BOOL", "NULL_VALUE", "IDENT", "STRING", "INTEGER", "NEWLINE", 
-			"WS", "COMMENT", "LINE_COMMENT"
+			null, null, null, null, null, null, null, null, null, null, null, "None", 
+			"INT_ARR_TYPE", "BOOL_ARR_TYPE", "STR_ARR_TYPE", "REC_ARR_TYPE", "INT_TYPE", 
+			"BOOL_TYPE", "STR_TYPE", "HIGHER_ARITH_OP", "ARITH_OP", "REL_OP", "EQ_OP", 
+			"HIGH_LOGIC_OP", "LOW_LOGIC_OP", "BOOL", "NULL_VALUE", "IDENT", "STRING", 
+			"INTEGER", "NEWLINE", "WS", "COMMENT", "LINE_COMMENT"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -1233,7 +1234,7 @@ public class JavanaParser extends Parser {
 			setState(224);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 4081403933800016L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 16325615886579280L) != 0)) {
 				{
 				{
 				setState(221);
@@ -2050,6 +2051,18 @@ public class JavanaParser extends Parser {
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")
+	public static class ExprIntegerParseIntContext extends ExpressionContext {
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public ExprIntegerParseIntContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof JavanaVisitor ) return ((JavanaVisitor<? extends T>)visitor).visitExprIntegerParseInt(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class ExprLowLogicalContext extends ExpressionContext {
 		public ExpressionContext lhs;
 		public Token op;
@@ -2269,6 +2282,23 @@ public class JavanaParser extends Parser {
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")
+	public static class ExprDotEqualsContext extends ExpressionContext {
+		public ExpressionContext lhs;
+		public ExpressionContext rhs;
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public ExprDotEqualsContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof JavanaVisitor ) return ((JavanaVisitor<? extends T>)visitor).visitExprDotEquals(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class ExprCharAtContext extends ExpressionContext {
 		public ExpressionContext str;
 		public ExpressionContext index;
@@ -2351,100 +2381,113 @@ public class JavanaParser extends Parser {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(317);
+			setState(321);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,19,_ctx) ) {
 			case 1:
 				{
-				_localctx = new ExprNotContext(_localctx);
+				_localctx = new ExprIntegerParseIntContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
 
 				setState(304);
 				match(T__28);
 				setState(305);
-				expression(9);
+				expression(0);
+				setState(306);
+				match(T__4);
 				}
 				break;
 			case 2:
 				{
-				_localctx = new ExprGroupContext(_localctx);
+				_localctx = new ExprNotContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(306);
-				match(T__3);
-				setState(307);
-				expression(0);
 				setState(308);
-				match(T__4);
+				match(T__30);
+				setState(309);
+				expression(9);
 				}
 				break;
 			case 3:
 				{
-				_localctx = new ExprReadCharContext(_localctx);
+				_localctx = new ExprGroupContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(310);
-				readCharCall();
+				match(T__3);
+				setState(311);
+				expression(0);
+				setState(312);
+				match(T__4);
 				}
 				break;
 			case 4:
 				{
-				_localctx = new ExprReadLineContext(_localctx);
+				_localctx = new ExprReadCharContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(311);
-				readLineCall();
+				setState(314);
+				readCharCall();
 				}
 				break;
 			case 5:
 				{
-				_localctx = new ExprFunctionCallContext(_localctx);
+				_localctx = new ExprReadLineContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(312);
-				functionCall();
+				setState(315);
+				readLineCall();
 				}
 				break;
 			case 6:
 				{
-				_localctx = new ExprVariableContext(_localctx);
+				_localctx = new ExprFunctionCallContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(313);
-				variable();
+				setState(316);
+				functionCall();
 				}
 				break;
 			case 7:
 				{
-				_localctx = new ExprLiteralContext(_localctx);
+				_localctx = new ExprVariableContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(314);
-				literal();
+				setState(317);
+				variable();
 				}
 				break;
 			case 8:
 				{
-				_localctx = new ExprNewArrayContext(_localctx);
+				_localctx = new ExprLiteralContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(315);
-				newArray();
+				setState(318);
+				literal();
 				}
 				break;
 			case 9:
 				{
+				_localctx = new ExprNewArrayContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
+				setState(319);
+				newArray();
+				}
+				break;
+			case 10:
+				{
 				_localctx = new ExprNewRecordContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(316);
+				setState(320);
 				newRecord();
 				}
 				break;
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(354);
+			setState(363);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,21,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
@@ -2452,7 +2495,7 @@ public class JavanaParser extends Parser {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					setState(352);
+					setState(361);
 					_errHandler.sync(this);
 					switch ( getInterpreter().adaptivePredict(_input,20,_ctx) ) {
 					case 1:
@@ -2460,11 +2503,11 @@ public class JavanaParser extends Parser {
 						_localctx = new ExprHigherArithContext(new ExpressionContext(_parentctx, _parentState));
 						((ExprHigherArithContext)_localctx).lhs = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(319);
+						setState(323);
 						if (!(precpred(_ctx, 15))) throw new FailedPredicateException(this, "precpred(_ctx, 15)");
-						setState(320);
+						setState(324);
 						((ExprHigherArithContext)_localctx).op = match(HIGHER_ARITH_OP);
-						setState(321);
+						setState(325);
 						((ExprHigherArithContext)_localctx).rhs = expression(16);
 						}
 						break;
@@ -2473,11 +2516,11 @@ public class JavanaParser extends Parser {
 						_localctx = new ExprArithContext(new ExpressionContext(_parentctx, _parentState));
 						((ExprArithContext)_localctx).lhs = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(322);
+						setState(326);
 						if (!(precpred(_ctx, 14))) throw new FailedPredicateException(this, "precpred(_ctx, 14)");
-						setState(323);
+						setState(327);
 						((ExprArithContext)_localctx).op = match(ARITH_OP);
-						setState(324);
+						setState(328);
 						((ExprArithContext)_localctx).rhs = expression(15);
 						}
 						break;
@@ -2486,11 +2529,11 @@ public class JavanaParser extends Parser {
 						_localctx = new ExprRelationalContext(new ExpressionContext(_parentctx, _parentState));
 						((ExprRelationalContext)_localctx).lhs = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(325);
+						setState(329);
 						if (!(precpred(_ctx, 13))) throw new FailedPredicateException(this, "precpred(_ctx, 13)");
-						setState(326);
+						setState(330);
 						((ExprRelationalContext)_localctx).op = match(REL_OP);
-						setState(327);
+						setState(331);
 						((ExprRelationalContext)_localctx).rhs = expression(14);
 						}
 						break;
@@ -2499,11 +2542,11 @@ public class JavanaParser extends Parser {
 						_localctx = new ExprEqualityContext(new ExpressionContext(_parentctx, _parentState));
 						((ExprEqualityContext)_localctx).lhs = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(328);
+						setState(332);
 						if (!(precpred(_ctx, 12))) throw new FailedPredicateException(this, "precpred(_ctx, 12)");
-						setState(329);
+						setState(333);
 						((ExprEqualityContext)_localctx).op = match(EQ_OP);
-						setState(330);
+						setState(334);
 						((ExprEqualityContext)_localctx).rhs = expression(13);
 						}
 						break;
@@ -2512,11 +2555,11 @@ public class JavanaParser extends Parser {
 						_localctx = new ExprHighLogicalContext(new ExpressionContext(_parentctx, _parentState));
 						((ExprHighLogicalContext)_localctx).lhs = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(331);
+						setState(335);
 						if (!(precpred(_ctx, 11))) throw new FailedPredicateException(this, "precpred(_ctx, 11)");
-						setState(332);
+						setState(336);
 						((ExprHighLogicalContext)_localctx).op = match(HIGH_LOGIC_OP);
-						setState(333);
+						setState(337);
 						((ExprHighLogicalContext)_localctx).rhs = expression(12);
 						}
 						break;
@@ -2525,11 +2568,11 @@ public class JavanaParser extends Parser {
 						_localctx = new ExprLowLogicalContext(new ExpressionContext(_parentctx, _parentState));
 						((ExprLowLogicalContext)_localctx).lhs = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(334);
+						setState(338);
 						if (!(precpred(_ctx, 10))) throw new FailedPredicateException(this, "precpred(_ctx, 10)");
-						setState(335);
+						setState(339);
 						((ExprLowLogicalContext)_localctx).op = match(LOW_LOGIC_OP);
-						setState(336);
+						setState(340);
 						((ExprLowLogicalContext)_localctx).rhs = expression(11);
 						}
 						break;
@@ -2538,9 +2581,9 @@ public class JavanaParser extends Parser {
 						_localctx = new ExprArrayElementContext(new ExpressionContext(_parentctx, _parentState));
 						((ExprArrayElementContext)_localctx).expr = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(337);
-						if (!(precpred(_ctx, 19))) throw new FailedPredicateException(this, "precpred(_ctx, 19)");
-						setState(338);
+						setState(341);
+						if (!(precpred(_ctx, 21))) throw new FailedPredicateException(this, "precpred(_ctx, 21)");
+						setState(342);
 						((ExprArrayElementContext)_localctx).arrIdx = arrIdxSpecifier();
 						}
 						break;
@@ -2549,11 +2592,11 @@ public class JavanaParser extends Parser {
 						_localctx = new ExprArrayLengthContext(new ExpressionContext(_parentctx, _parentState));
 						((ExprArrayLengthContext)_localctx).expr = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(339);
-						if (!(precpred(_ctx, 18))) throw new FailedPredicateException(this, "precpred(_ctx, 18)");
-						setState(340);
+						setState(343);
+						if (!(precpred(_ctx, 20))) throw new FailedPredicateException(this, "precpred(_ctx, 20)");
+						setState(344);
 						match(T__15);
-						setState(341);
+						setState(345);
 						match(T__26);
 						}
 						break;
@@ -2562,37 +2605,52 @@ public class JavanaParser extends Parser {
 						_localctx = new ExprCharAtContext(new ExpressionContext(_parentctx, _parentState));
 						((ExprCharAtContext)_localctx).str = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(342);
-						if (!(precpred(_ctx, 17))) throw new FailedPredicateException(this, "precpred(_ctx, 17)");
-						setState(343);
-						match(T__15);
-						setState(344);
-						match(T__27);
-						setState(345);
-						match(T__3);
 						setState(346);
-						((ExprCharAtContext)_localctx).index = expression(0);
+						if (!(precpred(_ctx, 19))) throw new FailedPredicateException(this, "precpred(_ctx, 19)");
 						setState(347);
+						match(T__15);
+						setState(348);
+						match(T__27);
+						setState(349);
+						match(T__3);
+						setState(350);
+						((ExprCharAtContext)_localctx).index = expression(0);
+						setState(351);
 						match(T__4);
 						}
 						break;
 					case 10:
 						{
+						_localctx = new ExprDotEqualsContext(new ExpressionContext(_parentctx, _parentState));
+						((ExprDotEqualsContext)_localctx).lhs = _prevctx;
+						pushNewRecursionContext(_localctx, _startState, RULE_expression);
+						setState(353);
+						if (!(precpred(_ctx, 17))) throw new FailedPredicateException(this, "precpred(_ctx, 17)");
+						setState(354);
+						match(T__29);
+						setState(355);
+						((ExprDotEqualsContext)_localctx).rhs = expression(0);
+						setState(356);
+						match(T__4);
+						}
+						break;
+					case 11:
+						{
 						_localctx = new ExprRecordFieldContext(new ExpressionContext(_parentctx, _parentState));
 						((ExprRecordFieldContext)_localctx).expr = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(349);
+						setState(358);
 						if (!(precpred(_ctx, 16))) throw new FailedPredicateException(this, "precpred(_ctx, 16)");
-						setState(350);
+						setState(359);
 						match(T__15);
-						setState(351);
+						setState(360);
 						((ExprRecordFieldContext)_localctx).name = identifier();
 						}
 						break;
 					}
 					} 
 				}
-				setState(356);
+				setState(365);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,21,_ctx);
 			}
@@ -2637,23 +2695,23 @@ public class JavanaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(357);
+			setState(366);
 			((ExprListContext)_localctx).expression = expression(0);
 			((ExprListContext)_localctx).exprs.add(((ExprListContext)_localctx).expression);
-			setState(362);
+			setState(371);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__7) {
 				{
 				{
-				setState(358);
+				setState(367);
 				match(T__7);
-				setState(359);
+				setState(368);
 				((ExprListContext)_localctx).expression = expression(0);
 				((ExprListContext)_localctx).exprs.add(((ExprListContext)_localctx).expression);
 				}
 				}
-				setState(364);
+				setState(373);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -2689,11 +2747,11 @@ public class JavanaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(365);
-			match(T__29);
-			setState(366);
+			setState(374);
+			match(T__31);
+			setState(375);
 			match(T__3);
-			setState(367);
+			setState(376);
 			match(T__4);
 			}
 		}
@@ -2727,11 +2785,11 @@ public class JavanaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(369);
-			match(T__30);
-			setState(370);
+			setState(378);
+			match(T__32);
+			setState(379);
 			match(T__3);
-			setState(371);
+			setState(380);
 			match(T__4);
 			}
 		}
@@ -2774,21 +2832,21 @@ public class JavanaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(373);
+			setState(382);
 			((FunctionCallContext)_localctx).name = identifier();
-			setState(374);
+			setState(383);
 			match(T__3);
-			setState(376);
+			setState(385);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 4081403805302800L) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 16325615758082064L) != 0)) {
 				{
-				setState(375);
+				setState(384);
 				((FunctionCallContext)_localctx).args = exprList();
 				}
 			}
 
-			setState(378);
+			setState(387);
 			match(T__4);
 			}
 		}
@@ -2831,11 +2889,11 @@ public class JavanaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(380);
-			match(T__31);
-			setState(381);
+			setState(389);
+			match(T__33);
+			setState(390);
 			((NewArrayContext)_localctx).t = arrayElemType();
-			setState(382);
+			setState(391);
 			((NewArrayContext)_localctx).arrId = arrIdxSpecifier();
 			}
 		}
@@ -2874,7 +2932,7 @@ public class JavanaParser extends Parser {
 		ArrayElemTypeContext _localctx = new ArrayElemTypeContext(_ctx, getState());
 		enterRule(_localctx, 76, RULE_arrayElemType);
 		try {
-			setState(386);
+			setState(395);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case INT_TYPE:
@@ -2882,14 +2940,14 @@ public class JavanaParser extends Parser {
 			case STR_TYPE:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(384);
+				setState(393);
 				scalarType();
 				}
 				break;
 			case IDENT:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(385);
+				setState(394);
 				identifier();
 				}
 				break;
@@ -2936,23 +2994,23 @@ public class JavanaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(388);
-			match(T__31);
-			setState(389);
+			setState(397);
+			match(T__33);
+			setState(398);
 			identifier();
-			setState(390);
+			setState(399);
 			match(T__9);
-			setState(392);
+			setState(401);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==IDENT) {
 				{
-				setState(391);
+				setState(400);
 				((NewRecordContext)_localctx).init = fieldInitList();
 				}
 			}
 
-			setState(394);
+			setState(403);
 			match(T__10);
 			}
 		}
@@ -2995,23 +3053,23 @@ public class JavanaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(396);
+			setState(405);
 			((FieldInitListContext)_localctx).fieldInit = fieldInit();
 			((FieldInitListContext)_localctx).init.add(((FieldInitListContext)_localctx).fieldInit);
-			setState(401);
+			setState(410);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__7) {
 				{
 				{
-				setState(397);
+				setState(406);
 				match(T__7);
-				setState(398);
+				setState(407);
 				((FieldInitListContext)_localctx).fieldInit = fieldInit();
 				((FieldInitListContext)_localctx).init.add(((FieldInitListContext)_localctx).fieldInit);
 				}
 				}
-				setState(403);
+				setState(412);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -3055,11 +3113,11 @@ public class JavanaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(404);
+			setState(413);
 			((FieldInitContext)_localctx).field = identifier();
-			setState(405);
+			setState(414);
 			match(T__13);
-			setState(406);
+			setState(415);
 			((FieldInitContext)_localctx).expr = expression(0);
 			}
 		}
@@ -3133,14 +3191,14 @@ public class JavanaParser extends Parser {
 		LiteralContext _localctx = new LiteralContext(_ctx, getState());
 		enterRule(_localctx, 84, RULE_literal);
 		try {
-			setState(412);
+			setState(421);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case INTEGER:
 				_localctx = new IntegerLiteralContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(408);
+				setState(417);
 				match(INTEGER);
 				}
 				break;
@@ -3148,7 +3206,7 @@ public class JavanaParser extends Parser {
 				_localctx = new BooleanLiteralContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(409);
+				setState(418);
 				match(BOOL);
 				}
 				break;
@@ -3156,7 +3214,7 @@ public class JavanaParser extends Parser {
 				_localctx = new StringLiteralContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(410);
+				setState(419);
 				match(STRING);
 				}
 				break;
@@ -3164,7 +3222,7 @@ public class JavanaParser extends Parser {
 				_localctx = new NoneValueContext(_localctx);
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(411);
+				setState(420);
 				match(None);
 				}
 				break;
@@ -3226,7 +3284,7 @@ public class JavanaParser extends Parser {
 		TypeContext _localctx = new TypeContext(_ctx, getState());
 		enterRule(_localctx, 86, RULE_type);
 		try {
-			setState(416);
+			setState(425);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case INT_TYPE:
@@ -3235,7 +3293,7 @@ public class JavanaParser extends Parser {
 				_localctx = new TypeScalarContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(414);
+				setState(423);
 				scalarType();
 				}
 				break;
@@ -3247,7 +3305,7 @@ public class JavanaParser extends Parser {
 				_localctx = new TypeCompositeContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(415);
+				setState(424);
 				compositeType();
 				}
 				break;
@@ -3293,27 +3351,27 @@ public class JavanaParser extends Parser {
 		ScalarTypeContext _localctx = new ScalarTypeContext(_ctx, getState());
 		enterRule(_localctx, 88, RULE_scalarType);
 		try {
-			setState(421);
+			setState(430);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case INT_TYPE:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(418);
+				setState(427);
 				integerType();
 				}
 				break;
 			case BOOL_TYPE:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(419);
+				setState(428);
 				booleanType();
 				}
 				break;
 			case STR_TYPE:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(420);
+				setState(429);
 				stringType();
 				}
 				break;
@@ -3365,41 +3423,41 @@ public class JavanaParser extends Parser {
 		CompositeTypeContext _localctx = new CompositeTypeContext(_ctx, getState());
 		enterRule(_localctx, 90, RULE_compositeType);
 		try {
-			setState(428);
+			setState(437);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case IDENT:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(423);
+				setState(432);
 				recordType();
 				}
 				break;
 			case INT_ARR_TYPE:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(424);
+				setState(433);
 				integerArrType();
 				}
 				break;
 			case BOOL_ARR_TYPE:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(425);
+				setState(434);
 				booleanArrType();
 				}
 				break;
 			case STR_ARR_TYPE:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(426);
+				setState(435);
 				stringArrType();
 				}
 				break;
 			case REC_ARR_TYPE:
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(427);
+				setState(436);
 				recordArrType();
 				}
 				break;
@@ -3439,7 +3497,7 @@ public class JavanaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(430);
+			setState(439);
 			match(INT_TYPE);
 			}
 		}
@@ -3475,7 +3533,7 @@ public class JavanaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(432);
+			setState(441);
 			match(BOOL_TYPE);
 			}
 		}
@@ -3511,7 +3569,7 @@ public class JavanaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(434);
+			setState(443);
 			match(STR_TYPE);
 			}
 		}
@@ -3549,7 +3607,7 @@ public class JavanaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(436);
+			setState(445);
 			identifier();
 			}
 		}
@@ -3585,7 +3643,7 @@ public class JavanaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(438);
+			setState(447);
 			match(INT_ARR_TYPE);
 			}
 		}
@@ -3621,7 +3679,7 @@ public class JavanaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(440);
+			setState(449);
 			match(BOOL_ARR_TYPE);
 			}
 		}
@@ -3657,7 +3715,7 @@ public class JavanaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(442);
+			setState(451);
 			match(STR_ARR_TYPE);
 			}
 		}
@@ -3693,7 +3751,7 @@ public class JavanaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(444);
+			setState(453);
 			match(REC_ARR_TYPE);
 			}
 		}
@@ -3730,7 +3788,7 @@ public class JavanaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(446);
+			setState(455);
 			match(IDENT);
 			}
 		}
@@ -3767,19 +3825,21 @@ public class JavanaParser extends Parser {
 		case 5:
 			return precpred(_ctx, 10);
 		case 6:
-			return precpred(_ctx, 19);
+			return precpred(_ctx, 21);
 		case 7:
-			return precpred(_ctx, 18);
+			return precpred(_ctx, 20);
 		case 8:
-			return precpred(_ctx, 17);
+			return precpred(_ctx, 19);
 		case 9:
+			return precpred(_ctx, 17);
+		case 10:
 			return precpred(_ctx, 16);
 		}
 		return true;
 	}
 
 	public static final String _serializedATN =
-		"\u0004\u00017\u01c1\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
+		"\u0004\u00019\u01ca\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
 		"\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0002\u0004\u0007\u0004\u0002"+
 		"\u0005\u0007\u0005\u0002\u0006\u0007\u0006\u0002\u0007\u0007\u0007\u0002"+
 		"\b\u0007\b\u0002\t\u0007\t\u0002\n\u0007\n\u0002\u000b\u0007\u000b\u0002"+
@@ -3825,22 +3885,23 @@ public class JavanaParser extends Parser {
 		"\u0001\u001d\u0001\u001e\u0001\u001e\u0003\u001e\u0127\b\u001e\u0001\u001f"+
 		"\u0001\u001f\u0001\u001f\u0001\u001f\u0001\u001f\u0003\u001f\u012e\b\u001f"+
 		"\u0001 \u0001 \u0001 \u0001 \u0001 \u0001 \u0001 \u0001 \u0001 \u0001"+
-		" \u0001 \u0001 \u0001 \u0001 \u0003 \u013e\b \u0001 \u0001 \u0001 \u0001"+
+		" \u0001 \u0001 \u0001 \u0001 \u0001 \u0001 \u0001 \u0001 \u0003 \u0142"+
+		"\b \u0001 \u0001 \u0001 \u0001 \u0001 \u0001 \u0001 \u0001 \u0001 \u0001"+
 		" \u0001 \u0001 \u0001 \u0001 \u0001 \u0001 \u0001 \u0001 \u0001 \u0001"+
 		" \u0001 \u0001 \u0001 \u0001 \u0001 \u0001 \u0001 \u0001 \u0001 \u0001"+
-		" \u0001 \u0001 \u0001 \u0001 \u0001 \u0001 \u0001 \u0001 \u0001 \u0005"+
-		" \u0161\b \n \f \u0164\t \u0001!\u0001!\u0001!\u0005!\u0169\b!\n!\f!\u016c"+
-		"\t!\u0001\"\u0001\"\u0001\"\u0001\"\u0001#\u0001#\u0001#\u0001#\u0001"+
-		"$\u0001$\u0001$\u0003$\u0179\b$\u0001$\u0001$\u0001%\u0001%\u0001%\u0001"+
-		"%\u0001&\u0001&\u0003&\u0183\b&\u0001\'\u0001\'\u0001\'\u0001\'\u0003"+
-		"\'\u0189\b\'\u0001\'\u0001\'\u0001(\u0001(\u0001(\u0005(\u0190\b(\n(\f"+
-		"(\u0193\t(\u0001)\u0001)\u0001)\u0001)\u0001*\u0001*\u0001*\u0001*\u0003"+
-		"*\u019d\b*\u0001+\u0001+\u0003+\u01a1\b+\u0001,\u0001,\u0001,\u0003,\u01a6"+
-		"\b,\u0001-\u0001-\u0001-\u0001-\u0001-\u0003-\u01ad\b-\u0001.\u0001.\u0001"+
+		" \u0001 \u0001 \u0001 \u0001 \u0001 \u0001 \u0001 \u0001 \u0005 \u016a"+
+		"\b \n \f \u016d\t \u0001!\u0001!\u0001!\u0005!\u0172\b!\n!\f!\u0175\t"+
+		"!\u0001\"\u0001\"\u0001\"\u0001\"\u0001#\u0001#\u0001#\u0001#\u0001$\u0001"+
+		"$\u0001$\u0003$\u0182\b$\u0001$\u0001$\u0001%\u0001%\u0001%\u0001%\u0001"+
+		"&\u0001&\u0003&\u018c\b&\u0001\'\u0001\'\u0001\'\u0001\'\u0003\'\u0192"+
+		"\b\'\u0001\'\u0001\'\u0001(\u0001(\u0001(\u0005(\u0199\b(\n(\f(\u019c"+
+		"\t(\u0001)\u0001)\u0001)\u0001)\u0001*\u0001*\u0001*\u0001*\u0003*\u01a6"+
+		"\b*\u0001+\u0001+\u0003+\u01aa\b+\u0001,\u0001,\u0001,\u0003,\u01af\b"+
+		",\u0001-\u0001-\u0001-\u0001-\u0001-\u0003-\u01b6\b-\u0001.\u0001.\u0001"+
 		"/\u0001/\u00010\u00010\u00011\u00011\u00012\u00012\u00013\u00013\u0001"+
 		"4\u00014\u00015\u00015\u00016\u00016\u00016\u0000\u0001@7\u0000\u0002"+
 		"\u0004\u0006\b\n\f\u000e\u0010\u0012\u0014\u0016\u0018\u001a\u001c\u001e"+
-		" \"$&(*,.02468:<>@BDFHJLNPRTVXZ\\^`bdfhjl\u0000\u0000\u01c7\u0000n\u0001"+
+		" \"$&(*,.02468:<>@BDFHJLNPRTVXZ\\^`bdfhjl\u0000\u0000\u01d2\u0000n\u0001"+
 		"\u0000\u0000\u0000\u0002|\u0001\u0000\u0000\u0000\u0004\u0080\u0001\u0000"+
 		"\u0000\u0000\u0006\u0088\u0001\u0000\u0000\u0000\b\u008e\u0001\u0000\u0000"+
 		"\u0000\n\u0090\u0001\u0000\u0000\u0000\f\u0093\u0001\u0000\u0000\u0000"+
@@ -3855,16 +3916,16 @@ public class JavanaParser extends Parser {
 		"\u0102\u0001\u0000\u0000\u00002\u010b\u0001\u0000\u0000\u00004\u0115\u0001"+
 		"\u0000\u0000\u00006\u011b\u0001\u0000\u0000\u00008\u011d\u0001\u0000\u0000"+
 		"\u0000:\u0121\u0001\u0000\u0000\u0000<\u0124\u0001\u0000\u0000\u0000>"+
-		"\u012d\u0001\u0000\u0000\u0000@\u013d\u0001\u0000\u0000\u0000B\u0165\u0001"+
-		"\u0000\u0000\u0000D\u016d\u0001\u0000\u0000\u0000F\u0171\u0001\u0000\u0000"+
-		"\u0000H\u0175\u0001\u0000\u0000\u0000J\u017c\u0001\u0000\u0000\u0000L"+
-		"\u0182\u0001\u0000\u0000\u0000N\u0184\u0001\u0000\u0000\u0000P\u018c\u0001"+
-		"\u0000\u0000\u0000R\u0194\u0001\u0000\u0000\u0000T\u019c\u0001\u0000\u0000"+
-		"\u0000V\u01a0\u0001\u0000\u0000\u0000X\u01a5\u0001\u0000\u0000\u0000Z"+
-		"\u01ac\u0001\u0000\u0000\u0000\\\u01ae\u0001\u0000\u0000\u0000^\u01b0"+
-		"\u0001\u0000\u0000\u0000`\u01b2\u0001\u0000\u0000\u0000b\u01b4\u0001\u0000"+
-		"\u0000\u0000d\u01b6\u0001\u0000\u0000\u0000f\u01b8\u0001\u0000\u0000\u0000"+
-		"h\u01ba\u0001\u0000\u0000\u0000j\u01bc\u0001\u0000\u0000\u0000l\u01be"+
+		"\u012d\u0001\u0000\u0000\u0000@\u0141\u0001\u0000\u0000\u0000B\u016e\u0001"+
+		"\u0000\u0000\u0000D\u0176\u0001\u0000\u0000\u0000F\u017a\u0001\u0000\u0000"+
+		"\u0000H\u017e\u0001\u0000\u0000\u0000J\u0185\u0001\u0000\u0000\u0000L"+
+		"\u018b\u0001\u0000\u0000\u0000N\u018d\u0001\u0000\u0000\u0000P\u0195\u0001"+
+		"\u0000\u0000\u0000R\u019d\u0001\u0000\u0000\u0000T\u01a5\u0001\u0000\u0000"+
+		"\u0000V\u01a9\u0001\u0000\u0000\u0000X\u01ae\u0001\u0000\u0000\u0000Z"+
+		"\u01b5\u0001\u0000\u0000\u0000\\\u01b7\u0001\u0000\u0000\u0000^\u01b9"+
+		"\u0001\u0000\u0000\u0000`\u01bb\u0001\u0000\u0000\u0000b\u01bd\u0001\u0000"+
+		"\u0000\u0000d\u01bf\u0001\u0000\u0000\u0000f\u01c1\u0001\u0000\u0000\u0000"+
+		"h\u01c3\u0001\u0000\u0000\u0000j\u01c5\u0001\u0000\u0000\u0000l\u01c7"+
 		"\u0001\u0000\u0000\u0000nr\u0003\u0002\u0001\u0000oq\u0003\b\u0004\u0000"+
 		"po\u0001\u0000\u0000\u0000qt\u0001\u0000\u0000\u0000rp\u0001\u0000\u0000"+
 		"\u0000rs\u0001\u0000\u0000\u0000su\u0001\u0000\u0000\u0000tr\u0001\u0000"+
@@ -3893,7 +3954,7 @@ public class JavanaParser extends Parser {
 		"\u00a2\u00a0\u0001\u0000\u0000\u0000\u00a2\u00a3\u0001\u0000\u0000\u0000"+
 		"\u00a3\u000f\u0001\u0000\u0000\u0000\u00a4\u00a2\u0001\u0000\u0000\u0000"+
 		"\u00a5\u00a6\u0003\u0018\f\u0000\u00a6\u0011\u0001\u0000\u0000\u0000\u00a7"+
-		"\u00aa\u0003V+\u0000\u00a8\u00aa\u0005!\u0000\u0000\u00a9\u00a7\u0001"+
+		"\u00aa\u0003V+\u0000\u00a8\u00aa\u0005#\u0000\u0000\u00a9\u00a7\u0001"+
 		"\u0000\u0000\u0000\u00a9\u00a8\u0001\u0000\u0000\u0000\u00aa\u0013\u0001"+
 		"\u0000\u0000\u0000\u00ab\u00ac\u0005\t\u0000\u0000\u00ac\u00ad\u0003l"+
 		"6\u0000\u00ad\u00b1\u0005\n\u0000\u0000\u00ae\u00b0\u0003\u0018\f\u0000"+
@@ -3967,88 +4028,93 @@ public class JavanaParser extends Parser {
 		"\u012b\u012c\u0005\u0005\u0000\u0000\u012c\u012e\u0001\u0000\u0000\u0000"+
 		"\u012d\u0128\u0001\u0000\u0000\u0000\u012d\u0129\u0001\u0000\u0000\u0000"+
 		"\u012e?\u0001\u0000\u0000\u0000\u012f\u0130\u0006 \uffff\uffff\u0000\u0130"+
-		"\u0131\u0005\u001d\u0000\u0000\u0131\u013e\u0003@ \t\u0132\u0133\u0005"+
-		"\u0004\u0000\u0000\u0133\u0134\u0003@ \u0000\u0134\u0135\u0005\u0005\u0000"+
-		"\u0000\u0135\u013e\u0001\u0000\u0000\u0000\u0136\u013e\u0003D\"\u0000"+
-		"\u0137\u013e\u0003F#\u0000\u0138\u013e\u0003H$\u0000\u0139\u013e\u0003"+
-		"*\u0015\u0000\u013a\u013e\u0003T*\u0000\u013b\u013e\u0003J%\u0000\u013c"+
-		"\u013e\u0003N\'\u0000\u013d\u012f\u0001\u0000\u0000\u0000\u013d\u0132"+
-		"\u0001\u0000\u0000\u0000\u013d\u0136\u0001\u0000\u0000\u0000\u013d\u0137"+
-		"\u0001\u0000\u0000\u0000\u013d\u0138\u0001\u0000\u0000\u0000\u013d\u0139"+
-		"\u0001\u0000\u0000\u0000\u013d\u013a\u0001\u0000\u0000\u0000\u013d\u013b"+
-		"\u0001\u0000\u0000\u0000\u013d\u013c\u0001\u0000\u0000\u0000\u013e\u0162"+
-		"\u0001\u0000\u0000\u0000\u013f\u0140\n\u000f\u0000\u0000\u0140\u0141\u0005"+
-		")\u0000\u0000\u0141\u0161\u0003@ \u0010\u0142\u0143\n\u000e\u0000\u0000"+
-		"\u0143\u0144\u0005*\u0000\u0000\u0144\u0161\u0003@ \u000f\u0145\u0146"+
-		"\n\r\u0000\u0000\u0146\u0147\u0005+\u0000\u0000\u0147\u0161\u0003@ \u000e"+
-		"\u0148\u0149\n\f\u0000\u0000\u0149\u014a\u0005,\u0000\u0000\u014a\u0161"+
-		"\u0003@ \r\u014b\u014c\n\u000b\u0000\u0000\u014c\u014d\u0005-\u0000\u0000"+
-		"\u014d\u0161\u0003@ \f\u014e\u014f\n\n\u0000\u0000\u014f\u0150\u0005."+
-		"\u0000\u0000\u0150\u0161\u0003@ \u000b\u0151\u0152\n\u0013\u0000\u0000"+
-		"\u0152\u0161\u0003.\u0017\u0000\u0153\u0154\n\u0012\u0000\u0000\u0154"+
-		"\u0155\u0005\u0010\u0000\u0000\u0155\u0161\u0005\u001b\u0000\u0000\u0156"+
-		"\u0157\n\u0011\u0000\u0000\u0157\u0158\u0005\u0010\u0000\u0000\u0158\u0159"+
-		"\u0005\u001c\u0000\u0000\u0159\u015a\u0005\u0004\u0000\u0000\u015a\u015b"+
-		"\u0003@ \u0000\u015b\u015c\u0005\u0005\u0000\u0000\u015c\u0161\u0001\u0000"+
-		"\u0000\u0000\u015d\u015e\n\u0010\u0000\u0000\u015e\u015f\u0005\u0010\u0000"+
-		"\u0000\u015f\u0161\u0003l6\u0000\u0160\u013f\u0001\u0000\u0000\u0000\u0160"+
-		"\u0142\u0001\u0000\u0000\u0000\u0160\u0145\u0001\u0000\u0000\u0000\u0160"+
-		"\u0148\u0001\u0000\u0000\u0000\u0160\u014b\u0001\u0000\u0000\u0000\u0160"+
-		"\u014e\u0001\u0000\u0000\u0000\u0160\u0151\u0001\u0000\u0000\u0000\u0160"+
-		"\u0153\u0001\u0000\u0000\u0000\u0160\u0156\u0001\u0000\u0000\u0000\u0160"+
-		"\u015d\u0001\u0000\u0000\u0000\u0161\u0164\u0001\u0000\u0000\u0000\u0162"+
-		"\u0160\u0001\u0000\u0000\u0000\u0162\u0163\u0001\u0000\u0000\u0000\u0163"+
-		"A\u0001\u0000\u0000\u0000\u0164\u0162\u0001\u0000\u0000\u0000\u0165\u016a"+
-		"\u0003@ \u0000\u0166\u0167\u0005\b\u0000\u0000\u0167\u0169\u0003@ \u0000"+
-		"\u0168\u0166\u0001\u0000\u0000\u0000\u0169\u016c\u0001\u0000\u0000\u0000"+
-		"\u016a\u0168\u0001\u0000\u0000\u0000\u016a\u016b\u0001\u0000\u0000\u0000"+
-		"\u016bC\u0001\u0000\u0000\u0000\u016c\u016a\u0001\u0000\u0000\u0000\u016d"+
-		"\u016e\u0005\u001e\u0000\u0000\u016e\u016f\u0005\u0004\u0000\u0000\u016f"+
-		"\u0170\u0005\u0005\u0000\u0000\u0170E\u0001\u0000\u0000\u0000\u0171\u0172"+
-		"\u0005\u001f\u0000\u0000\u0172\u0173\u0005\u0004\u0000\u0000\u0173\u0174"+
-		"\u0005\u0005\u0000\u0000\u0174G\u0001\u0000\u0000\u0000\u0175\u0176\u0003"+
-		"l6\u0000\u0176\u0178\u0005\u0004\u0000\u0000\u0177\u0179\u0003B!\u0000"+
-		"\u0178\u0177\u0001\u0000\u0000\u0000\u0178\u0179\u0001\u0000\u0000\u0000"+
-		"\u0179\u017a\u0001\u0000\u0000\u0000\u017a\u017b\u0005\u0005\u0000\u0000"+
-		"\u017bI\u0001\u0000\u0000\u0000\u017c\u017d\u0005 \u0000\u0000\u017d\u017e"+
-		"\u0003L&\u0000\u017e\u017f\u0003.\u0017\u0000\u017fK\u0001\u0000\u0000"+
-		"\u0000\u0180\u0183\u0003X,\u0000\u0181\u0183\u0003l6\u0000\u0182\u0180"+
-		"\u0001\u0000\u0000\u0000\u0182\u0181\u0001\u0000\u0000\u0000\u0183M\u0001"+
-		"\u0000\u0000\u0000\u0184\u0185\u0005 \u0000\u0000\u0185\u0186\u0003l6"+
-		"\u0000\u0186\u0188\u0005\n\u0000\u0000\u0187\u0189\u0003P(\u0000\u0188"+
-		"\u0187\u0001\u0000\u0000\u0000\u0188\u0189\u0001\u0000\u0000\u0000\u0189"+
-		"\u018a\u0001\u0000\u0000\u0000\u018a\u018b\u0005\u000b\u0000\u0000\u018b"+
-		"O\u0001\u0000\u0000\u0000\u018c\u0191\u0003R)\u0000\u018d\u018e\u0005"+
-		"\b\u0000\u0000\u018e\u0190\u0003R)\u0000\u018f\u018d\u0001\u0000\u0000"+
-		"\u0000\u0190\u0193\u0001\u0000\u0000\u0000\u0191\u018f\u0001\u0000\u0000"+
-		"\u0000\u0191\u0192\u0001\u0000\u0000\u0000\u0192Q\u0001\u0000\u0000\u0000"+
-		"\u0193\u0191\u0001\u0000\u0000\u0000\u0194\u0195\u0003l6\u0000\u0195\u0196"+
-		"\u0005\u000e\u0000\u0000\u0196\u0197\u0003@ \u0000\u0197S\u0001\u0000"+
-		"\u0000\u0000\u0198\u019d\u00053\u0000\u0000\u0199\u019d\u0005/\u0000\u0000"+
-		"\u019a\u019d\u00052\u0000\u0000\u019b\u019d\u0005!\u0000\u0000\u019c\u0198"+
-		"\u0001\u0000\u0000\u0000\u019c\u0199\u0001\u0000\u0000\u0000\u019c\u019a"+
-		"\u0001\u0000\u0000\u0000\u019c\u019b\u0001\u0000\u0000\u0000\u019dU\u0001"+
-		"\u0000\u0000\u0000\u019e\u01a1\u0003X,\u0000\u019f\u01a1\u0003Z-\u0000"+
-		"\u01a0\u019e\u0001\u0000\u0000\u0000\u01a0\u019f\u0001\u0000\u0000\u0000"+
-		"\u01a1W\u0001\u0000\u0000\u0000\u01a2\u01a6\u0003\\.\u0000\u01a3\u01a6"+
-		"\u0003^/\u0000\u01a4\u01a6\u0003`0\u0000\u01a5\u01a2\u0001\u0000\u0000"+
-		"\u0000\u01a5\u01a3\u0001\u0000\u0000\u0000\u01a5\u01a4\u0001\u0000\u0000"+
-		"\u0000\u01a6Y\u0001\u0000\u0000\u0000\u01a7\u01ad\u0003b1\u0000\u01a8"+
-		"\u01ad\u0003d2\u0000\u01a9\u01ad\u0003f3\u0000\u01aa\u01ad\u0003h4\u0000"+
-		"\u01ab\u01ad\u0003j5\u0000\u01ac\u01a7\u0001\u0000\u0000\u0000\u01ac\u01a8"+
-		"\u0001\u0000\u0000\u0000\u01ac\u01a9\u0001\u0000\u0000\u0000\u01ac\u01aa"+
-		"\u0001\u0000\u0000\u0000\u01ac\u01ab\u0001\u0000\u0000\u0000\u01ad[\u0001"+
-		"\u0000\u0000\u0000\u01ae\u01af\u0005&\u0000\u0000\u01af]\u0001\u0000\u0000"+
-		"\u0000\u01b0\u01b1\u0005\'\u0000\u0000\u01b1_\u0001\u0000\u0000\u0000"+
-		"\u01b2\u01b3\u0005(\u0000\u0000\u01b3a\u0001\u0000\u0000\u0000\u01b4\u01b5"+
-		"\u0003l6\u0000\u01b5c\u0001\u0000\u0000\u0000\u01b6\u01b7\u0005\"\u0000"+
-		"\u0000\u01b7e\u0001\u0000\u0000\u0000\u01b8\u01b9\u0005#\u0000\u0000\u01b9"+
-		"g\u0001\u0000\u0000\u0000\u01ba\u01bb\u0005$\u0000\u0000\u01bbi\u0001"+
-		"\u0000\u0000\u0000\u01bc\u01bd\u0005%\u0000\u0000\u01bdk\u0001\u0000\u0000"+
-		"\u0000\u01be\u01bf\u00051\u0000\u0000\u01bfm\u0001\u0000\u0000\u0000\u001f"+
+		"\u0131\u0005\u001d\u0000\u0000\u0131\u0132\u0003@ \u0000\u0132\u0133\u0005"+
+		"\u0005\u0000\u0000\u0133\u0142\u0001\u0000\u0000\u0000\u0134\u0135\u0005"+
+		"\u001f\u0000\u0000\u0135\u0142\u0003@ \t\u0136\u0137\u0005\u0004\u0000"+
+		"\u0000\u0137\u0138\u0003@ \u0000\u0138\u0139\u0005\u0005\u0000\u0000\u0139"+
+		"\u0142\u0001\u0000\u0000\u0000\u013a\u0142\u0003D\"\u0000\u013b\u0142"+
+		"\u0003F#\u0000\u013c\u0142\u0003H$\u0000\u013d\u0142\u0003*\u0015\u0000"+
+		"\u013e\u0142\u0003T*\u0000\u013f\u0142\u0003J%\u0000\u0140\u0142\u0003"+
+		"N\'\u0000\u0141\u012f\u0001\u0000\u0000\u0000\u0141\u0134\u0001\u0000"+
+		"\u0000\u0000\u0141\u0136\u0001\u0000\u0000\u0000\u0141\u013a\u0001\u0000"+
+		"\u0000\u0000\u0141\u013b\u0001\u0000\u0000\u0000\u0141\u013c\u0001\u0000"+
+		"\u0000\u0000\u0141\u013d\u0001\u0000\u0000\u0000\u0141\u013e\u0001\u0000"+
+		"\u0000\u0000\u0141\u013f\u0001\u0000\u0000\u0000\u0141\u0140\u0001\u0000"+
+		"\u0000\u0000\u0142\u016b\u0001\u0000\u0000\u0000\u0143\u0144\n\u000f\u0000"+
+		"\u0000\u0144\u0145\u0005+\u0000\u0000\u0145\u016a\u0003@ \u0010\u0146"+
+		"\u0147\n\u000e\u0000\u0000\u0147\u0148\u0005,\u0000\u0000\u0148\u016a"+
+		"\u0003@ \u000f\u0149\u014a\n\r\u0000\u0000\u014a\u014b\u0005-\u0000\u0000"+
+		"\u014b\u016a\u0003@ \u000e\u014c\u014d\n\f\u0000\u0000\u014d\u014e\u0005"+
+		".\u0000\u0000\u014e\u016a\u0003@ \r\u014f\u0150\n\u000b\u0000\u0000\u0150"+
+		"\u0151\u0005/\u0000\u0000\u0151\u016a\u0003@ \f\u0152\u0153\n\n\u0000"+
+		"\u0000\u0153\u0154\u00050\u0000\u0000\u0154\u016a\u0003@ \u000b\u0155"+
+		"\u0156\n\u0015\u0000\u0000\u0156\u016a\u0003.\u0017\u0000\u0157\u0158"+
+		"\n\u0014\u0000\u0000\u0158\u0159\u0005\u0010\u0000\u0000\u0159\u016a\u0005"+
+		"\u001b\u0000\u0000\u015a\u015b\n\u0013\u0000\u0000\u015b\u015c\u0005\u0010"+
+		"\u0000\u0000\u015c\u015d\u0005\u001c\u0000\u0000\u015d\u015e\u0005\u0004"+
+		"\u0000\u0000\u015e\u015f\u0003@ \u0000\u015f\u0160\u0005\u0005\u0000\u0000"+
+		"\u0160\u016a\u0001\u0000\u0000\u0000\u0161\u0162\n\u0011\u0000\u0000\u0162"+
+		"\u0163\u0005\u001e\u0000\u0000\u0163\u0164\u0003@ \u0000\u0164\u0165\u0005"+
+		"\u0005\u0000\u0000\u0165\u016a\u0001\u0000\u0000\u0000\u0166\u0167\n\u0010"+
+		"\u0000\u0000\u0167\u0168\u0005\u0010\u0000\u0000\u0168\u016a\u0003l6\u0000"+
+		"\u0169\u0143\u0001\u0000\u0000\u0000\u0169\u0146\u0001\u0000\u0000\u0000"+
+		"\u0169\u0149\u0001\u0000\u0000\u0000\u0169\u014c\u0001\u0000\u0000\u0000"+
+		"\u0169\u014f\u0001\u0000\u0000\u0000\u0169\u0152\u0001\u0000\u0000\u0000"+
+		"\u0169\u0155\u0001\u0000\u0000\u0000\u0169\u0157\u0001\u0000\u0000\u0000"+
+		"\u0169\u015a\u0001\u0000\u0000\u0000\u0169\u0161\u0001\u0000\u0000\u0000"+
+		"\u0169\u0166\u0001\u0000\u0000\u0000\u016a\u016d\u0001\u0000\u0000\u0000"+
+		"\u016b\u0169\u0001\u0000\u0000\u0000\u016b\u016c\u0001\u0000\u0000\u0000"+
+		"\u016cA\u0001\u0000\u0000\u0000\u016d\u016b\u0001\u0000\u0000\u0000\u016e"+
+		"\u0173\u0003@ \u0000\u016f\u0170\u0005\b\u0000\u0000\u0170\u0172\u0003"+
+		"@ \u0000\u0171\u016f\u0001\u0000\u0000\u0000\u0172\u0175\u0001\u0000\u0000"+
+		"\u0000\u0173\u0171\u0001\u0000\u0000\u0000\u0173\u0174\u0001\u0000\u0000"+
+		"\u0000\u0174C\u0001\u0000\u0000\u0000\u0175\u0173\u0001\u0000\u0000\u0000"+
+		"\u0176\u0177\u0005 \u0000\u0000\u0177\u0178\u0005\u0004\u0000\u0000\u0178"+
+		"\u0179\u0005\u0005\u0000\u0000\u0179E\u0001\u0000\u0000\u0000\u017a\u017b"+
+		"\u0005!\u0000\u0000\u017b\u017c\u0005\u0004\u0000\u0000\u017c\u017d\u0005"+
+		"\u0005\u0000\u0000\u017dG\u0001\u0000\u0000\u0000\u017e\u017f\u0003l6"+
+		"\u0000\u017f\u0181\u0005\u0004\u0000\u0000\u0180\u0182\u0003B!\u0000\u0181"+
+		"\u0180\u0001\u0000\u0000\u0000\u0181\u0182\u0001\u0000\u0000\u0000\u0182"+
+		"\u0183\u0001\u0000\u0000\u0000\u0183\u0184\u0005\u0005\u0000\u0000\u0184"+
+		"I\u0001\u0000\u0000\u0000\u0185\u0186\u0005\"\u0000\u0000\u0186\u0187"+
+		"\u0003L&\u0000\u0187\u0188\u0003.\u0017\u0000\u0188K\u0001\u0000\u0000"+
+		"\u0000\u0189\u018c\u0003X,\u0000\u018a\u018c\u0003l6\u0000\u018b\u0189"+
+		"\u0001\u0000\u0000\u0000\u018b\u018a\u0001\u0000\u0000\u0000\u018cM\u0001"+
+		"\u0000\u0000\u0000\u018d\u018e\u0005\"\u0000\u0000\u018e\u018f\u0003l"+
+		"6\u0000\u018f\u0191\u0005\n\u0000\u0000\u0190\u0192\u0003P(\u0000\u0191"+
+		"\u0190\u0001\u0000\u0000\u0000\u0191\u0192\u0001\u0000\u0000\u0000\u0192"+
+		"\u0193\u0001\u0000\u0000\u0000\u0193\u0194\u0005\u000b\u0000\u0000\u0194"+
+		"O\u0001\u0000\u0000\u0000\u0195\u019a\u0003R)\u0000\u0196\u0197\u0005"+
+		"\b\u0000\u0000\u0197\u0199\u0003R)\u0000\u0198\u0196\u0001\u0000\u0000"+
+		"\u0000\u0199\u019c\u0001\u0000\u0000\u0000\u019a\u0198\u0001\u0000\u0000"+
+		"\u0000\u019a\u019b\u0001\u0000\u0000\u0000\u019bQ\u0001\u0000\u0000\u0000"+
+		"\u019c\u019a\u0001\u0000\u0000\u0000\u019d\u019e\u0003l6\u0000\u019e\u019f"+
+		"\u0005\u000e\u0000\u0000\u019f\u01a0\u0003@ \u0000\u01a0S\u0001\u0000"+
+		"\u0000\u0000\u01a1\u01a6\u00055\u0000\u0000\u01a2\u01a6\u00051\u0000\u0000"+
+		"\u01a3\u01a6\u00054\u0000\u0000\u01a4\u01a6\u0005#\u0000\u0000\u01a5\u01a1"+
+		"\u0001\u0000\u0000\u0000\u01a5\u01a2\u0001\u0000\u0000\u0000\u01a5\u01a3"+
+		"\u0001\u0000\u0000\u0000\u01a5\u01a4\u0001\u0000\u0000\u0000\u01a6U\u0001"+
+		"\u0000\u0000\u0000\u01a7\u01aa\u0003X,\u0000\u01a8\u01aa\u0003Z-\u0000"+
+		"\u01a9\u01a7\u0001\u0000\u0000\u0000\u01a9\u01a8\u0001\u0000\u0000\u0000"+
+		"\u01aaW\u0001\u0000\u0000\u0000\u01ab\u01af\u0003\\.\u0000\u01ac\u01af"+
+		"\u0003^/\u0000\u01ad\u01af\u0003`0\u0000\u01ae\u01ab\u0001\u0000\u0000"+
+		"\u0000\u01ae\u01ac\u0001\u0000\u0000\u0000\u01ae\u01ad\u0001\u0000\u0000"+
+		"\u0000\u01afY\u0001\u0000\u0000\u0000\u01b0\u01b6\u0003b1\u0000\u01b1"+
+		"\u01b6\u0003d2\u0000\u01b2\u01b6\u0003f3\u0000\u01b3\u01b6\u0003h4\u0000"+
+		"\u01b4\u01b6\u0003j5\u0000\u01b5\u01b0\u0001\u0000\u0000\u0000\u01b5\u01b1"+
+		"\u0001\u0000\u0000\u0000\u01b5\u01b2\u0001\u0000\u0000\u0000\u01b5\u01b3"+
+		"\u0001\u0000\u0000\u0000\u01b5\u01b4\u0001\u0000\u0000\u0000\u01b6[\u0001"+
+		"\u0000\u0000\u0000\u01b7\u01b8\u0005(\u0000\u0000\u01b8]\u0001\u0000\u0000"+
+		"\u0000\u01b9\u01ba\u0005)\u0000\u0000\u01ba_\u0001\u0000\u0000\u0000\u01bb"+
+		"\u01bc\u0005*\u0000\u0000\u01bca\u0001\u0000\u0000\u0000\u01bd\u01be\u0003"+
+		"l6\u0000\u01bec\u0001\u0000\u0000\u0000\u01bf\u01c0\u0005$\u0000\u0000"+
+		"\u01c0e\u0001\u0000\u0000\u0000\u01c1\u01c2\u0005%\u0000\u0000\u01c2g"+
+		"\u0001\u0000\u0000\u0000\u01c3\u01c4\u0005&\u0000\u0000\u01c4i\u0001\u0000"+
+		"\u0000\u0000\u01c5\u01c6\u0005\'\u0000\u0000\u01c6k\u0001\u0000\u0000"+
+		"\u0000\u01c7\u01c8\u00053\u0000\u0000\u01c8m\u0001\u0000\u0000\u0000\u001f"+
 		"ry\u0083\u008e\u0097\u00a2\u00a9\u00b1\u00cc\u00da\u00e0\u00e7\u00ec\u00f6"+
-		"\u00fc\u0109\u011f\u0126\u012d\u013d\u0160\u0162\u016a\u0178\u0182\u0188"+
-		"\u0191\u019c\u01a0\u01a5\u01ac";
+		"\u00fc\u0109\u011f\u0126\u012d\u0141\u0169\u016b\u0173\u0181\u018b\u0191"+
+		"\u019a\u01a5\u01a9\u01ae\u01b5";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {
