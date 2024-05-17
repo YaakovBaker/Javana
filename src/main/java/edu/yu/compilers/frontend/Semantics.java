@@ -495,7 +495,12 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         SymTableEntry varId = symTableStack.lookup(varName);
         if( varId != null ){//If the varId is not null then we found the variable
             int lineNumber = ctx.getStart().getLine();
-            ctx.typeSpec = varId.getType();
+            //If the varId's type is Array then we need to get the array element type
+            if( varId.getType().getForm() == ARRAY ){
+                ctx.typeSpec = varId.getType().getArrayElementType();
+            }else{
+                ctx.typeSpec = varId.getType();
+            }
             ctx.entry = varId;
             varId.appendLineNumber(lineNumber);
             //Now deal with the varModifiers
