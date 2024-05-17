@@ -388,9 +388,9 @@ public class Converter extends JavanaBaseVisitor<Object> {
     //I'm not 100% on these prints, but lets see what happens
     @Override
     public Object visitPrintStatement(JavanaParser.PrintStatementContext ctx) {
-        code.emit("System.out.printf(");
+        code.emit("System.out.printf");
         visit(ctx.arg);
-        code.emitEnd(");");
+        code.emitEnd(";");
         return null;
     }
 
