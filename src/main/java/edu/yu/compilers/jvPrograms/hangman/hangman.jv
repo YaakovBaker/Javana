@@ -1,6 +1,5 @@
 Javana HangmanGame:
 
-
     func displayWord(word: string, guessedLetters: bool[]) -> string {
         var display = ""
         for (var i = 0; i < word.length; i + 1) {

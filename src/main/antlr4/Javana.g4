@@ -169,26 +169,26 @@ printArgument
 // Expressions -----------------------------
 
 expression locals [ Typespec typeSpec = null, SymTableEntry entry = null]
-    : expr=expression arrIdx=arrIdxSpecifier            # ExprArrayElement
-    | expr=expression '.' 'length'                      # ExprArrayLength
-    | expr=expression '.' 'charAt' '(' expression ')'   # ExprCharAt
-    | 'Integer.parseInt(' expression ')'                # ExprIntegerParseInt
-    | expr=expression '.' name=identifier               # ExprRecordField
-    | lhs=expression op=HIGHER_ARITH_OP rhs=expression  # ExprHigherArith
-    | lhs=expression op=ARITH_OP rhs=expression         # ExprArith
-    | lhs=expression op=REL_OP rhs=expression           # ExprRelational
-    | lhs=expression op=EQ_OP rhs=expression            # ExprEquality
-    | lhs=expression op=HIGH_LOGIC_OP rhs=expression    # ExprHighLogical
-    | lhs=expression op=LOW_LOGIC_OP rhs=expression     # ExprLowLogical
-    | '!' expression                                    # ExprNot
-    | '(' expression ')'                                # ExprGroup
-    | readCharCall                                      # ExprReadChar
-    | readLineCall                                      # ExprReadLine
-    | functionCall                                      # ExprFunctionCall //Done til here
-    | variable                                          # ExprVariable //Will just visitVariable, which returns a String
-    | literal                                           # ExprLiteral //Handled by literal
-    | newArray                                          # ExprNewArray //Handled by newArray
-    | newRecord                                         # ExprNewRecord //Handled by newArray
+    : expr=expression arrIdx=arrIdxSpecifier                # ExprArrayElement
+    | expr=expression '.' 'length'                          # ExprArrayLength
+    | str=expression '.' 'charAt' '(' index=expression ')'  # ExprCharAt
+    | 'Integer.parseInt(' expression ')'                    # ExprIntegerParseInt
+    | expr=expression '.' name=identifier                   # ExprRecordField
+    | lhs=expression op=HIGHER_ARITH_OP rhs=expression      # ExprHigherArith
+    | lhs=expression op=ARITH_OP rhs=expression             # ExprArith
+    | lhs=expression op=REL_OP rhs=expression               # ExprRelational
+    | lhs=expression op=EQ_OP rhs=expression                # ExprEquality
+    | lhs=expression op=HIGH_LOGIC_OP rhs=expression        # ExprHighLogical
+    | lhs=expression op=LOW_LOGIC_OP rhs=expression         # ExprLowLogical
+    | '!' expression                                        # ExprNot
+    | '(' expression ')'                                    # ExprGroup
+    | readCharCall                                          # ExprReadChar
+    | readLineCall                                          # ExprReadLine
+    | functionCall                                          # ExprFunctionCall //Done til here
+    | variable                                              # ExprVariable //Will just visitVariable, which returns a String
+    | literal                                               # ExprLiteral //Handled by literal
+    | newArray                                              # ExprNewArray //Handled by newArray
+    | newRecord                                             # ExprNewRecord //Handled by newArray
     ; //Make sure to return String instead of return null
 
 exprList

@@ -309,7 +309,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
             if(typeId == null){
                 typeId = symTableStack.enterLocal(typeAssocName, TYPE);
                 typeId.setType(typeCtx.typeSpec);
-                typeCtx.typeSpec.setIdentifier(typeId);
+//                typeCtx.typeSpec.setIdentifier(typeId);
             }else{//Else we already declared this ident
                 error.flag(REDECLARED_IDENTIFIER, ctx);
             }
@@ -495,20 +495,36 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         SymTableEntry varId = symTableStack.lookup(varName);
         if( varId != null ){//If the varId is not null then we found the variable
             int lineNumber = ctx.getStart().getLine();
-            ctx.typeSpec = varId.getType();
+            //If the varId's type is Array then we need to get the array element type
+            if( varId.getType().getForm() == ARRAY ){
+                ctx.typeSpec = varId.getType().getArrayElementType();
+            }else{
+                ctx.typeSpec = varId.getType();
+            }
             ctx.entry = varId;
             varId.appendLineNumber(lineNumber);
-
-            SymTableEntry.Kind kind = varId.getKind();
-            switch (kind) {
-                case TYPE, PROGRAM, PROGRAM_PARAMETER, PROCEDURE, UNDEFINED -> error.flag(SemanticErrorHandler.Code.INVALID_TYPE, ctx);
-                default -> {
-                }
+            //Now deal with the varModifiers
+            for(JavanaParser.VarModifierContext varModCtx : ctx.modifiers){
+                visit(varModCtx);
             }
         }else{//Else we didn't find the variable
             error.flag(SemanticErrorHandler.Code.UNDECLARED_IDENTIFIER, ctx);
             ctx.typeSpec = Predefined.integerType;
 //            ctx.typeSpec = Predefined.undefinedType;
+        }
+        return null;
+    }
+
+    //Done
+    @Override
+    public Object visitVarModifier(JavanaParser.VarModifierContext ctx) {
+        //Have to deal with the modifier
+        JavanaParser.ArrIdxSpecifierContext arrIdxCtx = ctx.arrIdxSpecifier();
+        JavanaParser.IdentifierContext idCtx = ctx.identifier();
+        if( arrIdxCtx != null ){
+            visit(arrIdxCtx);
+        }else if( idCtx != null ){
+            visit(idCtx);
         }
         return null;
     }
@@ -593,20 +609,13 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     public Object visitReturnStatement(JavanaParser.ReturnStatementContext ctx){
         JavanaParser.ExpressionContext exprCtx = ctx.expr;
         if( exprCtx != null ){
-            visit(exprCtx);
+            visit(exprCtx);//This should be calling ExprArrayElement
         }
         //Get the returnType
         Typespec returnType = exprCtx != null ? exprCtx.typeSpec : Predefined.undefinedType;
         //Check the current stack frame's routineIdType
         int nestingLevel = symTableStack.getLocalSymTable().getNestingLevel();
         SymTableEntry routineId = symTableStack.get(nestingLevel - 1).getOwner();
-
-        /*
-        Exception in thread "main" java.lang.NullPointerException: Cannot invoke "edu.yu.compilers.intermediate.symtable.SymTableEntry.getType()" because "routineId" is null
-	at edu.yu.compilers.frontend.Semantics.visitReturnStatement(Semantics.java:603)
-
-	This happens here when returning a literal, we dont want that
-         */
 
         Typespec routineType = routineId.getType();
         //Compare and see if we have a type mismatch or not
@@ -644,7 +653,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    //TODO
+    //
     @Override
     public Object visitPrintSingleValue(JavanaParser.PrintSingleValueContext ctx){
         JavanaParser.ExpressionContext exprCtx = ctx.expression();
@@ -652,7 +661,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
-    //TODO
+    //
     @Override
     public Object visitFormattedPrint(JavanaParser.FormattedPrintContext ctx) {
         JavanaParser.ExprListContext exprListCtx = ctx.exprList();
@@ -675,7 +684,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         if( arrIdxCtx.expr.typeSpec != Predefined.integerType){
             error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_INTEGER, arrIdxCtx);
         }
-        visit(exprCtx);
+        visit(exprCtx);//This should be calling the variable
         //Expression should be an array type
         if( exprCtx.typeSpec.getForm() != ARRAY){
             error.flag(SemanticErrorHandler.Code.INVALID_TYPE, exprCtx);
@@ -696,9 +705,10 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         //This should be an array
         //TODO
         //Java is fine with calling.length on a string, so lets keep that functionality too for hangman
-        if( exprType != null && exprType.getForm() != ARRAY){
+        if( exprType != null && exprType.getForm() != ARRAY && exprType != Predefined.stringType){
             error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_ARRAY, exprCtx);
         }
+        ctx.typeSpec = Predefined.integerType;
         return null;
     }
 
@@ -1155,4 +1165,21 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         return null;
     }
 
+    @Override
+    public Object visitExprCharAt(JavanaParser.ExprCharAtContext ctx) {
+        JavanaParser.ExpressionContext strCtx = ctx.str;
+        JavanaParser.ExpressionContext indexCtx = ctx.index;
+        visit(strCtx);
+        //Make sure it is a string type
+        if( strCtx.typeSpec != Predefined.stringType){
+            error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_STRING, strCtx);
+        }
+        visit(indexCtx);
+        //Must be a integer type
+        if( indexCtx.typeSpec != Predefined.integerType){
+            error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_INTEGER, indexCtx);
+        }
+        ctx.typeSpec = Predefined.stringType;
+        return null;
+    }
 }
