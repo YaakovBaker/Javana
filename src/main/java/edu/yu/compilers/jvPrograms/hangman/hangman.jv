@@ -1,25 +1,5 @@
 Javana HangmanGame:
-    const MAX_TRIES = 6
-    var WORDS = @string[10]
 
-    func initWords() -> None {
-        WORDS[0] = "yaakov"
-        WORDS[1] = "gabe"
-        WORDS[2] = "sacknovitz"
-        WORDS[3] = "compsci"
-        WORDS[4] = "graduation"
-        WORDS[5] = "awards"
-        WORDS[6] = "stadium"
-        WORDS[7] = "yeshiva"
-        WORDS[8] = "university"
-        WORDS[9] = "donkeykong"
-
-        return
-    }
-
-    func getRandomWord(index: int) -> string {
-        return WORDS[index]
-    }
 
     func displayWord(word: string, guessedLetters: bool[]) -> string {
         var display = ""
@@ -40,82 +20,82 @@ Javana HangmanGame:
 
     func convertLetterToIndex(letter: string) -> int {
 
-        if( letter == "a" || letter == "A"){
+        if( letter == "a"){
             return 0
         }
-        if( letter == "b" || letter == "B"){
+        if( letter == "b"){
             return 1
         }
-        if (letter == "c" || letter == "C") {
+        if (letter == "c") {
             return 2
         }
-        if (letter == "d" || letter == "D") {
+        if (letter == "d") {
             return 3
         }
-        if (letter == "e" || letter == "E") {
+        if (letter == "e") {
             return 4
         }
-        if (letter == "f" || letter == "F") {
+        if (letter == "f") {
             return 5
         }
-        if (letter == "g" || letter == "G") {
+        if (letter == "g") {
             return 6
         }
-        if (letter == "h" || letter == "H") {
+        if (letter == "h") {
             return 7
         }
-        if (letter == "i" || letter == "I") {
+        if (letter == "i") {
             return 8
         }
-        if (letter == "j" || letter == "J") {
+        if (letter == "j" ) {
             return 9
         }
-        if (letter == "k" || letter == "K") {
+        if (letter == "k") {
             return 10
         }
-        if (letter == "l" || letter == "L") {
+        if (letter == "l") {
             return 11
         }
-        if (letter == "m" || letter == "M") {
+        if (letter == "m") {
             return 12
         }
-        if (letter == "n" || letter == "N") {
+        if (letter == "n") {
             return 13
         }
-        if (letter == "o" || letter == "O") {
+        if (letter == "o") {
             return 14
         }
-        if (letter == "p" || letter == "P") {
+        if (letter == "p") {
             return 15
         }
-        if (letter == "q" || letter == "Q") {
+        if (letter == "q") {
             return 16
         }
-        if (letter == "r" || letter == "R") {
+        if (letter == "r") {
             return 17
         }
-        if (letter == "s" || letter == "S") {
+        if (letter == "s") {
             return 18
         }
-        if (letter == "t" || letter == "T") {
+        if (letter == "t") {
             return 19
         }
-        if (letter == "u" || letter == "U") {
+        if (letter == "u") {
             return 20
         }
-        if (letter == "v" || letter == "V") {
+        if (letter == "v") {
             return 21
         }
-        if (letter == "w" || letter == "W") {
+        if (letter == "w") {
             return 22
         }
-        if (letter == "x" || letter == "X") {
+        if (letter == "x") {
             return 23
         }
-        if (letter == "y" || letter == "Y") {
+        if (letter == "y") {
             return 24
         }
-        if (letter == "z" || letter == "Z") {
+        if (letter == "z") {
             return 25
         }
 
@@ -124,24 +104,28 @@ Javana HangmanGame:
     }
 
 
-    @main() {
-        println("Welcome to Hangman!")
-        initWords()
-        println("Please input a letter form a to j")
-        var indexFromPlayer = readch()
-        var indexFromPlayerConverted = convertLetterToIndex(indexFromPlayer)
-        if(indexFromPlayerConverted < 0 || indexFromPlayerConverted > 9){
-            println("Input is INVALID")
-        }
-        var word = getRandomWord(indexFromPlayerConverted)
+    @main(args : string[]) {
+        var playerWord = args[0]
+        var maxGuesses = args[1]
+        var MAX_TRIES = Integer.parseInt(maxGuesses)
         var guessedLetters = @bool[26]
         var tries = 0
 
+        print("Welcome. Try and guess my secret word: :")
+        var displayToUser = displayWord(playerWord, guessedLetters)
+        print(displayToUser)
+        println()
+        print("You are allowed ")
+        print(maxGuesses)
+        print(" strikes")
+        println()
+        println()
+
+
         while (tries < MAX_TRIES) {
-            var display = displayWord(word, guessedLetters)
-            println("Word: " + display)
-            println("Enter a letter: ")
+            println("Select a letter: ")
             var guess = readch()
+
             var index = convertLetterToIndex(guess)
             guessedLetters[index] = true
 
@@ -175,7 +159,7 @@ Javana HangmanGame:
         }
 
         if (tries == MAX_TRIES) {
-            println("Sorry, you've run out of tries. The word was: " + word)
+            println("You have struck out. Goodbye!")
         }
 
         println("Thanks for playing Hangman!")

@@ -172,6 +172,7 @@ expression locals [ Typespec typeSpec = null, SymTableEntry entry = null]
     : expr=expression arrIdx=arrIdxSpecifier            # ExprArrayElement
     | expr=expression '.' 'length'                      # ExprArrayLength
     | expr=expression '.' 'charAt' '(' expression ')'   # ExprCharAt
+    | 'Integer.parseInt(' expression ')'                # ExprIntegerParseInt
     | expr=expression '.' name=identifier               # ExprRecordField
     | lhs=expression op=HIGHER_ARITH_OP rhs=expression  # ExprHigherArith
     | lhs=expression op=ARITH_OP rhs=expression         # ExprArith
