@@ -593,20 +593,13 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     public Object visitReturnStatement(JavanaParser.ReturnStatementContext ctx){
         JavanaParser.ExpressionContext exprCtx = ctx.expr;
         if( exprCtx != null ){
-            visit(exprCtx);
+            visit(exprCtx);//This should be calling ExprArrayElement
         }
         //Get the returnType
         Typespec returnType = exprCtx != null ? exprCtx.typeSpec : Predefined.undefinedType;
         //Check the current stack frame's routineIdType
         int nestingLevel = symTableStack.getLocalSymTable().getNestingLevel();
         SymTableEntry routineId = symTableStack.get(nestingLevel - 1).getOwner();
-
-        /*
-        Exception in thread "main" java.lang.NullPointerException: Cannot invoke "edu.yu.compilers.intermediate.symtable.SymTableEntry.getType()" because "routineId" is null
-	at edu.yu.compilers.frontend.Semantics.visitReturnStatement(Semantics.java:603)
-
-	This happens here when returning a literal, we dont want that
-         */
 
         Typespec routineType = routineId.getType();
         //Compare and see if we have a type mismatch or not
@@ -675,7 +668,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         if( arrIdxCtx.expr.typeSpec != Predefined.integerType){
             error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_INTEGER, arrIdxCtx);
         }
-        visit(exprCtx);
+        visit(exprCtx);//This should be calling the variable
         //Expression should be an array type
         if( exprCtx.typeSpec.getForm() != ARRAY){
             error.flag(SemanticErrorHandler.Code.INVALID_TYPE, exprCtx);
