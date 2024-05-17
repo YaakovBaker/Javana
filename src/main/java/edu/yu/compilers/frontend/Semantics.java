@@ -572,6 +572,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     //Done
     @Override
     public Object visitForStatement(JavanaParser.ForStatementContext ctx){
+        symTableStack.push();
         JavanaParser.VariableDefContext varDefCtx = ctx.init;
         JavanaParser.ExpressionContext conditionCtx = ctx.condition;
         JavanaParser.ExpressionContext updateCtx = ctx.updateExpr;
@@ -598,6 +599,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         }
         //Block
         visit(blockCtx);
+        symTableStack.pop();
         return null;
     }
 
