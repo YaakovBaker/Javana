@@ -140,15 +140,15 @@ Javana HangmanGame:
 
             var howMany = 0
 
-            for (var i = 0; i < word.length; i + 1) {
+            for (var i = 0; i < playerWord.length; i + 1) {
 
-                var letterInWord = word.charAt(i)
+                var letterInWord = playerWord.charAt(i)
 
                 if ( letterInWord.equals(guess) ) {
                     howMany = howMany + 1
                 }
             }
-            if(alreadyGuessed == true){
+            if(alreadyGuessedThisLetter == true){
                 print("'")
                 print(guess)
                 print("' was already guessed: ")
