@@ -498,17 +498,28 @@ public class Semantics extends JavanaBaseVisitor<Object> {
             ctx.typeSpec = varId.getType();
             ctx.entry = varId;
             varId.appendLineNumber(lineNumber);
-
-//            SymTableEntry.Kind kind = varId.getKind();
-//            switch (kind) {
-//                case TYPE, PROGRAM, PROGRAM_PARAMETER, PROCEDURE, UNDEFINED -> error.flag(SemanticErrorHandler.Code.INVALID_TYPE, ctx);
-//                default -> {
-//                }
-//            }
+            //Now deal with the varModifiers
+            for(JavanaParser.VarModifierContext varModCtx : ctx.modifiers){
+                visit(varModCtx);
+            }
         }else{//Else we didn't find the variable
             error.flag(SemanticErrorHandler.Code.UNDECLARED_IDENTIFIER, ctx);
             ctx.typeSpec = Predefined.integerType;
 //            ctx.typeSpec = Predefined.undefinedType;
+        }
+        return null;
+    }
+
+    //Done
+    @Override
+    public Object visitVarModifier(JavanaParser.VarModifierContext ctx) {
+        //Have to deal with the modifier
+        JavanaParser.ArrIdxSpecifierContext arrIdxCtx = ctx.arrIdxSpecifier();
+        JavanaParser.IdentifierContext idCtx = ctx.identifier();
+        if( arrIdxCtx != null ){
+            visit(arrIdxCtx);
+        }else if( idCtx != null ){
+            visit(idCtx);
         }
         return null;
     }
