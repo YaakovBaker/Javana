@@ -35,6 +35,8 @@ public class Converter extends JavanaBaseVisitor<Object> {
         typeNameTable.put("int", "int");
         typeNameTable.put("bool", "boolean");
         typeNameTable.put("string", "String");
+        typeNameTable.put("integer", "int");
+        typeNameTable.put("boolean", "boolean");
     }
 
     private CodeGenerator code;
@@ -43,6 +45,7 @@ public class Converter extends JavanaBaseVisitor<Object> {
 
     private boolean programVariables = true;
     private boolean recordFields = false;
+    private SymTable routineSymTable;
 
     public String getProgramName() {
         return programName;
@@ -95,7 +98,7 @@ public class Converter extends JavanaBaseVisitor<Object> {
         // Emit the Java program class.
         code.emitLine("public class " + programName);
         code.emitLine("{");
-
+        this.routineSymTable = ctx.entry.getRoutineSymTable();
         return null;
     }
 
@@ -111,7 +114,6 @@ public class Converter extends JavanaBaseVisitor<Object> {
             code.emitStart();
             code.emitEnd("final " + javaType + " " + name + " = "
                     + exprContextString + ";"); // Should be good
-
         }
         return null;
 
@@ -124,14 +126,12 @@ public class Converter extends JavanaBaseVisitor<Object> {
         JavanaParser.ExpressionContext exprCtx = ctx.expression();
         String exprContextString =  (String) visit(exprCtx); //Should be good, must ensure return statement is not null
         Typespec typespec = exprCtx.typeSpec;
-
-
+        String javaType = typeNameTable.get(typespec.getIdentifier().getName());
         for(JavanaParser.IdentifierContext idCtx: namelistCtx.identifier()) {
             String name = idCtx.getText();
             code.emitStart();
-            code.emitEnd("var " + name + " = "
+            code.emitEnd(javaType + " " + name + " = "
                     + exprContextString + ";"); // Should be good
-
         }
         return null;
     }
@@ -453,12 +453,92 @@ public class Converter extends JavanaBaseVisitor<Object> {
 
     @Override
     public Object visitExprHigherArith(JavanaParser.ExprHigherArithContext ctx) {
-        return ctx.getText();
+        JavanaParser.ExpressionContext lhsCtx = ctx.lhs;
+        JavanaParser.ExpressionContext rhsCtx = ctx.rhs;
+        String operator = ctx.op.getText();
+        //Check if lhs is a int literal or constant
+        String lhs = (String) visit(lhsCtx);
+        String rhs = (String) visit(rhsCtx);
+        //If lhs is an int literal or constant and rhs is an int literal or constant
+        //Then we can just return the result of the operation
+        //Otherwise we need to return the string
+        int left;
+        try{
+            left = Integer.parseInt(lhs);
+        }catch( NumberFormatException e){
+            //Check if it is a constant
+            SymTableEntry lhsEntry = this.routineSymTable.lookup(lhs);
+            if(lhsEntry.getKind() == CONSTANT){
+                String ret = (String) visit((JavanaParser.ExpressionContext)lhsEntry.getValue());
+                left = Integer.parseInt(ret);
+            }else{
+                return ctx.getText();
+            }
+        }
+        int right;
+        try{
+            right = Integer.parseInt(rhs);
+        }catch( NumberFormatException e){
+            //Check if it is a constant
+            SymTableEntry rhsEntry = this.routineSymTable.lookup(rhs);
+            if(rhsEntry.getKind() == CONSTANT){
+                String ret = (String) visit((JavanaParser.ExpressionContext)rhsEntry.getValue());
+                right = Integer.parseInt(ret);
+            }else{
+                return ctx.getText();
+            }
+        }
+        //both are int vaules
+        return switch( operator ){
+            case "*" -> String.valueOf(left * right);
+            case "/" -> String.valueOf(left / right);
+            case "%" -> String.valueOf(left % right);
+            default -> ctx.getText();
+        };
     }
 
     @Override
     public Object visitExprArith(JavanaParser.ExprArithContext ctx) {
-        return ctx.getText();
+        JavanaParser.ExpressionContext lhsCtx = ctx.lhs;
+        JavanaParser.ExpressionContext rhsCtx = ctx.rhs;
+        String operator = ctx.op.getText();
+        //Check if lhs is a int literal or constant
+        String lhs = (String) visit(lhsCtx);
+        String rhs = (String) visit(rhsCtx);
+        //If lhs is an int literal or constant and rhs is an int literal or constant
+        //Then we can just return the result of the operation
+        //Otherwise we need to return the string
+        int left;
+        try{
+            left = Integer.parseInt(lhs);
+        }catch( NumberFormatException e){
+            //Check if it is a constant
+            SymTableEntry lhsEntry = this.routineSymTable.lookup(lhs);
+            if(lhsEntry.getKind() == CONSTANT){
+                String ret = (String) visit((JavanaParser.ExpressionContext)lhsEntry.getValue());
+                left = Integer.parseInt(ret);
+            }else{
+                return ctx.getText();
+            }
+        }
+        int right;
+        try{
+            right = Integer.parseInt(rhs);
+        }catch( NumberFormatException e){
+            //Check if it is a constant
+            SymTableEntry rhsEntry = this.routineSymTable.lookup(rhs);
+            if(rhsEntry.getKind() == CONSTANT){
+                String ret = (String) visit((JavanaParser.ExpressionContext)rhsEntry.getValue());
+                right = Integer.parseInt(ret);
+            }else{
+                return ctx.getText();
+            }
+        }
+        return switch( operator ){
+            case "+" -> String.valueOf(left + right);
+            case "-" -> String.valueOf(left - right);
+            default -> ctx.getText();
+        };
     }
 
     @Override
@@ -488,7 +568,7 @@ public class Converter extends JavanaBaseVisitor<Object> {
 
     @Override
     public Object visitExprGroup(JavanaParser.ExprGroupContext ctx) {
-        return ctx.getText();
+        return visit(ctx.expression());
     }
 
 //    @Override

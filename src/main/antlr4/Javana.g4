@@ -71,11 +71,11 @@ typeAssoc locals [ Typespec typeSpec = null, SymTableEntry entry = null ]
     : namelst=nameList ':' t=type
     ; //Done
 
-variableDef locals [ Typespec typeSpec = null ]
+variableDef locals [ Typespec typeSpec = null, SymTableEntry entry = null]
     : 'var' namelst=nameList '=' expr=expression
     ; //Done
 
-constantDef locals [ Typespec typeSpec = null ]
+constantDef locals [ Typespec typeSpec = null, SymTableEntry entry = null]
     : 'const' namelst=nameList '=' expr=expression
     ; //Done
 
@@ -110,7 +110,7 @@ nameDeclStatement locals [ Typespec typeSpec = null, SymTableEntry entry = null 
     | recordDecl
     ; //Handled via OR
 
-nameDeclDefStatement locals [ Typespec typeSpec = null ]
+nameDeclDefStatement locals [ Typespec typeSpec = null, SymTableEntry entry = null]
     : variableDef
     | constantDef
     | funcDefinition

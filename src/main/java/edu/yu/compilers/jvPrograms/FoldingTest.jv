@@ -1,0 +1,16 @@
+Javana FoldingTest:
+    //record Point {
+        //x: int
+        //y: int
+    //}
+    //const p = @Point{x=1, y=2}
+    //var p2 = @Point{x=3, y=4}
+    const b = 20
+    var a = 2 * 3 + (4 / 1) + b
+    const c = 14
+    var d = c * 2
+
+    @main(args: string[]) {
+        print(a)
+        print(c)
+    }

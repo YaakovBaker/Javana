@@ -900,6 +900,7 @@ public class JavanaParser extends Parser {
 	@SuppressWarnings("CheckReturnValue")
 	public static class VariableDefContext extends ParserRuleContext {
 		public Typespec typeSpec = null;
+		public SymTableEntry entry = null;
 		public NameListContext namelst;
 		public ExpressionContext expr;
 		public NameListContext nameList() {
@@ -949,6 +950,7 @@ public class JavanaParser extends Parser {
 	@SuppressWarnings("CheckReturnValue")
 	public static class ConstantDefContext extends ParserRuleContext {
 		public Typespec typeSpec = null;
+		public SymTableEntry entry = null;
 		public NameListContext namelst;
 		public ExpressionContext expr;
 		public NameListContext nameList() {
@@ -1321,6 +1323,7 @@ public class JavanaParser extends Parser {
 	@SuppressWarnings("CheckReturnValue")
 	public static class NameDeclDefStatementContext extends ParserRuleContext {
 		public Typespec typeSpec = null;
+		public SymTableEntry entry = null;
 		public VariableDefContext variableDef() {
 			return getRuleContext(VariableDefContext.class,0);
 		}

@@ -397,6 +397,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
                     varId.setSlotNumber(symTable.nextSlotNumber());
                 }
                 idCtx.entry = varId;
+                idCtx.typeSpec = exprType;
             }else{//Else we already declared this ident
                 error.flag(REDECLARED_IDENTIFIER, idCtx);
                 //Set the type of the variable to the expression's type
@@ -425,12 +426,15 @@ public class Semantics extends JavanaBaseVisitor<Object> {
             if( constId == null ){
                 constId = symTableStack.enterLocal(varName, CONSTANT);
                 constId.setType(exprType);
+                constId.setValue(exprCtx);
                 // Assign slot numbers to local variables.
                 SymTable symTable = constId.getSymTable();
                 if (symTable.getNestingLevel() > 1) {
                     constId.setSlotNumber(symTable.nextSlotNumber());
                 }
                 idCtx.entry = constId;
+                idCtx.typeSpec = exprType;
+                ctx.entry = constId;
             }else{//Else we already declared this ident
                 error.flag(REDECLARED_IDENTIFIER, ctx);
             }
@@ -463,8 +467,19 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     @Override
     public Object visitNameDeclDef(JavanaParser.NameDeclDefContext ctx){
         JavanaParser.NameDeclDefStatementContext nameDeclDefCtx = ctx.nameDeclDefStatement();
-        visit(nameDeclDefCtx);
-        ctx.typeSpec = nameDeclDefCtx.typeSpec;
+        JavanaParser.ConstantDefContext constDefCtx = nameDeclDefCtx.constantDef();
+        JavanaParser.VariableDefContext varDefCtx = nameDeclDefCtx.variableDef();
+        JavanaParser.FuncDefinitionContext funcDefCtx = nameDeclDefCtx.funcDefinition();
+        if( constDefCtx != null ){
+            visit(constDefCtx);
+            ctx.typeSpec = constDefCtx.typeSpec;
+        }else if( varDefCtx != null ){
+            visit(varDefCtx);
+            ctx.typeSpec = varDefCtx.typeSpec;
+        }else if( funcDefCtx != null ){
+            visit(funcDefCtx);
+            ctx.typeSpec = funcDefCtx.entry.getType();
+        }
         return null;
     }
     //Done
