@@ -569,6 +569,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     //Done
     @Override
     public Object visitIfStatement(JavanaParser.IfStatementContext ctx){
+        symTableStack.push();
         JavanaParser.ExpressionContext exprCtx = ctx.condition;
         JavanaParser.BlockStatementContext trueCtx = ctx.thenStmt;
         JavanaParser.BlockStatementContext falseCtx = ctx.elseStmt;
@@ -577,10 +578,11 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         if( exprCtx.typeSpec != Predefined.booleanType){
             error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_BOOLEAN, exprCtx);
         }
-
         visit(trueCtx);
+        symTableStack.pop();
+        symTableStack.push();
         if (falseCtx != null) visit(falseCtx);
-
+        symTableStack.pop();
         return null;
     }
 
@@ -621,6 +623,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     //Check
     @Override
     public Object visitWhileStatement(JavanaParser.WhileStatementContext ctx){
+        symTableStack.push();
         JavanaParser.ExpressionContext conditionCtx = ctx.condition;
         JavanaParser.BlockStatementContext blockCtx = ctx.body;
         visit(conditionCtx);
@@ -628,6 +631,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
             error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_BOOLEAN, conditionCtx);
         }
         visit(blockCtx);
+        symTableStack.pop();
         return null;
     }
 
