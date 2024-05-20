@@ -126,7 +126,13 @@ public class Converter extends JavanaBaseVisitor<Object> {
         JavanaParser.ExpressionContext exprCtx = ctx.expression();
         String exprContextString =  (String) visit(exprCtx); //Should be good, must ensure return statement is not null
         Typespec typespec = exprCtx.typeSpec;
-        String javaType = typeNameTable.get(typespec.getIdentifier().getName());
+        String javaType;
+        try{
+            javaType = typeNameTable.get(typespec.getIdentifier().getName());
+        }catch (NullPointerException e){
+            javaType = "var";
+        }
+
         for(JavanaParser.IdentifierContext idCtx: namelistCtx.identifier()) {
             String name = idCtx.getText();
             code.emitStart();
@@ -468,12 +474,17 @@ public class Converter extends JavanaBaseVisitor<Object> {
         }catch( NumberFormatException e){
             //Check if it is a constant
             SymTableEntry lhsEntry = this.routineSymTable.lookup(lhs);
-            if(lhsEntry.getKind() == CONSTANT){
-                String ret = (String) visit((JavanaParser.ExpressionContext)lhsEntry.getValue());
-                left = Integer.parseInt(ret);
-            }else{
+            try{
+                if(lhsEntry.getKind() == CONSTANT){
+                    String ret = (String) visit((JavanaParser.ExpressionContext)lhsEntry.getValue());
+                    left = Integer.parseInt(ret);
+                }else{
+                    return ctx.getText();
+                }
+            }catch(NullPointerException npe){
                 return ctx.getText();
             }
+
         }
         int right;
         try{
@@ -481,12 +492,17 @@ public class Converter extends JavanaBaseVisitor<Object> {
         }catch( NumberFormatException e){
             //Check if it is a constant
             SymTableEntry rhsEntry = this.routineSymTable.lookup(rhs);
-            if(rhsEntry.getKind() == CONSTANT){
-                String ret = (String) visit((JavanaParser.ExpressionContext)rhsEntry.getValue());
-                right = Integer.parseInt(ret);
-            }else{
+            try{
+                if(rhsEntry.getKind() == CONSTANT){
+                    String ret = (String) visit((JavanaParser.ExpressionContext)rhsEntry.getValue());
+                    right = Integer.parseInt(ret);
+                }else{
+                    return ctx.getText();
+                }
+            }catch (NullPointerException npe){
                 return ctx.getText();
             }
+
         }
         //both are int vaules
         return switch( operator ){
@@ -514,12 +530,17 @@ public class Converter extends JavanaBaseVisitor<Object> {
         }catch( NumberFormatException e){
             //Check if it is a constant
             SymTableEntry lhsEntry = this.routineSymTable.lookup(lhs);
-            if(lhsEntry.getKind() == CONSTANT){
-                String ret = (String) visit((JavanaParser.ExpressionContext)lhsEntry.getValue());
-                left = Integer.parseInt(ret);
-            }else{
+            try{
+                if(lhsEntry.getKind() == CONSTANT){
+                    String ret = (String) visit((JavanaParser.ExpressionContext)lhsEntry.getValue());
+                    left = Integer.parseInt(ret);
+                }else{
+                    return ctx.getText();
+                }
+            }catch(NullPointerException npe){
                 return ctx.getText();
             }
+
         }
         int right;
         try{
@@ -527,12 +548,17 @@ public class Converter extends JavanaBaseVisitor<Object> {
         }catch( NumberFormatException e){
             //Check if it is a constant
             SymTableEntry rhsEntry = this.routineSymTable.lookup(rhs);
-            if(rhsEntry.getKind() == CONSTANT){
-                String ret = (String) visit((JavanaParser.ExpressionContext)rhsEntry.getValue());
-                right = Integer.parseInt(ret);
-            }else{
+            try{
+                if(rhsEntry.getKind() == CONSTANT){
+                    String ret = (String) visit((JavanaParser.ExpressionContext)rhsEntry.getValue());
+                    right = Integer.parseInt(ret);
+                }else{
+                    return ctx.getText();
+                }
+            }catch (NullPointerException npe){
                 return ctx.getText();
             }
+
         }
         return switch( operator ){
             case "+" -> String.valueOf(left + right);

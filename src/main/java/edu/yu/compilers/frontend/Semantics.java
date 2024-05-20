@@ -478,7 +478,6 @@ public class Semantics extends JavanaBaseVisitor<Object> {
             ctx.typeSpec = varDefCtx.typeSpec;
         }else if( funcDefCtx != null ){
             visit(funcDefCtx);
-            ctx.typeSpec = funcDefCtx.entry.getType();
         }
         return null;
     }
