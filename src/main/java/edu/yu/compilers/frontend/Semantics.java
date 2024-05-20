@@ -169,6 +169,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         //Visit Block
         visit(ctx.blockStatement());
         funcId.setExecutable(ctx.blockStatement());
+        ctx.entry = funcId;
         symTableStack.pop();
 //        this.currentNestingLevel = 0;
         return null;
