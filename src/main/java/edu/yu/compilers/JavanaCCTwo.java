@@ -17,23 +17,14 @@ import java.util.List;
 public class JavanaCCTwo {
 
     public static void main(String[] args) throws Exception {
-        String desktop = "C:\\Users\\yyb20\\Downloads\\YUCompSci\\JavanaCompilerProject\\Javana\\";
-        String laptop = "C:\\Users\\yyb20\\Downloads\\YUCompSci\\Javana\\";
-        String pakage = "src\\main\\java\\edu\\yu\\compilers\\jvPrograms\\";
-        String folderExample = "examplePrograms\\";
+        String desktop = "C:\\Users\\yyb20\\Downloads\\YUCompSci\\Baker_Yaakov_800615623\\javana\\";
+        String folderExample = "examples\\";
         String folderHangMan = "hangman\\";
-        String folderFinished = "finished\\";
-        String errorChecking = "ErrorsInputs\\errors\\";
-        String typeMismatch = "TYPE_MISMATCH\\";
-        String sourceFileName = desktop + pakage + "FoldingTest.jv";
-        String hangMan = desktop + pakage + folderHangMan + "hangman.jv";
-        String finished = desktop + pakage + folderFinished + "TestAssignmentStatements.jv";
-        String testingPath = desktop + pakage + errorChecking + typeMismatch + "typecheck_expr_relational.jv";
-        String errorCheckingPath = desktop + pakage + errorChecking + "FunctionErrors.jv";
-//        sourceFileName = hangMan;
-//        sourceFileName = finished;
-//        sourceFileName = testingPath;
-//        sourceFileName = errorCheckingPath;
+        String errorChecking = "semantic_tests\\";
+        String sourceFileName = desktop + folderExample + "FoldingTest.jv";
+        String hangMan = desktop + folderHangMan + "hangman.jv";
+        String errorCheckingPath = desktop + errorChecking + "FunctionErrors.jv";
+        sourceFileName = errorCheckingPath;
         SyntaxErrorHandler syntaxErrorHandler = new SyntaxErrorHandler();
 
         var lexer = createLexer(sourceFileName, syntaxErrorHandler);
@@ -55,11 +46,11 @@ public class JavanaCCTwo {
 
         if (errorCount > 0)
             System.err.printf("There were %d semantic errors.\n", errorCount);
-        //pass2.printSymbolTableStack();
+        pass2.printSymbolTableStack();
 
-        Converter pass3 = new Converter();
-        String objectCode = (String) pass3.visit(tree);
-        System.out.println(objectCode);
+//        Converter pass3 = new Converter();
+//        String objectCode = (String) pass3.visit(tree);
+//        System.out.println(objectCode);
 
 
         System.exit(errorCount);

@@ -222,11 +222,11 @@ newRecord locals [Typespec typeSpec= null ]
     : '@' identifier '{' init=fieldInitList? '}'
     ; //Done
 
-fieldInitList
+fieldInitList locals [Typespec typeSpec= null ]
     : init+=fieldInit (',' init+=fieldInit)*
     ; //Done
 
-fieldInit
+fieldInit locals [Typespec typeSpec= null ]
     : field=identifier '=' expr=expression
     ; //Done
 

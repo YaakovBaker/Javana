@@ -50,6 +50,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
     }
 
     // Program and routines --------------------
+
     //Done
     @Override
     public Object visitProgram(JavanaParser.ProgramContext ctx){
@@ -256,11 +257,12 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         recordSymTable.setOwner(ownerId);
         //visit each field
         for(JavanaParser.TypeAssocContext typeAssocCtx : fields){
+            visit(typeAssocCtx);
             //Deal with TypeAssoc here since can't deal with it there
             for(JavanaParser.IdentifierContext idCtx : typeAssocCtx.namelst.names){
                 String fieldName = idCtx.getText();
                 SymTableEntry fieldId = recordSymTable.lookup(fieldName);
-                if( fieldId != null ){
+                if( fieldId != null && fieldId.getKind() != TYPE ){
                     error.flag(REDECLARED_IDENTIFIER, idCtx);
                 }
 
@@ -287,7 +289,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         SymTableEntry parentId = recordId.getSymTable().getOwner();
         String path = recordId.getName();
 
-        while ((parentId.getKind() == TYPE) && (parentId.getType().getForm() == RECORD)) {
+        while (( parentId.getKind() == TYPE) && (parentId.getType().getForm() == RECORD)) {
             path = parentId.getName() + "$" + path;
             parentId = parentId.getSymTable().getOwner();
         }
@@ -332,7 +334,9 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         JavanaParser.TypeAssocContext typeAssocCtx = ctx.assoc;
         JavanaParser.TypeContext typeCtx = typeAssocCtx.t;
         visit(typeCtx);
-
+        if( typeCtx.typeSpec.getIdentifier() == null ){
+//            typeCtx.typeSpec.setIdentifier(typeCtx.getText());
+        }
         JavanaParser.NameListContext nameListCtx = typeAssocCtx.namelst;
 
         for(JavanaParser.IdentifierContext idCtx : nameListCtx.names){
@@ -437,7 +441,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
                 idCtx.typeSpec = exprType;
                 ctx.entry = constId;
             }else{//Else we already declared this ident
-                error.flag(REDECLARED_IDENTIFIER, ctx);
+                error.flag(REDECLARED_IDENTIFIER, idCtx);
             }
             //Append the line number
             constId.appendLineNumber(ctx.getStart().getLine());
@@ -496,6 +500,10 @@ public class Semantics extends JavanaBaseVisitor<Object> {
 //        if( lhs.entry == null ){
 //            error.flag(SemanticErrorHandler.Code.UNDECLARED_IDENTIFIER, lhs);
 //        }
+        //If lhs is a const then can't assign
+        if( lhs.entry.getKind() == CONSTANT ){
+            error.flag(SemanticErrorHandler.Code.ILLEGAL_ASSIGNMENT, ctx);
+        }
         //If LHS is an array element then we need to get the array element type
         if( lhsType.getForm() != null && lhsType.getForm() == ARRAY ){
             lhsType = lhsType.getArrayElementType();
@@ -530,26 +538,31 @@ public class Semantics extends JavanaBaseVisitor<Object> {
             varId.appendLineNumber(lineNumber);
             //Now deal with the varModifiers
             for(JavanaParser.VarModifierContext varModCtx : ctx.modifiers){
-                visit(varModCtx);
+                JavanaParser.ArrIdxSpecifierContext arrIdxCtx = varModCtx.arrIdxSpecifier();
+                JavanaParser.IdentifierContext modifIdCtx = varModCtx.identifier();
+                if( arrIdxCtx != null ){
+                    visit(arrIdxCtx);
+                }else if( modifIdCtx != null ){
+                    if( varId.getType().getForm() == RECORD ){
+                        //Then we have to handle modifIdCtx as a record field
+                        SymTable recordSymTable = varId.getType().getRecordSymTable();
+                        SymTableEntry recordFieldId = recordSymTable.lookup(modifIdCtx.getText());
+                        if( recordFieldId == null ){
+                            error.flag(INVALID_FIELD, ctx);
+                            ctx.typeSpec = Predefined.undefinedType;
+                        }else{
+                            ctx.typeSpec = recordFieldId.getType();
+                        }
+                    }else{
+                        //Why are we doing .identifier() here?
+                        error.flag(TYPE_MUST_BE_RECORD, ctx);
+                    }
+                }
             }
         }else{//Else we didn't find the variable
             error.flag(SemanticErrorHandler.Code.UNDECLARED_IDENTIFIER, ctx);
             ctx.typeSpec = Predefined.integerType;
 //            ctx.typeSpec = Predefined.undefinedType;
-        }
-        return null;
-    }
-
-    //Done
-    @Override
-    public Object visitVarModifier(JavanaParser.VarModifierContext ctx) {
-        //Have to deal with the modifier
-        JavanaParser.ArrIdxSpecifierContext arrIdxCtx = ctx.arrIdxSpecifier();
-        JavanaParser.IdentifierContext idCtx = ctx.identifier();
-        if( arrIdxCtx != null ){
-            visit(arrIdxCtx);
-        }else if( idCtx != null ){
-            visit(idCtx);
         }
         return null;
     }
@@ -756,7 +769,7 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         Typespec exprType = exprCtx.typeSpec;
         //THis should be a record
         if( exprType.getForm() != RECORD){
-            error.flag(SemanticErrorHandler.Code.INVALID_TYPE, exprCtx);
+            error.flag(SemanticErrorHandler.Code.TYPE_MUST_BE_RECORD, exprCtx);
         }else{
             //Check if the field exists
 //            SymTable recordSymTable = exprType.getRecordSymTable();
@@ -926,11 +939,21 @@ public class Semantics extends JavanaBaseVisitor<Object> {
             error.flag(SemanticErrorHandler.Code.UNDECLARED_IDENTIFIER, idCtx);
             ctx.typeSpec = Predefined.undefinedType;
         }else{
-            ctx.typeSpec = funcId.getType();
-            idCtx.entry = funcId;
-        }
-        if( exprListCtx != null){
-            visit(exprListCtx);
+            if( funcId.getKind() != FUNCTION ){
+                error.flag(NAME_MUST_BE_FUNCTION, idCtx);
+                ctx.typeSpec = funcId.getType();
+            }else{
+                ctx.typeSpec = funcId.getType();
+                idCtx.entry = funcId;
+                int numParameters = funcId.getRoutineParameters().size();
+                if( exprListCtx != null){
+                    if( numParameters != exprListCtx.expression().size() ){
+                        error.flag(ARGUMENT_COUNT_MISMATCH, idCtx);
+                    }else{
+                        visit(exprListCtx);
+                    }
+                }
+            }
         }
         return null;
     }
@@ -1002,11 +1025,28 @@ public class Semantics extends JavanaBaseVisitor<Object> {
         if( recordTypeId == null ){
             error.flag(SemanticErrorHandler.Code.UNDECLARED_IDENTIFIER, idCtx);
             newRecordCtx.typeSpec = Predefined.undefinedType;
+        }else if( recordTypeId.getKind() != TYPE ){
+            error.flag(SemanticErrorHandler.Code.INVALID_TYPE, idCtx);
+            newRecordCtx.typeSpec = Predefined.undefinedType;
         }else{
-            newRecordCtx.typeSpec = recordTypeId.getType();
-            idCtx.entry = recordTypeId;
-            if( fieldInitListCtx != null){
-                visit(fieldInitListCtx);
+            SymTable recordSymTable = recordTypeId.getType().getRecordSymTable();
+            ctx.typeSpec = new Typespec(RECORD);
+            ctx.typeSpec.setRecordSymTable(recordSymTable);
+            ctx.typeSpec.setIdentifier(recordTypeId);
+            if( fieldInitListCtx != null ){
+                for(JavanaParser.FieldInitContext fieldInitCtx : fieldInitListCtx.fieldInit()){
+                    JavanaParser.IdentifierContext fieldIdCtx = fieldInitCtx.identifier();
+                    JavanaParser.ExpressionContext exprCtx = fieldInitCtx.expression();
+                    SymTableEntry fieldId = recordSymTable.lookup(fieldIdCtx.getText());
+                    if( fieldId == null ){
+                        error.flag(SemanticErrorHandler.Code.UNDECLARED_IDENTIFIER, fieldIdCtx);
+                    }else{
+                        visit(exprCtx);
+                        if( !TypeChecker.areAssignmentCompatible(fieldId.getType(), exprCtx.typeSpec) ){
+                            error.flag(SemanticErrorHandler.Code.ILLEGAL_ASSIGNMENT, fieldInitCtx);
+                        }
+                    }
+                }
             }
         }
         return null;
@@ -1110,7 +1150,13 @@ public class Semantics extends JavanaBaseVisitor<Object> {
 
     @Override
     public Object visitRecordType(JavanaParser.RecordTypeContext ctx){
-        ctx.typeSpec = Predefined.undefinedType;
+        visit(ctx.identifier());
+        if( ctx.identifier().typeSpec == Predefined.undefinedType ){
+            ctx.typeSpec = Predefined.undefinedType;
+        }else{
+            ctx.typeSpec = new Typespec(RECORD);
+            ctx.typeSpec.setIdentifier(ctx.identifier().entry);
+        }
         return null;
     }
 

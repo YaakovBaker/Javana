@@ -3056,6 +3056,7 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class FieldInitListContext extends ParserRuleContext {
+		public Typespec typeSpec = null;
 		public FieldInitContext fieldInit;
 		public List<FieldInitContext> init = new ArrayList<FieldInitContext>();
 		public List<FieldInitContext> fieldInit() {
@@ -3117,6 +3118,7 @@ public class JavanaParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class FieldInitContext extends ParserRuleContext {
+		public Typespec typeSpec = null;
 		public IdentifierContext field;
 		public ExpressionContext expr;
 		public IdentifierContext identifier() {
