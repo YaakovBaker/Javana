@@ -1,0 +1,207 @@
+Javana Hangman:
+
+
+
+    func convertLetterToIndex(letter: string) -> int {
+
+        if( letter.equals("a") ){
+            return 0
+        }
+        if( letter.equals("b") ){
+            return 1
+        }
+        if (letter.equals("c")) {
+            return 2
+        }
+        if (letter.equals("d")) {
+            return 3
+        }
+        if (letter.equals("e")) {
+            return 4
+        }
+        if (letter.equals("f")) {
+            return 5
+        }
+        if (letter.equals("g")) {
+            return 6
+        }
+        if (letter.equals("h")) {
+            return 7
+        }
+        if (letter.equals("i")) {
+            return 8
+        }
+        if (letter.equals("j")) {
+            return 9
+        }
+        if (letter.equals("k")) {
+            return 10
+        }
+        if (letter.equals("l")) {
+            return 11
+        }
+        if (letter.equals("m")) {
+            return 12
+        }
+        if (letter.equals("n")) {
+            return 13
+        }
+        if (letter.equals("o")) {
+            return 14
+        }
+        if (letter.equals("p")) {
+            return 15
+        }
+        if (letter.equals("q")) {
+            return 16
+        }
+        if (letter.equals("r")) {
+            return 17
+        }
+        if (letter.equals("s")) {
+            return 18
+        }
+        if (letter.equals("t")) {
+            return 19
+        }
+        if (letter.equals("u")) {
+            return 20
+        }
+        if (letter.equals("v")) {
+            return 21
+        }
+        if (letter.equals("w")) {
+            return 22
+        }
+        if (letter.equals("x")) {
+            return 23
+        }
+        if (letter.equals("y")) {
+            return 24
+        }
+        if (letter.equals("z")) {
+            return 25
+        }
+
+
+        return -1
+
+    }
+
+    func displayWord(word: string, guessedLetters: bool[]) -> string {
+            var display = ""
+            for (var i = 0; i < word.length(); i + 1) {
+                var letter = word.charAt(i)
+                var index = convertLetterToIndex(letter)
+                if(index == -1){
+                    println("This is not a good letter")
+                }
+                if (guessedLetters[index] == true) {
+                    display = display + letter
+                    display = display + " "
+                } else {
+                    display = display + "_ "
+                }
+            }
+            return display
+        }
+
+
+    @main(args : string[]) {
+        var playerWord = args[0]
+        var maxGuesses = args[1]
+        var MAX_TRIES = Integer.parseInt(maxGuesses)
+        var guessedLetters = @bool[26]
+        var tries = 0
+        var numOfGuessesUserMade = 0
+
+        print("Welcome. Try and guess my secret word: :")
+        var displayToUser = displayWord(playerWord, guessedLetters)
+        print(displayToUser)
+        println
+        print("You are allowed ")
+        print(maxGuesses)
+        print(" strikes")
+        println
+        println
+
+        var exitLoop = false
+        while (tries < MAX_TRIES && exitLoop == false) {
+
+            var alreadyGuessedThisLetter = false
+
+            println("Select a letter: ")
+            var guess = readch()
+            numOfGuessesUserMade = numOfGuessesUserMade + 1
+            var index = convertLetterToIndex(guess)
+            if(guessedLetters[index] == true){
+                alreadyGuessedThisLetter = true
+            }
+            guessedLetters[index] = true
+
+            var howMany = 0
+
+            for (var i = 0; i < playerWord.length(); i + 1) {
+
+                var letterInWord = playerWord.charAt(i)
+
+                if ( letterInWord.equals(guess) ) {
+                    howMany = howMany + 1
+                }
+            }
+            if(alreadyGuessedThisLetter == true){
+                print("'")
+                print(guess)
+                print("' was already guessed: ")
+                displayToUser = displayWord(playerWord, guessedLetters)
+                print(displayToUser)
+                println
+            } else {
+                if (howMany > 0) {
+                    print("The letter '")
+                    print(guess)
+                    print("' appears ")
+                    print(howMany)
+                    print(" time(s):")
+                    displayToUser = displayWord(playerWord, guessedLetters)
+                    print(displayToUser)
+                    println
+                } else {
+                    tries = tries + 1
+                    print("The letter '")
+                    print(guess)
+                    print("' does not appear. You have ")
+                    print(tries)
+                    print(" strike(s): ")
+                    displayToUser = displayWord(playerWord, guessedLetters)
+                    print(displayToUser)
+                    println
+                }
+            }
+
+
+            var allLettersGuessed = true
+            for (var i = 0; i < playerWord.length(); i + 1) {
+                var upToLetter = playerWord.charAt(i)
+                var covertIndex = convertLetterToIndex(upToLetter)
+                if (!guessedLetters[covertIndex]) {
+                    allLettersGuessed = false
+                }
+            }
+
+            if (allLettersGuessed) {
+                exitLoop = true
+            }
+        }
+
+        if (tries == MAX_TRIES) {
+            println("You have struck out. Goodbye!")
+        }else{
+            print("You won with ")
+            print(numOfGuessesUserMade)
+            print(" guesses. Goodbye!")
+            println
+        }
+
+
+    }

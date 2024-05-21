@@ -1,0 +1,15 @@
+Javana INVALID_TYPE:
+    decl a, b : type1
+
+    func add(x: type2, y: int) -> type3
+    {
+        var a = @type4[10]
+        return 1
+    }
+
+
+    @main(args: string[]) {
+        var a = 1
+        print("Hello, World!")
+    }
+

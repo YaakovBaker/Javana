@@ -1,0 +1,13 @@
+Javana INVALID_FIELD:
+    record myRecord{
+        a : int
+        b : int
+    }
+
+    @main(args: string[]){
+        var r = @myRecord{a=1, b=2}
+        var nope = r.c
+        //Invalid field
+        r.c = 3
+        //Invalid field
+    }

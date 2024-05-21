@@ -1,0 +1,7 @@
+Javana ILLEGAL_ASSIGNMENT:
+
+    const b = 1
+
+    @main(args: string[]) {
+        b = 2//Error Illegal Assignment
+    }

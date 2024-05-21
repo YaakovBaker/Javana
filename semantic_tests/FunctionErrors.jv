@@ -1,0 +1,29 @@
+Javana Functions:
+    func myFunc(a: int, b: string) -> bool {
+        var c = a
+        println(a)
+        println(c)
+        println(b)
+        return false
+    }
+    //INVALID_RETURN_TYPE - Is being caught
+    func func2(a: int, b: string) -> bool {
+        return 1
+    }
+
+    @main() {
+
+        var a = "goodbye"
+        var b = 1
+        var c = myFunc(b, a)
+
+        //NAME_MUST_BE_FUNCTION - Is caught
+        a()
+        //NAME_MUST_BE_FUNCTION - Is caught
+        b()
+        //NAME_MUST_BE_FUNCTION - Is caught - this is holding the return value of myFunc
+        c()
+        //ARGUMENT_COUNT_MISMATCH - Is Caught
+        myFunc(a, b, c)
+        println(c)
+    }
